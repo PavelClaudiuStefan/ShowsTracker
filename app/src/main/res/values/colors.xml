@@ -3,4 +3,19 @@
     <color name="colorPrimary">#03A9F4</color>
     <color name="colorPrimaryDark">#0288D1</color>
     <color name="colorAccent">#00796B</color>
+
+    <!--&lt;!&ndash; Primary color of the app (shown in the app bar) &ndash;&gt;-->
+    <!--<color name="colorPrimary">#2B3D4D</color>-->
+
+    <!--&lt;!&ndash; Primary dark color of the app (shown in the status bar) &ndash;&gt;-->
+    <!--<color name="colorPrimaryDark">#23303D</color>-->
+
+    <!--&lt;!&ndash; Accent color of the app &ndash;&gt;-->
+    <!--<color name="colorAccent">#10CAC9</color>-->
+
+    <!-- Text color for the details of the earthquake in the list item -->
+    <color name="textColorMovieDetails">#4f5254</color>
+
+    <!-- Text color for the primary location of the earthquake in the list item -->
+    <color name="textColorMovieTitle">#2B3D4D</color>
 </resources>
