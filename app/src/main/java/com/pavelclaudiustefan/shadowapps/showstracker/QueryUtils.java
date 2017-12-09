@@ -1,5 +1,6 @@
 package com.pavelclaudiustefan.shadowapps.showstracker;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,6 +24,8 @@ import java.util.List;
  */
 
 final class QueryUtils {
+
+    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
     private final static String LOG_TAG = "QueryUtils";
 
@@ -116,8 +119,11 @@ final class QueryUtils {
                 String title = currentMovie.getString("title");
                 double voteAverage = currentMovie.getDouble("vote_average");
                 String date = currentMovie.getString("release_date");
+                int id = currentMovie.getInt("id");
 
-                Movie movie = new Movie(title, voteAverage, date);
+                String imdbUrl = fetchImdbUrl(id);
+
+                Movie movie = new Movie(title, voteAverage, date, imdbUrl);
                 earthquakes.add(movie);
             }
 
@@ -126,6 +132,48 @@ final class QueryUtils {
         }
 
         return earthquakes;
+    }
+
+    private static String fetchImdbUrl(int tmdbId) {
+        // Create TMDB String URL
+        String stringUrl = createStringUrl(tmdbId);
+
+        // Create TMDB URL
+        URL url = createUrl(stringUrl);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return extractImdbIdFromJson(jsonResponse);
+    }
+
+    private static String createStringUrl(int tmdbId) {
+        Uri baseUri = Uri.parse("https://api.themoviedb.org/3/movie/" + tmdbId);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendQueryParameter("api_key", API_KEY);
+
+        return uriBuilder.toString();
+    }
+
+    private static String extractImdbIdFromJson(String movieJSON) {
+        if (TextUtils.isEmpty(movieJSON)) {
+            return null;
+        }
+
+        String imdbUrl = "http://www.imdb.com/title/";
+
+        try {
+            JSONObject movieJsonResponse = new JSONObject(movieJSON);
+            imdbUrl += movieJsonResponse.getString("imdb_id");
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "Problem parsing the movie JSON results", e);
+        }
+
+        return imdbUrl;
     }
 
 }

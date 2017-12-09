@@ -6,4 +6,9 @@
     <string name="settings_order_by_key" translatable="false">order_by</string>
     <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_popularity_desc</string>
     <string name="settings_sort_by_popularity_desc" translatable="false">popularity.desc</string>
+
+    <string name="category_movies_not_seen">Not seen</string>
+    <string name="category_movies_not_aired">Not aired</string>
+    <string name="category_movies_all">All</string>
+    <string name="category_movies_discover">Discover</string>
 </resources>
