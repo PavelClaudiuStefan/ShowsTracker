@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.MovieActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="match_parent"
+            android:layout_height="128dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/poster_temp" />
+
+        <TextView
+            android:id="@+id/movie_title"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="48sp"
+            android:layout_marginTop="32dp"
+            tools:text="Title"/>
+
+        <TextView
+            android:id="@+id/average_vote"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"
+            android:layout_marginTop="32dp"
+            tools:text="Average vote: 10"/>
+
+        <TextView
+            android:id="@+id/release_date"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="32sp"
+            android:layout_marginTop="32dp"
+            tools:text="04 Apr 1996"/>
+
+        <Button
+            android:id="@+id/imdb_url_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginTop="32dp"
+            android:text="IMDB"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -107,7 +107,7 @@ final class QueryUtils {
             return null;
         }
 
-        List<Movie> earthquakes = new ArrayList<>();
+        List<Movie> movies = new ArrayList<>();
 
         try {
             JSONObject baseJsonResponse = new JSONObject(moviesJSON);
@@ -124,14 +124,14 @@ final class QueryUtils {
                 String imdbUrl = fetchImdbUrl(id);
 
                 Movie movie = new Movie(title, voteAverage, date, imdbUrl);
-                earthquakes.add(movie);
+                movies.add(movie);
             }
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
         }
 
-        return earthquakes;
+        return movies;
     }
 
     private static String fetchImdbUrl(int tmdbId) {

@@ -33,7 +33,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         Movie currentMovie = getItem(position);
 
-        TextView titleView = listItemView.findViewById(R.id.movie_name);
+        TextView titleView = listItemView.findViewById(R.id.movie_title);
         titleView.setText(currentMovie.getTitle());
 
         TextView averageVoteView = listItemView.findViewById(R.id.average_vote);
