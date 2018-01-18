@@ -6,7 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -42,6 +45,11 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         TextView dateView = listItemView.findViewById(R.id.date);
         String formattedDate = formatDate(currentMovie.getDate());
         dateView.setText(formattedDate);
+
+        ImageView imageView = listItemView.findViewById(R.id.movie_image);
+        Picasso.with(getContext())
+                .load(currentMovie.getImageUrl())
+                .into(imageView);
 
         return listItemView;
     }

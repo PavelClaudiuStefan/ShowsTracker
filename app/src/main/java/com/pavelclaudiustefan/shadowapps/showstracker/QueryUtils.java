@@ -123,12 +123,14 @@ final class QueryUtils {
 
                 String imdbUrl = fetchImdbUrl(id);
 
-                Movie movie = new Movie(title, voteAverage, date, imdbUrl);
+                String imageUrl = currentMovie.getString("backdrop_path");
+
+                Movie movie = new Movie(title, voteAverage, date, imdbUrl, imageUrl);
                 movies.add(movie);
             }
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Problem parsing the earthquake JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing json results", e);
         }
 
         return movies;

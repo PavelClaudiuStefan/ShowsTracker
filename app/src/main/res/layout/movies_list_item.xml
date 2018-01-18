@@ -24,16 +24,15 @@
     android:paddingRight="16dp"
     android:paddingStart="16dp">
 
-    <TextView
+    <ImageView
         android:id="@+id/movie_image"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
         android:layout_gravity="center_vertical"
-        android:background="@drawable/circle"
-        android:fontFamily="sans-serif-medium"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
         android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"/>
+        android:background="@drawable/poster_temp"/>
 
     <LinearLayout
         android:layout_width="0dp"

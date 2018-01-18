@@ -86,7 +86,7 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case MOVIES:
-                return insertPet(uri, contentValues);
+                return insertMovie(uri, contentValues);
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -96,7 +96,7 @@ public class MovieProvider extends ContentProvider {
      * Insert a pet into the database with the given content values. Return the new content URI
      * for that specific row in the database.
      */
-    private Uri insertPet(Uri uri, ContentValues values) {
+    private Uri insertMovie(Uri uri, ContentValues values) {
         // Check that the name is not null
         String name = values.getAsString(MovieEntry.COLUMN_MOVIE_TITLE);
         if (name == null) {
@@ -119,6 +119,12 @@ public class MovieProvider extends ContentProvider {
         String imdbId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMDB_ID);
         if (imdbId == null) {
             throw new IllegalArgumentException("Movie requires an imdb id");
+        }
+
+        // Check that the image url is not null
+        String imageUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
+        if (imageUrl == null) {
+            throw new IllegalArgumentException("Movie requires an image url");
         }
 
         // Get writeable database
@@ -181,6 +187,12 @@ public class MovieProvider extends ContentProvider {
         String imdbId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMDB_ID);
         if (imdbId == null) {
             throw new IllegalArgumentException("Movie requires an imdb id");
+        }
+
+        // Check that the image url is not null
+        String imageUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
+        if (imageUrl == null) {
+            throw new IllegalArgumentException("Movie requires an image url");
         }
 
         // If there are no values to update, then don't try to update the database

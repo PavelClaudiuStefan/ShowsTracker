@@ -10,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
+import com.squareup.picasso.Picasso;
 
 public class MovieActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -20,6 +22,7 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
 
     private Uri currentMovieUri;
 
+    private ImageView imageView;
     private TextView titleTextView;
     private TextView averageVoteTextView;
     private TextView releaseDateTextView;
@@ -34,6 +37,7 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
         currentMovieUri = intent.getData();
         setTitle("Movie");
 
+        imageView = findViewById(R.id.movie_image);
         titleTextView = findViewById(R.id.movie_title);
         averageVoteTextView = findViewById(R.id.average_vote);
         releaseDateTextView = findViewById(R.id.release_date);
@@ -51,7 +55,8 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
                 MovieEntry.COLUMN_MOVIE_TITLE,
                 MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
                 MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
-                MovieEntry.COLUMN_MOVIE_IMDB_ID };
+                MovieEntry.COLUMN_MOVIE_IMDB_ID,
+                MovieEntry.COLUMN_MOVIE_IMAGE_URL};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
@@ -71,18 +76,23 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
 
         if (cursor.moveToFirst()) {
             // Find the columns of pet attributes that we're interested in
+            int imageUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
             int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
             int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
             int releaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
             int imdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMDB_ID);
 
             // Extract out the value from the Cursor for the given column index
+            String imageUrl = cursor.getString(imageUrlColumnIndex);
             String title = cursor.getString(titleColumnIndex);
             String averageVote = cursor.getString(averageVoteColumnIndex);
             String releaseDate = cursor.getString(releaseDateColumnIndex);
             final String imdbUrl = cursor.getString(imdbIdColumnIndex);
 
             // Update the views on the screen with the values from the database
+            Picasso.with(this)
+                    .load(imageUrl)
+                    .into(imageView);
             titleTextView.setText(title);
             averageVoteTextView.setText(averageVote);
             releaseDateTextView.setText(releaseDate);

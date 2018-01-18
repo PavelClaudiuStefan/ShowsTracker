@@ -14,11 +14,12 @@
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/poster"
+            android:id="@+id/movie_image"
             android:layout_width="match_parent"
-            android:layout_height="128dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/poster_temp" />
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:background="@drawable/poster_temp"/>
 
         <TextView
             android:id="@+id/movie_title"

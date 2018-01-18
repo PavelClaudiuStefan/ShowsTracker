@@ -90,6 +90,7 @@ public class MoviesPopularFragment extends Fragment
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movie.getDate());
         values.put(MovieEntry.COLUMN_MOVIE_IMDB_ID, movie.getImdbUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
 
         Uri newUri = getActivity().getContentResolver().insert(MovieEntry.CONTENT_URI, values);
     }
@@ -124,7 +125,7 @@ public class MoviesPopularFragment extends Fragment
         View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
 
-        // Set empty state text to display "No earthquakes found." It's not visible if any movie is added to the adapter
+        // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
         emptyStateTextView.setText(R.string.no_movies);
 
         movieAdapter.clear();

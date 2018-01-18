@@ -29,6 +29,7 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
         public static final String COLUMN_MOVIE_AVERAGE_VOTE = "average_vote";
         public static final String COLUMN_MOVIE_IMDB_ID = "imdb_id";
+        public static final String COLUMN_MOVIE_IMAGE_URL = "image_url";
 
     }
 

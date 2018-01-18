@@ -76,7 +76,8 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 MovieEntry._ID,
                 MovieEntry.COLUMN_MOVIE_TITLE,
                 MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE};
+                MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
+                MovieEntry.COLUMN_MOVIE_IMAGE_URL,};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(getContext(),   // Parent activity context

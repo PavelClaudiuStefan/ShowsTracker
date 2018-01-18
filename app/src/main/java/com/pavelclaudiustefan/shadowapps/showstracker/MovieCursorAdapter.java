@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
+import com.squareup.picasso.Picasso;
 
 public class MovieCursorAdapter extends CursorAdapter {
 
@@ -27,18 +29,26 @@ public class MovieCursorAdapter extends CursorAdapter {
         TextView titleTextView = view.findViewById(R.id.movie_title);
         TextView averageVoteTextView = view.findViewById(R.id.average_vote);
         TextView dateTextView = view.findViewById(R.id.date);
+        ImageView imageView = view.findViewById(R.id.movie_image);
 
         int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
         int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
         int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
+        int imageUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
 
         String movieName = cursor.getString(titleColumnIndex);
         String movieAverageVote = cursor.getString(averageVoteColumnIndex);
         String movieReleaseDate = cursor.getString(dateColumnIndex);
+        String imageUrl = cursor.getString(imageUrlColumnIndex);
 
         // Update the TextViews with the attributes for the current movie
         titleTextView.setText(movieName);
         averageVoteTextView.setText(movieAverageVote);
         dateTextView.setText(movieReleaseDate);
+
+        // Load movie image (landscape)
+        Picasso.with(context)
+                .load(imageUrl)
+                .into(imageView);
     }
 }
