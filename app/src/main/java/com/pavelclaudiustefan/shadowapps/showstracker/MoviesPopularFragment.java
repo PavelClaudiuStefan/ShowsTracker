@@ -90,6 +90,7 @@ public class MoviesPopularFragment extends Fragment
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movie.getDate());
         values.put(MovieEntry.COLUMN_MOVIE_IMDB_ID, movie.getImdbUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
         values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
 
         Uri newUri = getActivity().getContentResolver().insert(MovieEntry.CONTENT_URI, values);

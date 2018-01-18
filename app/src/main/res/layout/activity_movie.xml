@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:background="@drawable/poster_temp"/>
+            android:background="@drawable/image_temp"/>
 
         <TextView
             android:id="@+id/movie_title"

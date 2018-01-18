@@ -50,7 +50,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // Create new intent to go to {@link EditorActivity}
+                // Create new intent to go to {@link MovieActivity}
                 Intent intent = new Intent(getActivity(), MovieActivity.class);
 
                 Uri currentMovieUri = ContentUris.withAppendedId(MovieEntry.CONTENT_URI, id);
@@ -77,7 +77,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 MovieEntry.COLUMN_MOVIE_TITLE,
                 MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
                 MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
-                MovieEntry.COLUMN_MOVIE_IMAGE_URL,};
+                MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL,};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(getContext(),   // Parent activity context

@@ -121,6 +121,12 @@ public class MovieProvider extends ContentProvider {
             throw new IllegalArgumentException("Movie requires an imdb id");
         }
 
+        // Check that the thumbnail url is not null
+        String thumbnailUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        if (thumbnailUrl == null) {
+            throw new IllegalArgumentException("Movie requires a thumbnail url");
+        }
+
         // Check that the image url is not null
         String imageUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
         if (imageUrl == null) {
@@ -130,7 +136,7 @@ public class MovieProvider extends ContentProvider {
         // Get writeable database
         SQLiteDatabase database = movieDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
+        // Insert the new movie with the given values
         long id = database.insert(MovieEntry.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -153,7 +159,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIES:
                 return updateMovie(uri, contentValues, selection, selectionArgs);
             case MOVIE_ID:
-                // For the PET_ID code, extract out the ID from the URI,
+                // For the MOVIE_ID code, extract out the ID from the URI,
                 // so we know which row to update. Selection will be "_id=?" and selection
                 // arguments will be a String array containing the actual ID.
                 selection = MovieEntry._ID + "=?";
@@ -187,6 +193,12 @@ public class MovieProvider extends ContentProvider {
         String imdbId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMDB_ID);
         if (imdbId == null) {
             throw new IllegalArgumentException("Movie requires an imdb id");
+        }
+
+        // Check that the image url is not null
+        String thumbnailUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        if (thumbnailUrl == null) {
+            throw new IllegalArgumentException("Movie requires a thumbnail url");
         }
 
         // Check that the image url is not null

@@ -6,6 +6,7 @@ public class Movie {
     private double vote;
     private String date;
     private String imdbUrl;
+    private String thumbnailUrl;
     private String imageUrl;
 
     public Movie(String title, double vote, String date, String imdbUrl, String imageUrl) {
@@ -13,6 +14,7 @@ public class Movie {
         this.vote = vote;
         this.date = date;
         this.imdbUrl = imdbUrl;
+        this.thumbnailUrl = "http://image.tmdb.org/t/p/w300" + imageUrl;
         this.imageUrl = "http://image.tmdb.org/t/p/original" + imageUrl;
     }
 
@@ -34,5 +36,9 @@ public class Movie {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
     }
 }

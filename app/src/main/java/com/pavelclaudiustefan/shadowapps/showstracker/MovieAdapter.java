@@ -48,7 +48,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         ImageView imageView = listItemView.findViewById(R.id.movie_image);
         Picasso.with(getContext())
-                .load(currentMovie.getImageUrl())
+                .load(currentMovie.getThumbnailUrl())
                 .into(imageView);
 
         return listItemView;

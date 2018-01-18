@@ -29,17 +29,17 @@ public class MovieCursorAdapter extends CursorAdapter {
         TextView titleTextView = view.findViewById(R.id.movie_title);
         TextView averageVoteTextView = view.findViewById(R.id.average_vote);
         TextView dateTextView = view.findViewById(R.id.date);
-        ImageView imageView = view.findViewById(R.id.movie_image);
+        ImageView thumbnailView = view.findViewById(R.id.movie_image);
 
         int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
         int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
         int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
-        int imageUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
+        int thumbnailUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
 
         String movieName = cursor.getString(titleColumnIndex);
         String movieAverageVote = cursor.getString(averageVoteColumnIndex);
         String movieReleaseDate = cursor.getString(dateColumnIndex);
-        String imageUrl = cursor.getString(imageUrlColumnIndex);
+        String thumbnailUrl = cursor.getString(thumbnailUrlColumnIndex);
 
         // Update the TextViews with the attributes for the current movie
         titleTextView.setText(movieName);
@@ -48,7 +48,7 @@ public class MovieCursorAdapter extends CursorAdapter {
 
         // Load movie image (landscape)
         Picasso.with(context)
-                .load(imageUrl)
-                .into(imageView);
+                .load(thumbnailUrl)
+                .into(thumbnailView);
     }
 }
