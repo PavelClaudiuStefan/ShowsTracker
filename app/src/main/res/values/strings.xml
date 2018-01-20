@@ -11,4 +11,9 @@
     <string name="category_movies_not_aired">Not aired</string>
     <string name="category_movies_all">All</string>
     <string name="category_movies_discover">Discover</string>
+    <string name="thumbnail">thumbnail</string>
+    <string name="no_movie_data">No movie data</string>
+    <string name="imdb">IMDb</string>
+    <string name="movie_image_description">Movie image</string>
+    <string name="overview_title">Overview:</string>
 </resources>

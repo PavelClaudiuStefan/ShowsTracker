@@ -19,26 +19,23 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    android:paddingEnd="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingStart="16dp">
+    android:paddingEnd="8dp"
+    android:paddingStart="8dp">
 
     <ImageView
         android:id="@+id/movie_image"
-        android:layout_gravity="center_vertical"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:scaleType="centerInside"
+        android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
-        android:gravity="center"
-        android:background="@drawable/thumbnail_temp"/>
+        android:background="@drawable/thumbnail_temp"
+        android:contentDescription="@string/thumbnail"
+        android:scaleType="centerInside" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -71,7 +68,6 @@
     <TextView
         android:id="@+id/date"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

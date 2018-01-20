@@ -97,6 +97,12 @@ public class MovieProvider extends ContentProvider {
      * for that specific row in the database.
      */
     private Uri insertMovie(Uri uri, ContentValues values) {
+        // Check that the tmdb id is not null
+        String tmdbId = values.getAsString(MovieEntry.TMDB_ID);
+        if (tmdbId == null) {
+            throw new IllegalArgumentException("Movie requires a tmdb id");
+        }
+
         // Check that the name is not null
         String name = values.getAsString(MovieEntry.COLUMN_MOVIE_TITLE);
         if (name == null) {
@@ -171,6 +177,12 @@ public class MovieProvider extends ContentProvider {
     }
 
     private int updateMovie(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        // Check that the tmdb id is not null
+        String tmdbId = values.getAsString(MovieEntry.TMDB_ID);
+        if (tmdbId == null) {
+            throw new IllegalArgumentException("Movie requires a tmdb id");
+        }
+
         // Check that the name is not null
         String name = values.getAsString(MovieEntry.COLUMN_MOVIE_TITLE);
         if (name == null) {

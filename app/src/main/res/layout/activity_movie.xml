@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.MovieActivity">
+    android:background="#E0E0E0"
+    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.MovieActivitySQL">
 
 
     <LinearLayout
@@ -15,47 +16,121 @@
 
         <ImageView
             android:id="@+id/movie_image"
+            android:contentDescription="@string/movie_image_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
+            android:layout_marginBottom="@dimen/bottom_margin"
             android:background="@drawable/image_temp"/>
 
+        <!-- Empty view is only visible when the list has no items. -->
         <TextView
-            android:id="@+id/movie_title"
-            android:textAlignment="center"
+            android:id="@+id/empty_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="48sp"
-            android:layout_marginTop="32dp"
-            tools:text="Title"/>
+            android:textAppearance="?android:textAppearanceMedium"/>
 
-        <TextView
-            android:id="@+id/average_vote"
-            android:textAlignment="center"
+        <!-- Loading indicator is only shown before the first load -->
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
-            android:layout_marginTop="32dp"
-            tools:text="Average vote: 10"/>
+            android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/release_date"
-            android:textAlignment="center"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
-            android:layout_marginTop="32dp"
-            tools:text="04 Apr 1996"/>
+            android:padding="@dimen/text_padding"
+            android:layout_marginBottom="@dimen/bottom_margin"
+            android:background="@android:color/white">
+
+            <TextView
+                android:id="@+id/movie_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textSize="24sp"
+                android:textColor="@color/textColorMovieTitle"
+                tools:text="Title" />
+
+            <TextView
+                android:id="@+id/release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/movie_title"
+                android:layout_alignStart="@id/movie_title"
+                android:textSize="16sp"
+                android:textColor="@color/textColorMovieDetails"
+                tools:text="04 Apr 1996" />
+
+            <TextView
+                android:id="@+id/average_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/release_date"
+                android:layout_alignStart="@id/movie_title"
+                android:padding="2dp"
+                android:textSize="16sp"
+                android:textColor="#ffffff"
+                android:background="@android:color/holo_green_dark"
+                tools:text="10"/>
+
+            <TextView
+                android:id="@+id/vote_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/release_date"
+                android:layout_toEndOf="@id/average_vote"
+                android:layout_marginStart="16dp"
+                android:padding="2dp"
+                android:textSize="16sp"
+                android:textColor="@color/textColorMovieDetails"
+                android:text="200 votes"
+                tools:text="200 votes"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/bottom_margin"
+            android:background="@android:color/white"
+            android:padding="@dimen/text_padding">
+
+            <TextView
+                android:id="@+id/overview_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textSize="24sp"
+                android:textColor="@color/textColorMovieTitle"
+                android:text="@string/overview_title"/>
+
+            <TextView
+                android:id="@+id/overview"
+                android:textAlignment="textStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/overview_title"
+                android:textSize="16sp"
+                android:textColor="@color/textColorMovieDetails"
+                android:text="I need a lot of text here because this is gonna be the overview of this movie, or show, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."
+                tools:text="I need a lot of text here because this is gonna be the overview of this movie, or show, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
+
+
+        </RelativeLayout>
 
         <Button
             android:id="@+id/imdb_url_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:textSize="14sp"
             android:layout_marginTop="32dp"
-            android:text="IMDB"/>
+            android:text="@string/imdb"/>
 
     </LinearLayout>
 
-</RelativeLayout>
+</ScrollView>

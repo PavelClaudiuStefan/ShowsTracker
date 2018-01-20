@@ -50,8 +50,8 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // Create new intent to go to {@link MovieActivity}
-                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                // Create new intent to go to {@link MovieActivitySQL}
+                Intent intent = new Intent(getActivity(), MovieActivitySQL.class);
 
                 Uri currentMovieUri = ContentUris.withAppendedId(MovieEntry.CONTENT_URI, id);
 

@@ -1,6 +1,5 @@
 package com.pavelclaudiustefan.shadowapps.showstracker;
 
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -25,11 +24,9 @@ import java.util.List;
 
 final class QueryUtils {
 
-    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
-
     private final static String LOG_TAG = "QueryUtils";
 
-    static List<Movie> fetchMovieData(String stringUrl) {
+    static List<Movie> fetchMoviesData(String stringUrl) {
         URL url = createUrl(stringUrl);
 
         String jsonResponse = null;
@@ -40,6 +37,19 @@ final class QueryUtils {
         }
 
         return extractMoviesFromJson(jsonResponse);
+    }
+
+    static Movie fetchMovieData(String stringUrl) {
+        URL url = createUrl(stringUrl);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return extractMovieDataFromJson(jsonResponse);
     }
 
     private static URL createUrl(String stringUrl) {
@@ -116,16 +126,19 @@ final class QueryUtils {
             for (int i = 0; i < moviesArray.length(); i++) {
                 JSONObject currentMovie = moviesArray.getJSONObject(i);
 
+                int tmdbId = currentMovie.getInt("id");
                 String title = currentMovie.getString("title");
                 double voteAverage = currentMovie.getDouble("vote_average");
                 String date = currentMovie.getString("release_date");
-                int id = currentMovie.getInt("id");
-
-                String imdbUrl = fetchImdbUrl(id);
-
                 String imageUrl = currentMovie.getString("backdrop_path");
 
-                Movie movie = new Movie(title, voteAverage, date, imdbUrl, imageUrl);
+                Movie movie = new Movie(tmdbId, title, voteAverage, date, imageUrl);
+
+                // TODO Add imdb url when adding movie into database
+                //String imdbUrl = fetchImdbUrl(tmdbId);
+                String imdbUrl = "http://www.imdb.com";
+                movie.setImdbUrl(imdbUrl);
+
                 movies.add(movie);
             }
 
@@ -136,46 +149,30 @@ final class QueryUtils {
         return movies;
     }
 
-    private static String fetchImdbUrl(int tmdbId) {
-        // Create TMDB String URL
-        String stringUrl = createStringUrl(tmdbId);
-
-        // Create TMDB URL
-        URL url = createUrl(stringUrl);
-
-        String jsonResponse = null;
-        try {
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return extractImdbIdFromJson(jsonResponse);
-    }
-
-    private static String createStringUrl(int tmdbId) {
-        Uri baseUri = Uri.parse("https://api.themoviedb.org/3/movie/" + tmdbId);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
-
-        return uriBuilder.toString();
-    }
-
-    private static String extractImdbIdFromJson(String movieJSON) {
+    private static Movie extractMovieDataFromJson(String movieJSON) {
         if (TextUtils.isEmpty(movieJSON)) {
             return null;
         }
 
-        String imdbUrl = "http://www.imdb.com/title/";
+        Movie movie = null;
 
         try {
-            JSONObject movieJsonResponse = new JSONObject(movieJSON);
-            imdbUrl += movieJsonResponse.getString("imdb_id");
+            JSONObject movieJsonData = new JSONObject(movieJSON);
+
+            int tmdbId = movieJsonData.getInt("id");
+            String title = movieJsonData.getString("title");
+            double voteAverage = movieJsonData.getDouble("vote_average");
+            String date = movieJsonData.getString("release_date");
+            String imageUrl = movieJsonData.getString("backdrop_path");
+            String imdbUrl = movieJsonData.getString("imdb_id");
+
+            movie = new Movie(tmdbId, title, voteAverage, date, imageUrl, imdbUrl);
+
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "Problem parsing the movie JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing json results", e);
         }
 
-        return imdbUrl;
+        return movie;
     }
 
 }

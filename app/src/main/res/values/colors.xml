@@ -14,8 +14,9 @@
     <!--<color name="colorAccent">#10CAC9</color>-->
 
     <!-- Text color for the details of the earthquake in the list item -->
-    <color name="textColorMovieDetails">#4f5254</color>
+    <color name="textColorMovieDetails">#3f4243</color>
 
     <!-- Text color for the primary location of the earthquake in the list item -->
-    <color name="textColorMovieTitle">#2B3D4D</color>
+    <color name="textColorMovieTitle">#000000</color>
+    <color name="movie_list_background_color">#B3E5FC</color>
 </resources>

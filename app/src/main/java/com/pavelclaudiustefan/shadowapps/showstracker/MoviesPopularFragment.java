@@ -2,12 +2,14 @@ package com.pavelclaudiustefan.shadowapps.showstracker;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -46,7 +48,7 @@ public class MoviesPopularFragment extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.movies_list, container, false);
 
         ListView movieListView = rootView.findViewById(R.id.list);
@@ -59,7 +61,10 @@ public class MoviesPopularFragment extends Fragment
         movieListView.setAdapter(movieAdapter);
 
         ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        NetworkInfo networkInfo = null;
+        if (connMgr != null) {
+            networkInfo = connMgr.getActiveNetworkInfo();
+        }
 
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
@@ -73,11 +78,23 @@ public class MoviesPopularFragment extends Fragment
             emptyStateTextView.setText(R.string.no_internet_connection);
         }
 
+//        movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                Movie movie = movies.get(position);
+//                insertMovie(movie);
+//            }
+//        });
+
+        // Setup the item click listener
         movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // Create new intent to go to {@link MovieActivityHTTP}
+                Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
                 Movie movie = movies.get(position);
-                insertMovie(movie);
+                intent.putExtra("tmdb_id", String.valueOf(movie.getTmdbId()));
+                startActivity(intent);
             }
         });
 
@@ -86,6 +103,7 @@ public class MoviesPopularFragment extends Fragment
 
     private void insertMovie(Movie movie) {
         ContentValues values = new ContentValues();
+        values.put(MovieEntry.TMDB_ID, movie.getTmdbId());
         values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movie.getDate());
@@ -93,7 +111,7 @@ public class MoviesPopularFragment extends Fragment
         values.put(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
         values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
 
-        Uri newUri = getActivity().getContentResolver().insert(MovieEntry.CONTENT_URI, values);
+        getActivity().getContentResolver().insert(MovieEntry.CONTENT_URI, values);
     }
 
     @Override
@@ -117,7 +135,7 @@ public class MoviesPopularFragment extends Fragment
         uriBuilder.appendQueryParameter("api_key", API_KEY);
         uriBuilder.appendQueryParameter("sort_by", sortBy);
 
-        return new MovieLoader(getActivity(), uriBuilder.toString());
+        return new MovieListLoader(getActivity(), uriBuilder.toString());
     }
 
     @Override

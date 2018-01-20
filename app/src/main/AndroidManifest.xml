@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MoviesActivity">
+        <activity
+            android:name=".MoviesActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,9 +28,12 @@
             android:exported="false" />
 
         <activity
-            android:name=".MovieActivity"
-            android:parentActivityName=".MoviesActivity">
-        </activity>
+            android:name=".MovieActivitySQL"
+            android:parentActivityName=".MoviesActivity"/>
+
+        <activity
+            android:name=".MovieActivityHTTP"
+            android:parentActivityName=".MoviesActivity"/>
     </application>
 
 </manifest>

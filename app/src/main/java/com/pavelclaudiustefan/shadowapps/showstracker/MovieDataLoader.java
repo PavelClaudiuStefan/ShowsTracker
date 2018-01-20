@@ -1,15 +1,15 @@
 package com.pavelclaudiustefan.shadowapps.showstracker;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
-import java.util.List;
 
-public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
+public class MovieDataLoader extends AsyncTaskLoader<Movie> {
 
     private String url;
 
-    MovieLoader(Context context, String url) {
+    MovieDataLoader(Context context, String url) {
         super(context);
         this.url = url;
     }
@@ -19,8 +19,9 @@ public class MovieLoader extends AsyncTaskLoader<List<Movie>> {
         forceLoad();
     }
 
+    @Nullable
     @Override
-    public List<Movie> loadInBackground() {
+    public Movie loadInBackground() {
         if (url == null) {
             return null;
         }

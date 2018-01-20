@@ -21,6 +21,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // Create a String that contains the SQL statement to create the movies table
         String SQL_CREATE_MOVIES_TABLE =  "CREATE TABLE " + MovieEntry.TABLE_NAME + " ("
                 + MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + MovieEntry.TMDB_ID + " INTEGER NOT NULL UNIQUE, "
                 + MovieEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, "
                 + MovieEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT NOT NULL, "
                 + MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE + " TEXT NOT NULL, "

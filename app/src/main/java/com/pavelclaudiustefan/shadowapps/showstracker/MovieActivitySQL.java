@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
-public class MovieActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieActivitySQL extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int EXISTING_MOVIE_LOADER = 0;
 
@@ -28,6 +28,8 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
     private TextView releaseDateTextView;
     private Button imdbButton;
 
+    private TextView emptyStateTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +38,8 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
         Intent intent = getIntent();
         currentMovieUri = intent.getData();
         setTitle("Movie");
+
+        emptyStateTextView = findViewById(R.id.empty_view);
 
         imageView = findViewById(R.id.movie_image);
         titleTextView = findViewById(R.id.movie_title);
@@ -74,6 +78,10 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
             return;
         }
 
+        // Hide loading indicator because the data has been loaded
+        View loadingIndicator = findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+
         if (cursor.moveToFirst()) {
             // Find the columns of pet attributes that we're interested in
             int imageUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
@@ -105,6 +113,13 @@ public class MovieActivity extends AppCompatActivity implements LoaderManager.Lo
                     startActivity(intent);
                 }
             });
+
+            if (title != null && title != "") {
+                emptyStateTextView.setVisibility(View.GONE);
+            } else {
+                // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
+                emptyStateTextView.setText(R.string.no_movie_data);
+            }
 
         }
     }
