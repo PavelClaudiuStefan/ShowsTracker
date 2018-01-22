@@ -16,7 +16,7 @@ public class MoviesCategoryAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new MoviesNotSeenFragment();
+            return new MoviesToWatchFragment();
         } else if (position == 1) {
             return new MoviesNotAiredFragment();
         } else if (position == 2) {
@@ -34,7 +34,7 @@ public class MoviesCategoryAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (position == 0) {
-            return context.getString(R.string.category_movies_not_seen);
+            return context.getString(R.string.category_movies_to_watch);
         } else if (position == 1) {
             return context.getString(R.string.category_movies_not_aired);
         } else if (position == 2) {
@@ -43,4 +43,5 @@ public class MoviesCategoryAdapter extends FragmentPagerAdapter {
             return context.getString(R.string.category_movies_discover);
         }
     }
+
 }

@@ -27,9 +27,13 @@ public class MovieContract {
         public static final String _ID = BaseColumns._ID;
         public static final String TMDB_ID = "tmdb_id";
         public static final String COLUMN_MOVIE_TITLE = "title";
-        public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
+        public static final String COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS = "release_date";
         public static final String COLUMN_MOVIE_AVERAGE_VOTE = "average_vote";
-        public static final String COLUMN_MOVIE_IMDB_ID = "imdb_id";
+        public static final String COLUMN_MOVIE_IMDB_URL = "imdb_url";
+        public static final String COLUMN_MOVIE_OVERVIEW = "overview";
+        public static final String COLUMN_MOVIE_VOTE_COUNT = "votes_count";
+        public static final String COLUMN_MOVIE_WATCHED = "watched";
+        public static final String COLUMN_MOVIE_IMAGE_ID = "image_id";
         public static final String COLUMN_MOVIE_THUMBNAIL_URL = "thumbnail_url";
         public static final String COLUMN_MOVIE_IMAGE_URL = "image_url";
 

@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Primary color of the app (shown in the app bar) -->
     <color name="colorPrimary">#03A9F4</color>
+
+    <!-- Primary dark color of the app (shown in the status bar) -->
     <color name="colorPrimaryDark">#0288D1</color>
+
+    <!-- Accent color of the app -->
     <color name="colorAccent">#00796B</color>
 
-    <!--&lt;!&ndash; Primary color of the app (shown in the app bar) &ndash;&gt;-->
-    <!--<color name="colorPrimary">#2B3D4D</color>-->
+    <color name="colorMovieTitle">#000000</color>
+    <color name="colorMovieDetails">#3f4243</color>
 
-    <!--&lt;!&ndash; Primary dark color of the app (shown in the status bar) &ndash;&gt;-->
-    <!--<color name="colorPrimaryDark">#23303D</color>-->
+    <color name="colorMovieListBackground">#B3E5FC</color>
 
-    <!--&lt;!&ndash; Accent color of the app &ndash;&gt;-->
-    <!--<color name="colorAccent">#10CAC9</color>-->
-
-    <!-- Text color for the details of the earthquake in the list item -->
-    <color name="textColorMovieDetails">#3f4243</color>
-
-    <!-- Text color for the primary location of the earthquake in the list item -->
-    <color name="textColorMovieTitle">#000000</color>
-    <color name="movie_list_background_color">#B3E5FC</color>
+    <color name="colorAddMovieButton">#4CAF50</color>
+    <color name="colorRemoveMovieButton">#FF5722</color>
+    <color name="colorNotWatchedMovieButton">#2196F3</color>
+    <color name="colorWatchedMovieButton">#FF9800</color>
+    <color name="colorIMDbButton">#FDD835</color>
 </resources>

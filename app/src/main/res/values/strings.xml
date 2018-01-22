@@ -7,7 +7,7 @@
     <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_popularity_desc</string>
     <string name="settings_sort_by_popularity_desc" translatable="false">popularity.desc</string>
 
-    <string name="category_movies_not_seen">Not seen</string>
+    <string name="category_movies_to_watch">To watch</string>
     <string name="category_movies_not_aired">Not aired</string>
     <string name="category_movies_all">All</string>
     <string name="category_movies_discover">Discover</string>
@@ -16,4 +16,8 @@
     <string name="imdb">IMDb</string>
     <string name="movie_image_description">Movie image</string>
     <string name="overview_title">Overview:</string>
+    <string name="add_movie">Add movie</string>
+    <string name="remove_movie">Remove movie</string>
+    <string name="set_watched_movie">Set watched</string>
+    <string name="set_not_watched_movie">Set not watched</string>
 </resources>

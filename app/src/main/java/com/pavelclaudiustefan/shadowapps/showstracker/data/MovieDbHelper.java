@@ -23,9 +23,13 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 + MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + MovieEntry.TMDB_ID + " INTEGER NOT NULL UNIQUE, "
                 + MovieEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, "
-                + MovieEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT NOT NULL, "
+                + MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS + " INTEGER NOT NULL, "
                 + MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE + " TEXT NOT NULL, "
-                + MovieEntry.COLUMN_MOVIE_IMDB_ID + " TEXT NOT NULL,"
+                + MovieEntry.COLUMN_MOVIE_IMDB_URL + " TEXT NOT NULL,"
+                + MovieEntry.COLUMN_MOVIE_VOTE_COUNT + " INTEGER NOT NULL,"
+                + MovieEntry.COLUMN_MOVIE_OVERVIEW + " TEXT NOT NULL,"
+                + MovieEntry.COLUMN_MOVIE_WATCHED + " INTEGER NOT NULL,"
+                + MovieEntry.COLUMN_MOVIE_IMAGE_ID + " TEXT NOT NULL,"
                 + MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL + " TEXT NOT NULL,"
                 + MovieEntry.COLUMN_MOVIE_IMAGE_URL + " TEXT NOT NULL);";
 

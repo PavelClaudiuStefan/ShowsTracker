@@ -1,6 +1,5 @@
 package com.pavelclaudiustefan.shadowapps.showstracker;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,8 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,10 @@ public class MoviesPopularFragment extends Fragment
 
     private TextView emptyStateTextView;
 
+    private ListView movieListView;
+
+    private Parcelable state;
+
     public MoviesPopularFragment() {
         // Required empty constructor
     }
@@ -51,7 +53,7 @@ public class MoviesPopularFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.movies_list, container, false);
 
-        ListView movieListView = rootView.findViewById(R.id.list);
+        movieListView = rootView.findViewById(R.id.list);
 
         //Only visible if no movies are found
         emptyStateTextView = rootView.findViewById(R.id.empty_view);
@@ -78,14 +80,6 @@ public class MoviesPopularFragment extends Fragment
             emptyStateTextView.setText(R.string.no_internet_connection);
         }
 
-//        movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//                Movie movie = movies.get(position);
-//                insertMovie(movie);
-//            }
-//        });
-
         // Setup the item click listener
         movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -101,23 +95,15 @@ public class MoviesPopularFragment extends Fragment
         return rootView;
     }
 
-    private void insertMovie(Movie movie) {
-        ContentValues values = new ContentValues();
-        values.put(MovieEntry.TMDB_ID, movie.getTmdbId());
-        values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-        values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
-        values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movie.getDate());
-        values.put(MovieEntry.COLUMN_MOVIE_IMDB_ID, movie.getImdbUrl());
-        values.put(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
-        values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-
-        getActivity().getContentResolver().insert(MovieEntry.CONTENT_URI, values);
+    @Override
+    public void onPause() {
+        super.onPause();
+        state = movieListView.onSaveInstanceState();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
     }
 
     @Override
@@ -151,6 +137,10 @@ public class MoviesPopularFragment extends Fragment
 
         if (movies != null && !movies.isEmpty()) {
             movieAdapter.addAll(movies);
+        }
+
+        if(state != null) {
+            movieListView.onRestoreInstanceState(state);
         }
     }
 

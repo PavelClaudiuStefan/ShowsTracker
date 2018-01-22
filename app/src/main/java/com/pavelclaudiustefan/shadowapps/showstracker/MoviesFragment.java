@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -28,13 +29,16 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     MovieCursorAdapter movieCursorAdapter;
 
+    private String selection = null;
+    private String[] selectionArgs = null;
+
     public MoviesFragment() {
         // Required empty constructor
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.movies_list, container, false);
 
         ListView movieListView = rootView.findViewById(R.id.list);
@@ -58,7 +62,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 // Set the URI on the data field of the intent
                 intent.setData(currentMovieUri);
 
-                // Launch the {@link EditorActivity} to display the data for the current pet.
+                // Launch the {@link EditorActivity} to display the data for the current movie.
                 startActivity(intent);
             }
         });
@@ -74,18 +78,19 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
                 MovieEntry._ID,
+                MovieEntry.TMDB_ID,
                 MovieEntry.COLUMN_MOVIE_TITLE,
                 MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
+                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS,
                 MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL,};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(getContext(),   // Parent activity context
-                MovieEntry.CONTENT_URI,   // Provider content URI to query
-                projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
-                null);                  // Default sort order
+                MovieEntry.CONTENT_URI,         // Provider content URI to query
+                projection,                     // Columns to include in the resulting Cursor
+                selection,                      // Include only rows that have watched = 0
+                selectionArgs,
+                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
     }
 
     @Override
@@ -103,5 +108,13 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         movieCursorAdapter.swapCursor(null);
+    }
+
+    public void setSelection(String selection) {
+        this.selection = selection;
+    }
+
+    public void setSelectionArgs(String[] selectionArgs) {
+        this.selectionArgs = selectionArgs;
     }
 }

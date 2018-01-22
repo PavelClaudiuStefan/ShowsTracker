@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/textColorMovieTitle"
+            android:textColor="@color/colorMovieTitle"
             android:textSize="16sp"
             tools:text="Movie name" />
 
@@ -58,7 +58,7 @@
             android:fontFamily="sans-serif-medium"
             android:maxLines="1"
             android:textAllCaps="true"
-            android:textColor="@color/textColorMovieDetails"
+            android:textColor="@color/colorMovieDetails"
             android:textSize="12sp"
             tools:text="7.30" />
 
@@ -71,7 +71,7 @@
         android:layout_marginStart="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textColorMovieDetails"
+        android:textColor="@color/colorMovieDetails"
         android:textSize="12sp"
         tools:text="2017-09-05" />
 </LinearLayout>

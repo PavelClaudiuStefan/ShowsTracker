@@ -14,7 +14,7 @@ import com.squareup.picasso.Picasso;
 
 public class MovieCursorAdapter extends CursorAdapter {
 
-    public MovieCursorAdapter(Context context, Cursor c) {
+    MovieCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
 
@@ -31,20 +31,24 @@ public class MovieCursorAdapter extends CursorAdapter {
         TextView dateTextView = view.findViewById(R.id.date);
         ImageView thumbnailView = view.findViewById(R.id.movie_image);
 
+        int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
         int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
         int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
-        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE);
+        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
         int thumbnailUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
 
+        int tmdbId = cursor.getInt(tmdbIdColumnIndex);
         String movieName = cursor.getString(titleColumnIndex);
-        String movieAverageVote = cursor.getString(averageVoteColumnIndex);
-        String movieReleaseDate = cursor.getString(dateColumnIndex);
+        double movieAverageVote = cursor.getDouble(averageVoteColumnIndex);
+        long movieReleaseDateInMilliseconds = cursor.getLong(dateColumnIndex);
         String thumbnailUrl = cursor.getString(thumbnailUrlColumnIndex);
 
+        Movie movie = new Movie(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, thumbnailUrl);
+
         // Update the TextViews with the attributes for the current movie
-        titleTextView.setText(movieName);
-        averageVoteTextView.setText(movieAverageVote);
-        dateTextView.setText(movieReleaseDate);
+        titleTextView.setText(movie.getTitle());
+        averageVoteTextView.setText(String.valueOf(movie.getVote()));
+        dateTextView.setText(movie.getDate());
 
         // Load movie image (landscape)
         Picasso.with(context)

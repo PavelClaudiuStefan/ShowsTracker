@@ -15,8 +15,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 /**
  *  Helper methods used to query data from The Movie Database (TMDb)
@@ -129,10 +133,13 @@ final class QueryUtils {
                 int tmdbId = currentMovie.getInt("id");
                 String title = currentMovie.getString("title");
                 double voteAverage = currentMovie.getDouble("vote_average");
-                String date = currentMovie.getString("release_date");
+                String releaseDate = currentMovie.getString("release_date");
                 String imageUrl = currentMovie.getString("backdrop_path");
 
-                Movie movie = new Movie(tmdbId, title, voteAverage, date, imageUrl);
+                Date date = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDate);
+                long dateInMillseconds = date.getTime();
+
+                Movie movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl);
 
                 // TODO Add imdb url when adding movie into database
                 //String imdbUrl = fetchImdbUrl(tmdbId);
@@ -144,6 +151,8 @@ final class QueryUtils {
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing json results", e);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return movies;
@@ -162,17 +171,23 @@ final class QueryUtils {
             int tmdbId = movieJsonData.getInt("id");
             String title = movieJsonData.getString("title");
             double voteAverage = movieJsonData.getDouble("vote_average");
-            String date = movieJsonData.getString("release_date");
+            String releaseDate = movieJsonData.getString("release_date");
             String imageUrl = movieJsonData.getString("backdrop_path");
-            String imdbUrl = movieJsonData.getString("imdb_id");
+            String imdbUrl = "http://www.imdb.com/title/" + movieJsonData.getString("imdb_id");
+            int voteCount = movieJsonData.getInt("vote_count");
+            String overview = movieJsonData.getString("overview");
 
-            movie = new Movie(tmdbId, title, voteAverage, date, imageUrl, imdbUrl);
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDate);
+            long dateInMillseconds = date.getTime();
+
+            movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl, imdbUrl, voteCount, overview);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing json results", e);
+        } catch (ParseException e) {
+            Log.i("Claudiu", "QuerryUtils stuff happened");
         }
 
         return movie;
     }
-
 }

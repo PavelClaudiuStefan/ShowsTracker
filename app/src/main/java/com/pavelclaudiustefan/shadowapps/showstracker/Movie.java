@@ -1,38 +1,51 @@
 package com.pavelclaudiustefan.shadowapps.showstracker;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Movie {
 
     private int tmdbId;
     private String title;
     private double vote;
-    private String date;
+    private long dateInMilliseconds;
     private String imdbUrl;
+    private String imageId;
     private String thumbnailUrl;
     private String imageUrl;
-    private int voteCount;
+    private String voteCount;
     private String overview;
     private boolean watched;
 
     private String thumbnailSize = "w300";
     private String imageSize = "original";
 
-    public Movie(int tmdbId, String title, double vote, String date, String imageUrl) {
+    public Movie(int tmdbId, String title, double vote, long dateInMilliseconds, String imageId) {
         this.tmdbId = tmdbId;
         this.title = title;
         this.vote = vote;
-        this.date = date;
-        this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageUrl;
-        this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageUrl;
+        this.dateInMilliseconds = dateInMilliseconds;
+        this.imageId = imageId;
+        this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
+        this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageId;
+
+        this.watched = false;
     }
 
-    public Movie(int tmdbId, String title, double vote, String date, String imageUrl, String imdbId) {
+    public Movie(int tmdbId, String title, double vote, long dateInMilliseconds, String imageId, String imdbUrl, int voteCount, String overview) {
         this.tmdbId = tmdbId;
         this.title = title;
         this.vote = vote;
-        this.date = date;
-        this.thumbnailUrl = "http://image.tmdb.org/t/p/w300" + imageUrl;
-        this.imageUrl = "http://image.tmdb.org/t/p/original" + imageUrl;
-        this.imdbUrl = "http://www.imdb.com/title/" + imdbId;
+        this.dateInMilliseconds = dateInMilliseconds;
+        this.imageId = imageId;
+        this.thumbnailUrl = "http://image.tmdb.org/t/p/w300" + imageId;
+        this.imageUrl = "http://image.tmdb.org/t/p/original" + imageId;
+        this.imdbUrl = imdbUrl;
+        this.voteCount = voteCount + " votes";
+        this.overview = overview;
+
+        this.watched = false;
     }
 
     public int getTmdbId(){
@@ -47,8 +60,16 @@ public class Movie {
         return vote;
     }
 
+    public long getDateInMilliseconds() {
+        return dateInMilliseconds;
+    }
+
     public String getDate() {
-        return date;
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dateInMilliseconds);
+        return formatter.format(calendar.getTime());
     }
 
     public void setImdbUrl(String imdbUrl) {
@@ -59,11 +80,46 @@ public class Movie {
         return imdbUrl;
     }
 
+    public String getImageId() {
+        return imageId;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
 
     public String getThumbnailUrl() {
         return thumbnailUrl;
+    }
+
+    public String getVoteCount() {
+        return voteCount;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setWatched(boolean watched) {
+        this.watched = watched;
+    }
+
+    public boolean isWatched() {
+        return watched;
+    }
+
+    public int getWatchedIntValue() {
+        if (watched) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public void setThumbnailSize(String thumbnailSize) {
+        this.thumbnailSize = thumbnailSize;
+    }
+
+    public void setImageSize(String imageSize) {
+        this.imageSize = imageSize;
     }
 }

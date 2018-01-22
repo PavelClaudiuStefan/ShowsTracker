@@ -11,13 +11,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
@@ -43,8 +38,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         averageVoteView.setText(formatVote(currentMovie.getVote()));
 
         TextView dateView = listItemView.findViewById(R.id.date);
-        String formattedDate = formatDate(currentMovie.getDate());
-        dateView.setText(formattedDate);
+        dateView.setText(currentMovie.getDate());
 
         ImageView imageView = listItemView.findViewById(R.id.movie_image);
         Picasso.with(getContext())
@@ -57,18 +51,5 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     private String formatVote(double vote) {
         DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
         return magnitudeFormat.format(vote);
-    }
-
-    private String formatDate(String dateString) {
-        DateFormat format = new SimpleDateFormat("yyyy-mm-dd", Locale.ENGLISH);
-        Date date = null;
-        try {
-            date = format.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd LLL yyyy", Locale.ENGLISH);
-        return dateFormat.format(date);
     }
 }
