@@ -19,7 +19,7 @@ public class Movie {
     private boolean watched;
 
     private String thumbnailSize = "w300";
-    private String imageSize = "original";
+    private String imageSize = "w780";
 
     public Movie(int tmdbId, String title, double vote, long dateInMilliseconds, String imageId) {
         this.tmdbId = tmdbId;
@@ -39,8 +39,8 @@ public class Movie {
         this.vote = vote;
         this.dateInMilliseconds = dateInMilliseconds;
         this.imageId = imageId;
-        this.thumbnailUrl = "http://image.tmdb.org/t/p/w300" + imageId;
-        this.imageUrl = "http://image.tmdb.org/t/p/original" + imageId;
+        this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
+        this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageId;
         this.imdbUrl = imdbUrl;
         this.voteCount = voteCount + " votes";
         this.overview = overview;

@@ -2,13 +2,15 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -20,15 +22,16 @@ import android.widget.ToggleButton;
 import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieDataLoader;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
-public class MovieActivityHTTP extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Movie>{
+public class MovieActivityHTTP extends AppCompatActivity implements LoaderManager.LoaderCallbacks{
 
     //TODO - Hide the API key
     private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
     private static final int EXISTING_MOVIE_LOADER = 0;
+    private static final int EXISTING_MOVIE_LOADER_ID = 1;
 
     private String tmdbId;
 
@@ -44,6 +47,9 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
 
     private boolean inUserCollection;
     private boolean isWatched;
+
+    private Movie movie;
+    private String movieId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         overviewTextView = findViewById(R.id.overview);
         imdbButton = findViewById(R.id.imdb_url_button);
 
-        getSupportLoaderManager().initLoader(EXISTING_MOVIE_LOADER, null, this);
+        getLoaderManager().initLoader(EXISTING_MOVIE_LOADER, null, this);
 
         //Only visible if no movies are found
         emptyStateTextView = findViewById(R.id.empty_view);
@@ -76,8 +82,8 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
 
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
-            LoaderManager loaderManager = getSupportLoaderManager();
-            loaderManager.initLoader(1, null, this);
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(EXISTING_MOVIE_LOADER, null, this);
         } else {
             // First, hide loading indicator so error message will be visible
             View loadingIndicator = findViewById(R.id.loading_indicator);
@@ -88,112 +94,182 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
     }
 
     @Override
-    public Loader<Movie> onCreateLoader(int i, Bundle bundle) {
-        String tmdbUrl = "https://api.themoviedb.org/3/movie/" + tmdbId;
-        Uri baseUri = Uri.parse(tmdbUrl);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+    public Loader onCreateLoader(int id, Bundle bundle) {
+        if (id == EXISTING_MOVIE_LOADER) {
+            String tmdbUrl = "https://api.themoviedb.org/3/movie/" + tmdbId;
+            Uri baseUri = Uri.parse(tmdbUrl);
+            Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+            uriBuilder.appendQueryParameter("api_key", API_KEY);
 
-        return new MovieDataLoader(this, uriBuilder.toString());
+            return new MovieDataLoader(this, uriBuilder.toString());
+        } else if (id == EXISTING_MOVIE_LOADER_ID){
+            String[] projection = {
+                    MovieEntry._ID,
+                    MovieEntry.COLUMN_MOVIE_WATCHED};
+
+            String selection = MovieEntry.TMDB_ID + "=?";
+
+            String[] selectionArgs = {String.valueOf(movie.getTmdbId())};
+
+            // This loader will execute the ContentProvider's query method on a background thread
+            return new CursorLoader(this,   // Parent activity context
+                    MovieEntry.CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    null);
+        }
+        return null;
     }
 
 
     @Override
-    public void onLoadFinished(Loader<Movie> loader, final Movie movie) {
-        // Bail early if the cursor is null or there is less than 1 row in the cursor
-        if (movie == null) {
-            return;
-        }
+    public void onLoadFinished(Loader loader, Object data) {
+        if (loader.getId() == EXISTING_MOVIE_LOADER) {
+            this.movie = (Movie)data;
 
-        // Hide loading indicator because the data has been loaded
-        View loadingIndicator = findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.GONE);
-
-        String imageUrl = movie.getImageUrl();
-        String title = movie.getTitle();
-        String averageVote = String.valueOf(movie.getVote());
-        String voteCount = movie.getVoteCount();
-        String releaseDate = movie.getDate();
-        String overview = movie.getOverview();
-        final String imdbUrl = movie.getImdbUrl();
-
-        Picasso.with(this)
-                .load(imageUrl)
-                .into(imageView);
-        titleTextView.setText(title);
-        averageVoteTextView.setText(averageVote);
-        voteCountTextView.setText(voteCount);
-        releaseDateTextView.setText(releaseDate);
-        overviewTextView.setText(overview);
-
-        imdbButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(imdbUrl));
-                startActivity(intent);
+            // Bail early if the cursor is null or there is less than 1 row in the cursor
+            if (movie == null) {
+                return;
             }
-        });
 
-        if (title != null && !title.isEmpty()) {
-            emptyStateTextView.setVisibility(View.GONE);
+            getLoaderManager().initLoader(EXISTING_MOVIE_LOADER_ID, null, this);
+
+            // Hide loading indicator because the data has been loaded
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+
+            String imageUrl = movie.getImageUrl();
+            String title = movie.getTitle();
+            String averageVote = String.valueOf(movie.getVote());
+            String voteCount = movie.getVoteCount();
+            String releaseDate = movie.getDate();
+            String overview = movie.getOverview();
+            final String imdbUrl = movie.getImdbUrl();
+
+            Picasso.with(this)
+                    .load(imageUrl)
+                    .into(imageView);
+            titleTextView.setText(title);
+            averageVoteTextView.setText(averageVote);
+            voteCountTextView.setText(voteCount);
+            releaseDateTextView.setText(releaseDate);
+            overviewTextView.setText(overview);
+
+            imdbButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(imdbUrl));
+                    startActivity(intent);
+                }
+            });
+
+            if (title != null && !title.isEmpty()) {
+                emptyStateTextView.setVisibility(View.GONE);
+            } else {
+                // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
+                emptyStateTextView.setText(R.string.no_movie_data);
+            }
         } else {
-            // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
-            emptyStateTextView.setText(R.string.no_movie_data);
+            Cursor cursor = (Cursor)data;
+
+            if (cursor != null && cursor.getCount() >= 1 && cursor.moveToFirst()) {
+                inUserCollection = true;
+                // Find the columns of movie attributes that we're interested in
+                int movieIdColumnIndex = cursor.getColumnIndex(MovieEntry._ID);
+                int watchedColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_WATCHED);
+
+                // Extract out the value from the Cursor for the given column index
+                movieId = cursor.getString(movieIdColumnIndex);
+                isWatched = cursor.getInt(watchedColumnIndex) == 1; // 1 -> true, 0 -> false
+
+                movie.setWatched(isWatched);
+            } else {
+                inUserCollection = false;
+                isWatched = false;
+            }
+            final ToggleButton addRemoveMovieButton = findViewById(R.id.add_remove_movie);
+            addRemoveMovieButton.setChecked(inUserCollection);
+            addRemoveMovieButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if (isChecked) {
+                        insertMovie(movie);
+                        inUserCollection = true;
+                    } else {
+                        removeMovie(movieId);
+                        inUserCollection = false;
+                    }
+                }
+            });
+
+            final ToggleButton watchedNotWatchedButton = findViewById(R.id.watched_not_watched_movie);
+            watchedNotWatchedButton.setChecked(isWatched);
+            watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if (isChecked) {
+                        if (inUserCollection) {
+                            setMovieWatched(movie, movieId, 1);
+                        } else {
+                            movie.setWatched(true);
+                            addRemoveMovieButton.toggle();
+                        }
+                    } else {
+                        setMovieWatched(movie, movieId, 0);
+                    }
+                }
+            });
         }
-
-        final ToggleButton addRemoveMovieButton = findViewById(R.id.add_remove_movie);
-        addRemoveMovieButton.setChecked(inUserCollection);
-        addRemoveMovieButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    insertMovie(movie);
-                } else {
-                    // TODO
-                    // removeMovie(movieId);
-                }
-            }
-        });
-
-        final ToggleButton watchedNotWatchedButton = findViewById(R.id.watched_not_watched_movie);
-        watchedNotWatchedButton.setChecked(isWatched);
-        watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    // TODO - Update watched -> true
-                } else {
-                    // TODO - Update watched -> false
-                }
-            }
-        });
     }
 
     @Override
-    public void onLoaderReset(Loader<Movie> loader) {
-        // TODO
+    public void onLoaderReset(Loader loader) {
+        if (loader.getId() == EXISTING_MOVIE_LOADER) {
+            // TODO
+        } else if (loader.getId() == EXISTING_MOVIE_LOADER_ID) {
+            // TODO
+        }
     }
 
     private void insertMovie(Movie movie) {
         ContentValues values = new ContentValues();
-        values.put(MovieContract.MovieEntry.TMDB_ID, movie.getTmdbId());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedIntValue());
+        values.put(MovieEntry.TMDB_ID, movie.getTmdbId());
+        values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
+        values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
+        values.put(MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
+        values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
+        values.put(MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
+        values.put(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedIntValue());
 
-        getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
+        getContentResolver().insert(MovieEntry.CONTENT_URI, values);
     }
 
     private void removeMovie(String movieId) {
-        getContentResolver().delete(Uri.withAppendedPath(MovieContract.MovieEntry.CONTENT_URI, movieId), null, null);
+        getContentResolver().delete(Uri.withAppendedPath(MovieEntry.CONTENT_URI, movieId), null, null);
     }
+
+    private void setMovieWatched(Movie movie, String movieId, int isWatchedAsInt){
+        ContentValues values = new ContentValues();
+        values.put(MovieEntry.TMDB_ID, movie.getTmdbId());
+        values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
+        values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
+        values.put(MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
+        values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
+        values.put(MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
+        values.put(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
+        values.put(MovieEntry.COLUMN_MOVIE_WATCHED, isWatchedAsInt);
+
+        getContentResolver().update(Uri.withAppendedPath(MovieEntry.CONTENT_URI, movieId), values, null, null);
+    }
+
 }

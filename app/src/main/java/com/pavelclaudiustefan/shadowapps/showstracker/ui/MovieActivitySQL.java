@@ -67,8 +67,6 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // Since the editor shows all pet attributes, define a projection that contains
-        // all columns from the pet table
         String[] projection = {
                 MovieEntry._ID,
                 MovieEntry.TMDB_ID,
@@ -83,7 +81,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
-                currentMovieUri,         // Query the content URI for the current pet
+                currentMovieUri,         // Query the content URI for the current movie
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,                   // No selection arguments
@@ -102,7 +100,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
         loadingIndicator.setVisibility(View.GONE);
 
         if (cursor.moveToFirst()) {
-            // Find the columns of pet attributes that we're interested in
+            // Find the columns of movie attributes that we're interested in
             int movieIdColumnIndex = cursor.getColumnIndex(MovieEntry._ID);
             int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
             int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
@@ -162,8 +160,10 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
                         insertMovie(movie);
+                        inUserCollection = true;
                     } else {
                         removeMovie(movieId);
+                        inUserCollection = false;
                     }
                 }
             });
@@ -177,7 +177,8 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
                         if (inUserCollection) {
                             setMovieWatched(movie, movieId, 1);
                         } else {
-                            insertMovie(movie);
+                            movie.setWatched(true);
+                            addRemoveMovieButton.toggle();
                         }
                     } else {
                         setMovieWatched(movie, movieId, 0);

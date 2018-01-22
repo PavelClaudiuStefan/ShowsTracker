@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,6 +126,8 @@ public class MoviesPopularFragment extends Fragment
 
         uriBuilder.appendQueryParameter("api_key", API_KEY);
         uriBuilder.appendQueryParameter("sort_by", sortBy);
+
+        Log.i("Claudiu", "MoviesPopularFragment - onCreateLoader - TMDb URI: " + uriBuilder.toString());
 
         return new MovieListLoader(getActivity(), uriBuilder.toString());
     }
