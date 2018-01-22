@@ -3,8 +3,8 @@ package com.pavelclaudiustefan.shadowapps.showstracker.loaders;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 
 import java.util.List;
 

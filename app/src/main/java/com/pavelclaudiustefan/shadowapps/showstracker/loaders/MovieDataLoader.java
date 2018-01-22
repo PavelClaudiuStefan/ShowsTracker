@@ -4,8 +4,8 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.content.AsyncTaskLoader;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 
 
 public class MovieDataLoader extends AsyncTaskLoader<Movie> {

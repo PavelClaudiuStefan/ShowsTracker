@@ -2,6 +2,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.squareup.picasso.Picasso;
 
@@ -53,5 +54,10 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     private String formatVote(double vote) {
         DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
         return magnitudeFormat.format(vote);
+    }
+
+    @Override
+    public void addAll(Movie... items) {
+        super.addAll(items);
     }
 }

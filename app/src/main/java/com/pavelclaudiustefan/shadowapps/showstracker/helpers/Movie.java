@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

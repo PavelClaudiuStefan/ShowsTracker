@@ -22,7 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MovieAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
@@ -38,9 +39,15 @@ public class MoviesPopularFragment extends Fragment
 
     private static String TMDB_URL = "https://api.themoviedb.org/3/discover/movie";
 
+    private static int DATABASE_LOADER_ID = 0;
+
+    private int MOVIES_LOADER_CURRENT_PAGE_ID = 1;
+
     private View rootView;
 
-    private ArrayList<Movie> movies = new ArrayList<>();
+    private static ArrayList<Movie> movies = new ArrayList<>();
+
+    private static ArrayList<Movie> allMovies = new ArrayList<>();
 
     private MovieAdapter movieAdapter;
 
@@ -61,7 +68,7 @@ public class MoviesPopularFragment extends Fragment
 
         movieListView = rootView.findViewById(R.id.list);
 
-        //Only visible if no movies are found
+        //Only visible if no temporarMovies are found
         emptyStateTextView = rootView.findViewById(R.id.empty_view);
         movieListView.setEmptyView(emptyStateTextView);
 
@@ -77,7 +84,7 @@ public class MoviesPopularFragment extends Fragment
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
             LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(1, null, this);
+            loaderManager.initLoader(MOVIES_LOADER_CURRENT_PAGE_ID, null, this);
         } else {
             // First, hide loading indicator so error message will be visible
             View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
@@ -98,6 +105,34 @@ public class MoviesPopularFragment extends Fragment
             }
         });
 
+        movieListView.setOnScrollListener(new EndlessScrollListener(5, 1) {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                // Show loading indicator when searching for new temporarMovies
+                View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+                loadingIndicator.setVisibility(View.VISIBLE);
+
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo networkInfo = null;
+                if (connMgr != null) {
+                    networkInfo = connMgr.getActiveNetworkInfo();
+                }
+
+                // If there is a network connection, fetch more
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    LoaderManager loaderManager = getLoaderManager();
+                    loaderManager.initLoader(++MOVIES_LOADER_CURRENT_PAGE_ID, null, MoviesPopularFragment.this);
+                    return true;
+                } else {
+                    loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+                    loadingIndicator.setVisibility(View.GONE);
+
+                    emptyStateTextView.setText(R.string.no_internet_connection);
+                    return false;
+                }
+            }
+        });
+
         return rootView;
     }
 
@@ -107,6 +142,7 @@ public class MoviesPopularFragment extends Fragment
         state = movieListView.onSaveInstanceState();
     }
 
+
     @Override
     public void onStop() {
         super.onStop();
@@ -114,6 +150,7 @@ public class MoviesPopularFragment extends Fragment
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         String sortBy = sharedPrefs.getString(
@@ -121,11 +158,14 @@ public class MoviesPopularFragment extends Fragment
                 getString(R.string.settings_sort_by_default)
         );
 
+        String page = String.valueOf(MOVIES_LOADER_CURRENT_PAGE_ID);
+
         Uri baseUri = Uri.parse(TMDB_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter("api_key", API_KEY);
         uriBuilder.appendQueryParameter("sort_by", sortBy);
+        uriBuilder.appendQueryParameter("page", page);
 
         Log.i("Claudiu", "MoviesPopularFragment - onCreateLoader - TMDb URI: " + uriBuilder.toString());
 
@@ -134,21 +174,22 @@ public class MoviesPopularFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-        // Hide loading indicator because the data has been loaded
-        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.GONE);
+        // TODO - Find a better way to stop the adding of extra movies when returning from MovieActivity
+        if (MOVIES_LOADER_CURRENT_PAGE_ID == loader.getId() && (loader.getId()-1) * 20 == movieAdapter.getCount()) {
+            // Hide loading indicator because the data has been loaded
+            View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
 
-        // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
-        emptyStateTextView.setText(R.string.no_movies);
+            // Set empty state text to display "No temporarMovies found." It's not visible if any movie is added to the adapter
+            emptyStateTextView.setText(R.string.no_movies);
 
-        movieAdapter.clear();
-
-        if (movies != null && !movies.isEmpty()) {
-            movieAdapter.addAll(movies);
-        }
-
-        if(state != null) {
-            movieListView.onRestoreInstanceState(state);
+            if (!movies.isEmpty()) {
+                movieAdapter.addAll(movies);
+            }
+            Log.i("Claudiu", "MoviesPopularFragment - onLoadFinished - (id=" + loader.getId() + ") (adapter=" + movieAdapter.getCount() + ")");
+            if(state != null) {
+                movieListView.onRestoreInstanceState(state);
+            }
         }
     }
 
