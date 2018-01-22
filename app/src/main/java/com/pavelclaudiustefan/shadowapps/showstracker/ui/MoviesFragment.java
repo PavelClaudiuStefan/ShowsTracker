@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.content.ContentUris;
 import android.content.Intent;
@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MovieCursorAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
 
 public class MoviesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{

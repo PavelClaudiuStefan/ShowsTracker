@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
-    MovieAdapter(Context context, ArrayList<Movie> movies) {
+    public MovieAdapter(Context context, ArrayList<Movie> movies) {
         super(context, 0, movies);
     }
 

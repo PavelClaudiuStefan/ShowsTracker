@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,12 +9,14 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
 public class MovieCursorAdapter extends CursorAdapter {
 
-    MovieCursorAdapter(Context context, Cursor c) {
+    public MovieCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
 

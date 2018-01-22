@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 
 public class MoviesAllFragment extends MoviesFragment {

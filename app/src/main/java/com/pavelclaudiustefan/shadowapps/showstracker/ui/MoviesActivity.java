@@ -1,9 +1,12 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.support.v4.view.ViewPager;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MoviesCategoryAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
 
 public class MoviesActivity extends AppCompatActivity {
 

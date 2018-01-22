@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MovieAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
 
 import java.util.ArrayList;
 import java.util.List;

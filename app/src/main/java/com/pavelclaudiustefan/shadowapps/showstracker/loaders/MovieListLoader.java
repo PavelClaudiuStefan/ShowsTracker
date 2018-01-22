@@ -1,7 +1,10 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.loaders;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+
+import com.pavelclaudiustefan.shadowapps.showstracker.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.QueryUtils;
 
 import java.util.List;
 
@@ -9,7 +12,7 @@ public class MovieListLoader extends AsyncTaskLoader<List<Movie>> {
 
     private String url;
 
-    MovieListLoader(Context context, String url) {
+    public MovieListLoader(Context context, String url) {
         super(context);
         this.url = url;
     }

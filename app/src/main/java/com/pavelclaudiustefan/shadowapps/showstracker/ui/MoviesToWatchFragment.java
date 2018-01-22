@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
 

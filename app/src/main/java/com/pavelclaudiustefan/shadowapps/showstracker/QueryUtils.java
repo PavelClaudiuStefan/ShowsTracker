@@ -26,11 +26,11 @@ import java.util.List;
  *  Helper methods used to query data from The Movie Database (TMDb)
  */
 
-final class QueryUtils {
+public final class QueryUtils {
 
     private final static String LOG_TAG = "QueryUtils";
 
-    static List<Movie> fetchMoviesData(String stringUrl) {
+    public static List<Movie> fetchMoviesData(String stringUrl) {
         URL url = createUrl(stringUrl);
 
         String jsonResponse = null;
@@ -43,7 +43,7 @@ final class QueryUtils {
         return extractMoviesFromJson(jsonResponse);
     }
 
-    static Movie fetchMovieData(String stringUrl) {
+    public static Movie fetchMovieData(String stringUrl) {
         URL url = createUrl(stringUrl);
 
         String jsonResponse = null;

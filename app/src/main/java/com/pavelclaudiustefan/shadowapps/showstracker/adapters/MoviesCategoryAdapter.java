@@ -1,14 +1,20 @@
-package com.pavelclaudiustefan.shadowapps.showstracker;
+package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.MoviesAllFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.MoviesNotAiredFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.MoviesPopularFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.MoviesToWatchFragment;
+
 public class MoviesCategoryAdapter extends FragmentPagerAdapter {
 
     private Context context;
 
-    MoviesCategoryAdapter(Context context, FragmentManager fm) {
+    public MoviesCategoryAdapter(Context context, FragmentManager fm) {
         super(fm);
         this.context = context;
     }

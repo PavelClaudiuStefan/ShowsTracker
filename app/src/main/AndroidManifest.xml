@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MoviesActivity"
+            android:name=".ui.MoviesActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,12 +28,12 @@
             android:exported="false" />
 
         <activity
-            android:name=".MovieActivitySQL"
-            android:parentActivityName=".MoviesActivity"/>
+            android:name=".ui.MovieActivitySQL"
+            android:parentActivityName=".ui.MoviesActivity"/>
 
         <activity
-            android:name=".MovieActivityHTTP"
-            android:parentActivityName=".MoviesActivity"/>
+            android:name=".ui.MovieActivityHTTP"
+            android:parentActivityName=".ui.MoviesActivity"/>
     </application>
 
 </manifest>
