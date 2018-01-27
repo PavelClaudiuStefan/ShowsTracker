@@ -17,23 +17,27 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.MovieActivitySQL"
+            android:parentActivityName=".ui.MoviesActivity" />
+
+        <activity
+            android:name=".ui.MovieActivityHTTP"
+            android:parentActivityName=".ui.MoviesActivity" />
+
+        <activity
+            android:name=".ui.SearchActivity"
+            android:parentActivityName=".ui.MoviesActivity" />
 
         <provider
             android:name=".data.MovieProvider"
             android:authorities="com.pavelclaudiustefan.shadowapps.showstracker"
             android:exported="false" />
 
-        <activity
-            android:name=".ui.MovieActivitySQL"
-            android:parentActivityName=".ui.MoviesActivity"/>
-
-        <activity
-            android:name=".ui.MovieActivityHTTP"
-            android:parentActivityName=".ui.MoviesActivity"/>
     </application>
 
 </manifest>

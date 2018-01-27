@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -71,6 +72,15 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
         // Kick off the loader
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+
+        FloatingActionButton searchFab = rootView.findViewById(R.id.search_movie_fab);
+        searchFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }

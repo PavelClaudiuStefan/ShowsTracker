@@ -11,10 +11,10 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +37,6 @@ public class MoviesPopularFragment extends Fragment
     //TODO - Hide the API key
     private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
-    private static String TMDB_URL = "https://api.themoviedb.org/3/discover/movie";
-
     private static int DATABASE_LOADER_ID = 0;
 
     private int MOVIES_LOADER_CURRENT_PAGE_ID = 1;
@@ -46,8 +44,6 @@ public class MoviesPopularFragment extends Fragment
     private View rootView;
 
     private static ArrayList<Movie> movies = new ArrayList<>();
-
-    private static ArrayList<Movie> allMovies = new ArrayList<>();
 
     private MovieAdapter movieAdapter;
 
@@ -65,6 +61,9 @@ public class MoviesPopularFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.movies_list, container, false);
+
+        FloatingActionButton fab = rootView.findViewById(R.id.search_movie_fab);
+        fab.setVisibility(View.GONE);
 
         movieListView = rootView.findViewById(R.id.list);
 
@@ -160,14 +159,13 @@ public class MoviesPopularFragment extends Fragment
 
         String page = String.valueOf(MOVIES_LOADER_CURRENT_PAGE_ID);
 
-        Uri baseUri = Uri.parse(TMDB_URL);
+        String tmdbUrl = "https://api.themoviedb.org/3/discover/movie";
+        Uri baseUri = Uri.parse(tmdbUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter("api_key", API_KEY);
         uriBuilder.appendQueryParameter("sort_by", sortBy);
         uriBuilder.appendQueryParameter("page", page);
-
-        Log.i("Claudiu", "MoviesPopularFragment - onCreateLoader - TMDb URI: " + uriBuilder.toString());
 
         return new MovieListLoader(getActivity(), uriBuilder.toString());
     }
@@ -183,10 +181,10 @@ public class MoviesPopularFragment extends Fragment
             // Set empty state text to display "No temporarMovies found." It's not visible if any movie is added to the adapter
             emptyStateTextView.setText(R.string.no_movies);
 
-            if (!movies.isEmpty()) {
+            if (movies != null && !movies.isEmpty()) {
                 movieAdapter.addAll(movies);
             }
-            Log.i("Claudiu", "MoviesPopularFragment - onLoadFinished - (id=" + loader.getId() + ") (adapter=" + movieAdapter.getCount() + ")");
+
             if(state != null) {
                 movieListView.onRestoreInstanceState(state);
             }
