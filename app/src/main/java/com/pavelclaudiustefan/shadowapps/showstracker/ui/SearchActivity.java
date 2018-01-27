@@ -45,6 +45,7 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
+        setTitle("Search movies");
 
         searchView = findViewById(R.id.search_view);
         searchView.setIconifiedByDefault(false);

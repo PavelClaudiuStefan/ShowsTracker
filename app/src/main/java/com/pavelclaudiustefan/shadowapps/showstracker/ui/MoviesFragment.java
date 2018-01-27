@@ -26,6 +26,8 @@ import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEn
 public class MoviesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private View rootView;
 
+    private boolean isFabVisible = false;
+
     private TextView emptyStateTextView;
 
     private static final int MOVIE_LOADER = 0;
@@ -74,13 +76,17 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
 
         FloatingActionButton searchFab = rootView.findViewById(R.id.search_movie_fab);
-        searchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                startActivity(intent);
-            }
-        });
+        if (isFabVisible) {
+            searchFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    startActivity(intent);
+                }
+            });
+        } else {
+            searchFab.setVisibility(View.GONE);
+        }
 
         return rootView;
     }
@@ -128,5 +134,9 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     public void setSelectionArgs(String[] selectionArgs) {
         this.selectionArgs = selectionArgs;
+    }
+
+    public void setSearchFabVisibility(boolean value) {
+        isFabVisible = value;
     }
 }

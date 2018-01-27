@@ -15,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -172,12 +173,12 @@ public class MoviesPopularFragment extends Fragment
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+        // Hide loading indicator because the data has been loaded
+        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+
         // TODO - Find a better way to stop the adding of extra movies when returning from MovieActivity
         if (MOVIES_LOADER_CURRENT_PAGE_ID == loader.getId() && (loader.getId()-1) * 20 == movieAdapter.getCount()) {
-            // Hide loading indicator because the data has been loaded
-            View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-            loadingIndicator.setVisibility(View.GONE);
-
             // Set empty state text to display "No temporarMovies found." It's not visible if any movie is added to the adapter
             emptyStateTextView.setText(R.string.no_movies);
 

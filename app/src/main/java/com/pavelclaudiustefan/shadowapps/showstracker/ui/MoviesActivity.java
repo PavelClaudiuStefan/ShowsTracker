@@ -14,6 +14,7 @@ public class MoviesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
+        setTitle("Movies");
 
         ViewPager viewPager = findViewById(R.id.viewpager);
         MoviesCategoryAdapter adapter = new MoviesCategoryAdapter(this, getSupportFragmentManager());
