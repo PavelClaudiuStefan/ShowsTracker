@@ -142,6 +142,13 @@ public class MoviesPopularFragment extends Fragment
         state = movieListView.onSaveInstanceState();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(state != null) {
+            movieListView.onRestoreInstanceState(state);
+        }
+    }
 
     @Override
     public void onStop() {
@@ -184,10 +191,6 @@ public class MoviesPopularFragment extends Fragment
 
             if (movies != null && !movies.isEmpty()) {
                 movieAdapter.addAll(movies);
-            }
-
-            if(state != null) {
-                movieListView.onRestoreInstanceState(state);
             }
         }
     }
