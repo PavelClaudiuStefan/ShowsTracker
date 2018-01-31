@@ -148,13 +148,15 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
             String overview = movie.getOverview();
             final String imdbUrl = movie.getImdbUrl();
 
+            String cinemaReleaseDate = "Released in cinema: " + movie.getDate();
+
             Picasso.with(this)
                     .load(imageUrl)
                     .into(imageView);
             titleTextView.setText(title);
             averageVoteTextView.setText(averageVote);
             voteCountTextView.setText(voteCount);
-            releaseDateTextView.setText(releaseDate);
+            releaseDateTextView.setText(cinemaReleaseDate);
             overviewTextView.setText(overview);
 
             imdbButton.setOnClickListener(new View.OnClickListener() {

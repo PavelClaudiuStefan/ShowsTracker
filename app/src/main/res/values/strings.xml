@@ -7,9 +7,21 @@
     <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_popularity_desc</string>
     <string name="settings_sort_by_popularity_desc" translatable="false">popularity.desc</string>
 
+    <!-- Filter options in the "To watch" tab -->
+    <string name="settings_to_watch_filter" translatable="false">to_watch_filter</string>
+    <string name="settings_to_watch_filter_default" translatable="false">released_cinema</string>
+
+    <!-- Sorting options in the "To watch" tab -->
+    <string name="settings_to_watch_sort" translatable="false">to_watch_sort</string>
+    <string name="settings_to_watch_sort_default" translatable="false">release_date</string>
+
+    <!-- Sorting direction options in the "To watch" tab -->
+    <string name="settings_to_watch_sort_direction" translatable="false">to_watch_sort_direction</string>
+    <string name="settings_to_watch_sort_direction_default" translatable="false">ASC</string>
+
     <string name="category_movies_to_watch">To watch</string>
     <string name="category_movies_not_aired">Not aired</string>
-    <string name="category_movies_all">All</string>
+    <string name="category_movies_all">Collection</string>
     <string name="category_movies_discover">Discover</string>
     <string name="thumbnail">thumbnail</string>
     <string name="no_movie_data">No movie data</string>
@@ -20,5 +32,19 @@
     <string name="remove_movie">Remove movie</string>
     <string name="set_watched_movie">Set watched</string>
     <string name="set_not_watched_movie">Set not watched</string>
-    <string name="search_movie">Search new movie...</string>
+    <string name="search_movie">Search new movie…</string>
+    <string name="filter_options">Filter options</string>
+    <string name="sort_by_date">Sort by date</string>
+    <string name="sort_by_rating">Sort by rating</string>
+    <string name="popular_movies">Popular movies</string>
+    <string name="recommended_movies">Recommended movies</string>
+    <string name="released_on_dvd">Released on dvd</string>
+    <string name="released_in_cinema">Released in cinema</string>
+    <string name="sorting_options">Sorting options</string>
+    <string name="show_all">Show all</string>
+    <string name="not_released">Not released</string>
+    <string name="default_average_vote">0.0</string>
+    <string name="ascending_order">Ascending order</string>
+    <string name="descending_order">Descending order</string>
+    <string name="top_rated">Top rated</string>
 </resources>

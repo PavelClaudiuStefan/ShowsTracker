@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_filter"
+        android:icon="@drawable/ic_filter_options"
+        android:title="@string/filter_options"
+        app:showAsAction="ifRoom">
+
+        <menu>
+            <item
+                android:id="@+id/menu_show_top_rated"
+                android:title="@string/top_rated" />
+            <item
+                android:id="@+id/menu_show_popular"
+                android:title="@string/popular_movies" />
+            <item
+                android:id="@+id/menu_show_recommended"
+                android:title="@string/recommended_movies" />
+        </menu>
+    </item>
+
+</menu>

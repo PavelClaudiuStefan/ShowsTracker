@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,12 +31,13 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     private TextView emptyStateTextView;
 
-    private static final int MOVIE_LOADER = 0;
+    private static int MOVIE_LOADER = 0;
 
     MovieCursorAdapter movieCursorAdapter;
 
     private String selection = null;
     private String[] selectionArgs = null;
+    private String sortOrder = null;
 
     public MoviesFragment() {
         // Required empty constructor
@@ -88,6 +90,15 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
             searchFab.setVisibility(View.GONE);
         }
 
+        final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshMovieList();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         return rootView;
     }
 
@@ -106,9 +117,9 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         return new CursorLoader(getContext(),   // Parent activity context
                 MovieEntry.CONTENT_URI,         // Provider content URI to query
                 projection,                     // Columns to include in the resulting Cursor
-                selection,                      // Include only rows that have watched = 0
+                selection,
                 selectionArgs,
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
+                sortOrder);
     }
 
     @Override
@@ -117,7 +128,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
 
-        // Set empty state text to display "No earthquakes found." It's not visible if any movie is added to the adapter
+        // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
         emptyStateTextView.setText(R.string.no_movies);
 
         movieCursorAdapter.swapCursor(data);
@@ -136,7 +147,17 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         this.selectionArgs = selectionArgs;
     }
 
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
     public void setSearchFabVisibility(boolean value) {
         isFabVisible = value;
+    }
+
+    public void refreshMovieList() {
+        if (getActivity() != null) {
+            ((MoviesActivity)getActivity()).dataChanged();
+        }
     }
 }

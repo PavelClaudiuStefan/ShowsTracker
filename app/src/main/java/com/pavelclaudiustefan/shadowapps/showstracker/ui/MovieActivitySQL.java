@@ -127,6 +127,8 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             final Movie movie = new Movie(tmdbId, title, averageVote, releaseDate, imageId, imdbUrl, voteCount, overview);
             movie.setWatched(isWatched);
 
+            String cinemaReleaseDate = "Released in cinema: " + movie.getDate();
+
             // Update the views on the screen with the values from the database
             Picasso.with(this)
                     .load(movie.getImageUrl())
@@ -134,7 +136,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             titleTextView.setText(movie.getTitle());
             averageVoteTextView.setText(String.valueOf(movie.getVote()));
             voteCountTextView.setText(String.valueOf(movie.getVoteCount()));
-            releaseDateTextView.setText(movie.getDate());
+            releaseDateTextView.setText(cinemaReleaseDate);
             overviewTextView.setText(movie.getOverview());
 
             imdbButton.setOnClickListener(new View.OnClickListener() {

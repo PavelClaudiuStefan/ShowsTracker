@@ -2,32 +2,32 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MovieAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MovieAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
-import com.pavelclaudiustefan.shadowapps.showstracker.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +55,7 @@ public class MoviesPopularFragment extends Fragment
     private Parcelable state;
 
     public MoviesPopularFragment() {
-        // Required empty constructor
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -133,7 +133,22 @@ public class MoviesPopularFragment extends Fragment
             }
         });
 
+        final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshMovieList();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        menu.clear();
+        inflater.inflate(R.menu.discover_menu,menu);
     }
 
     @Override
@@ -157,14 +172,6 @@ public class MoviesPopularFragment extends Fragment
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-        String sortBy = sharedPrefs.getString(
-                getString(R.string.settings_order_by_key),
-                getString(R.string.settings_sort_by_default)
-        );
-
         String page = String.valueOf(MOVIES_LOADER_CURRENT_PAGE_ID);
 
         String tmdbUrl = "https://api.themoviedb.org/3/discover/movie";
@@ -172,7 +179,6 @@ public class MoviesPopularFragment extends Fragment
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
         uriBuilder.appendQueryParameter("api_key", API_KEY);
-        uriBuilder.appendQueryParameter("sort_by", sortBy);
         uriBuilder.appendQueryParameter("page", page);
 
         return new MovieListLoader(getActivity(), uriBuilder.toString());
@@ -198,5 +204,11 @@ public class MoviesPopularFragment extends Fragment
     @Override
     public void onLoaderReset(Loader<List<Movie>> loader) {
         movieAdapter.clear();
+    }
+
+    private void refreshMovieList() {
+        if (getActivity() != null) {
+            ((MoviesActivity)getActivity()).dataChanged();
+        }
     }
 }

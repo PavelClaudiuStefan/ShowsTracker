@@ -47,7 +47,7 @@
             android:textAllCaps="true"
             android:textColor="@color/colorMovieDetails"
             android:textSize="12sp"
-            tools:text="7.30" />
+            android:text="@string/default_average_vote" />
 
     </LinearLayout>
 
