@@ -1,5 +1,6 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,8 +19,11 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -54,6 +58,19 @@ public final class QueryUtils {
         }
 
         return extractMovieDataFromJson(jsonResponse);
+    }
+
+    public static List<Movie> fetchRecommendedMoviesData(ArrayList<Integer> tmdbIds) {
+        ArrayList<URL> urls = createUrls(tmdbIds);
+
+        ArrayList<String> jsonResponses = null;
+        try {
+            jsonResponses = makeHttpRequests(urls);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return extractRecommendedMoviesFromJson(jsonResponses);
     }
 
     private static URL createUrl(String stringUrl) {
@@ -125,6 +142,7 @@ public final class QueryUtils {
 
         try {
             JSONObject baseJsonResponse = new JSONObject(moviesJSON);
+            int totalPages = baseJsonResponse.getInt("total_pages");
             JSONArray moviesArray = baseJsonResponse.getJSONArray("results");
 
             for (int i = 0; i < moviesArray.length(); i++) {
@@ -136,15 +154,13 @@ public final class QueryUtils {
                 String releaseDate = currentMovie.getString("release_date");
                 String imageUrl = currentMovie.getString("backdrop_path");
 
-                Date date = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDate);
+                Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
                 long dateInMillseconds = date.getTime();
 
                 Movie movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl);
 
-                // TODO Add imdb url when adding movie into database
-                //String imdbUrl = fetchImdbUrl(tmdbId);
-                String imdbUrl = "http://www.imdb.com";
-                movie.setImdbUrl(imdbUrl);
+                if (i == 0)
+                    movie.setTotalPages(totalPages);
 
                 movies.add(movie);
             }
@@ -177,7 +193,7 @@ public final class QueryUtils {
             int voteCount = movieJsonData.getInt("vote_count");
             String overview = movieJsonData.getString("overview");
 
-            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(releaseDate);
+            Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
             long dateInMillseconds = date.getTime();
 
             movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl, imdbUrl, voteCount, overview);
@@ -189,5 +205,124 @@ public final class QueryUtils {
         }
 
         return movie;
+    }
+
+    private static ArrayList<URL> createUrls(ArrayList<Integer> tmdbIds) {
+        ArrayList<URL> urls = new ArrayList<>();
+        for (Integer tmdbId:tmdbIds) {
+            try {
+                String tmdbUrl = "https://api.themoviedb.org/3/movie/" + tmdbId + "/recommendations";
+                Uri baseUri = Uri.parse(tmdbUrl);
+                Uri.Builder uriBuilder = baseUri.buildUpon();
+                uriBuilder.appendQueryParameter("api_key", "e0ff28973a330d2640142476f896da04");
+
+                URL url = new URL(uriBuilder.toString());
+                urls.add(url);
+            } catch (MalformedURLException e) {
+                Log.e(LOG_TAG, "Error while building url", e);
+            }
+        }
+        return urls;
+    }
+
+    private static ArrayList<String> makeHttpRequests(ArrayList<URL> urls) throws IOException {
+        ArrayList<String> jsonResponses = new ArrayList<>();
+
+        if (urls.isEmpty()) {
+            return jsonResponses;
+        }
+
+        for (URL url:urls) {
+            HttpURLConnection urlConnection = null;
+            InputStream inputStream = null;
+            try {
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setReadTimeout(10000 /* milliseconds */);
+                urlConnection.setConnectTimeout(15000 /* milliseconds */);
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                if (urlConnection.getResponseCode() == 200) {
+                    inputStream = urlConnection.getInputStream();
+                    jsonResponses.add(readFromStream(inputStream));
+                } else {
+                    Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+                }
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error", e);
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        }
+        return jsonResponses;
+    }
+
+    private static List<Movie> extractRecommendedMoviesFromJson(ArrayList<String> jsonResponses) {
+        List<Movie> movies = new ArrayList<>();
+
+        if (jsonResponses.isEmpty()) {
+            return null;
+        }
+
+        for (String moviesJSON:jsonResponses) {
+            if (TextUtils.isEmpty(moviesJSON)) {
+                break;
+            }
+
+            try {
+                JSONObject baseJsonResponse = new JSONObject(moviesJSON);
+                JSONArray moviesArray = baseJsonResponse.getJSONArray("results");
+
+                for (int i = 0; i < moviesArray.length(); i++) {
+                    JSONObject currentMovie = moviesArray.getJSONObject(i);
+
+                    int tmdbId = currentMovie.getInt("id");
+                    String title = currentMovie.getString("title");
+                    double voteAverage = currentMovie.getDouble("vote_average");
+                    String releaseDate = currentMovie.getString("release_date");
+                    String imageUrl = currentMovie.getString("backdrop_path");
+
+                    Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
+                    long dateInMillseconds = date.getTime();
+
+                    Movie movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl);
+
+                    boolean isAlreadyInMovies = false;
+                    for (Movie savedMovie:movies) {
+                        if (savedMovie.getTmdbId() == movie.getTmdbId())
+                            isAlreadyInMovies = true;
+                    }
+
+                    if (!isAlreadyInMovies) {
+                        movies.add(movie);
+                    }
+                }
+
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Problem parsing json results", e);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Order by rating
+        Collections.sort(movies, new Comparator<Movie>() {
+            @Override
+            public int compare(Movie m1, Movie m2) {
+                if (m1.getVote() > m2.getVote())
+                    return -1;
+                else if (m1.getVote() < m2.getVote())
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+        return movies;
     }
 }

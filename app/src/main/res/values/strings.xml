@@ -19,6 +19,9 @@
     <string name="settings_to_watch_sort_direction" translatable="false">to_watch_sort_direction</string>
     <string name="settings_to_watch_sort_direction_default" translatable="false">ASC</string>
 
+    <string name="settings_discover_tmdb_url" translatable="false">tmdb_url</string>
+    <string name="settings_discover_tmdb_url_default" translatable="false">https://api.themoviedb.org/3/discover/movie</string>
+
     <string name="category_movies_to_watch">To watch</string>
     <string name="category_movies_not_aired">Not aired</string>
     <string name="category_movies_all">Collection</string>

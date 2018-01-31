@@ -21,6 +21,8 @@ public class Movie {
     private String thumbnailSize = "w300";
     private String imageSize = "w780";
 
+    private int totalPages;
+
     public Movie(int tmdbId, String title, double vote, long dateInMilliseconds, String imageId) {
         this.tmdbId = tmdbId;
         this.title = title;
@@ -121,5 +123,13 @@ public class Movie {
 
     public void setImageSize(String imageSize) {
         this.imageSize = imageSize;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
     }
 }

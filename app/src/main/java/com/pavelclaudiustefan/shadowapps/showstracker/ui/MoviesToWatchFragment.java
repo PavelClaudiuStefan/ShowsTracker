@@ -20,6 +20,13 @@ public class MoviesToWatchFragment extends MoviesFragment {
 
     public MoviesToWatchFragment() {
         setHasOptionsMenu(true);
+
+        // Init cursor loader with only watched movies
+        String selection = MovieEntry.COLUMN_MOVIE_WATCHED;
+        String[] selectionArgs = {"0"};
+
+        setSelection(selection);
+        setSelectionArgs(selectionArgs);
     }
 
     @Nullable
