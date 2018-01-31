@@ -35,6 +35,7 @@ public class MoviesAllFragment extends MoviesFragment {
 
         switch (currentFilterOption) {
             case "all":
+                displayAllMovies();
                 break;
             case "released_cinema":
                 displayMoviesReleasedInCinema();
@@ -168,6 +169,12 @@ public class MoviesAllFragment extends MoviesFragment {
         return true;
     }
 
+    private void displayAllMovies() {
+        setSelection(null);
+        setSelectionArgs(null);
+    }
+
+    // TODO
     private void displayMoviesReleasedOnDvd() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
         String selection = MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS + ">?";

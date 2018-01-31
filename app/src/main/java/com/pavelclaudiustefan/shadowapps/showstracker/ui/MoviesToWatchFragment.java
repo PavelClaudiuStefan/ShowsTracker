@@ -22,7 +22,7 @@ public class MoviesToWatchFragment extends MoviesFragment {
         setHasOptionsMenu(true);
 
         // Init cursor loader with only watched movies
-        String selection = MovieEntry.COLUMN_MOVIE_WATCHED;
+        String selection = MovieEntry.COLUMN_MOVIE_WATCHED + "=?";
         String[] selectionArgs = {"0"};
 
         setSelection(selection);
