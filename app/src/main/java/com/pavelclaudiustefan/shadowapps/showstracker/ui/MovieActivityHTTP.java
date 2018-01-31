@@ -148,7 +148,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
             String overview = movie.getOverview();
             final String imdbUrl = movie.getImdbUrl();
 
-            String cinemaReleaseDate = "Released in cinema: " + movie.getDate();
+            String cinemaReleaseDate = "Released in cinema: " + releaseDate;
 
             Picasso.with(this)
                     .load(imageUrl)
@@ -203,6 +203,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
                     } else {
                         removeMovie(movieId);
                         inUserCollection = false;
+                        movie.setWatched(false);
                     }
                 }
             });

@@ -166,6 +166,9 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
                     } else {
                         removeMovie(movieId);
                         inUserCollection = false;
+                        isWatched = false;
+                        ToggleButton watchedNotWatchedButton = findViewById(R.id.watched_not_watched_movie);
+                        watchedNotWatchedButton.setChecked(isWatched);
                     }
                 }
             });

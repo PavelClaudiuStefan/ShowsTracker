@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/menu_filter"
+    <item
+        android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter_options"
         android:title="@string/filter_options"
         app:showAsAction="ifRoom">
@@ -18,6 +19,12 @@
                 android:id="@+id/menu_show_recommended"
                 android:title="@string/recommended_movies" />
         </menu>
+    </item>
+
+    <item
+        android:id="@+id/show_hide_watched"
+        android:title="@string/show_collection_movies">
+
     </item>
 
 </menu>

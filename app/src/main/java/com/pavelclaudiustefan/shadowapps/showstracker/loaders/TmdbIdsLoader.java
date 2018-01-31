@@ -46,7 +46,9 @@ public class TmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
             int tmdbId = cursor.getInt(tmdbIdColumnIndex);
             tmdbIds.add(tmdbId);
         }
-        mdf.startRecommendedLoader(tmdbIds);
+
+        mdf.setTmdbIds(tmdbIds);
+        mdf.startLoader();
     }
 
     @Override

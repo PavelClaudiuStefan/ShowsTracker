@@ -19,6 +19,8 @@
     <string name="settings_to_watch_sort_direction" translatable="false">to_watch_sort_direction</string>
     <string name="settings_to_watch_sort_direction_default" translatable="false">ASC</string>
 
+    <string name="settings_discover_show_watched" translatable="false">show_watched_option</string>
+
     <string name="settings_discover_tmdb_url" translatable="false">tmdb_url</string>
     <string name="settings_discover_tmdb_url_default" translatable="false">https://api.themoviedb.org/3/discover/movie</string>
 
@@ -50,4 +52,6 @@
     <string name="ascending_order">Ascending order</string>
     <string name="descending_order">Descending order</string>
     <string name="top_rated">Top rated</string>
+    <string name="show_collection_movies">Show added movies</string>
+    <string name="hide_collection_movies">Hide added movies</string>
 </resources>

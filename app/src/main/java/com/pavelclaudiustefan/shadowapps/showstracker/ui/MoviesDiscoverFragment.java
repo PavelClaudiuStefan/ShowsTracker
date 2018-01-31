@@ -60,13 +60,13 @@ public class MoviesDiscoverFragment extends Fragment
     private View rootView;
 
     private static ArrayList<Movie> movies = new ArrayList<>();
-
     private ArrayList<Integer> tmdbIds;
 
     private MovieAdapter movieAdapter;
 
-    private TextView emptyStateTextView;
+    private boolean isShowItemsInCollection;
 
+    private TextView emptyStateTextView;
     private ListView movieListView;
 
     private Parcelable state;
@@ -75,23 +75,12 @@ public class MoviesDiscoverFragment extends Fragment
         setHasOptionsMenu(true);
     }
 
-    private void initTmdbUrl() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        tmdbUrl = sharedPrefs.getString(
-                getString(R.string.settings_discover_tmdb_url),
-                getString(R.string.settings_discover_tmdb_url_default)
-        );
-        if (Objects.equals(tmdbUrl, "recommended_option")) {
-            isRecommended = true;
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.movies_list, container, false);
 
-        initTmdbUrl();
+        init();
 
         FloatingActionButton fab = rootView.findViewById(R.id.search_movie_fab);
         fab.setVisibility(View.GONE);
@@ -113,12 +102,8 @@ public class MoviesDiscoverFragment extends Fragment
 
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
-            LoaderManager loaderManager = getLoaderManager();
-            if (isRecommended) {
-                new TmdbIdsLoader(this);
-            } else {
-                loaderManager.initLoader(HTTP_LOADER_ID, null, this);
-            }
+            // Loads tmdbIds and then starts the movies loader
+            new TmdbIdsLoader(this);
 
         } else {
             // First, hide loading indicator so error message will be visible
@@ -187,6 +172,22 @@ public class MoviesDiscoverFragment extends Fragment
         return rootView;
     }
 
+    private void init() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        tmdbUrl = sharedPrefs.getString(
+                getString(R.string.settings_discover_tmdb_url),
+                getString(R.string.settings_discover_tmdb_url_default)
+        );
+        if (Objects.equals(tmdbUrl, "recommended_option")) {
+            isRecommended = true;
+        }
+
+        isShowItemsInCollection = sharedPrefs.getBoolean(
+                getString(R.string.settings_discover_show_watched),
+                true
+        );
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -241,6 +242,20 @@ public class MoviesDiscoverFragment extends Fragment
             // Set empty state text to display "No temporarMovies found." It's not visible if any movie is added to the adapter
             emptyStateTextView.setText(R.string.no_movies);
 
+            // If isShowItemsInCollection = false -> hide watched
+            if (!isShowItemsInCollection) {
+                ArrayList<Movie> moviesToDelete = new ArrayList<>();
+                for (Movie movie : movies) {
+                    int movieTmdbId = movie.getTmdbId();
+                    for (int tmdbId:tmdbIds) {
+                        if (movieTmdbId == tmdbId) {
+                            moviesToDelete.add(movie);
+                        }
+                    }
+                }
+                movies.removeAll(moviesToDelete);
+            }
+
             if (movies != null && !movies.isEmpty()) {
                 movieAdapter.addAll(movies);
             }
@@ -278,6 +293,11 @@ public class MoviesDiscoverFragment extends Fragment
                 Log.e("MoviesAllFragment", "Filtering error");
                 break;
         }
+        if (isShowItemsInCollection) {
+            MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
+            showWatchedItem.setTitle(R.string.hide_collection_movies);
+        }
+
     }
 
     @Override
@@ -292,6 +312,9 @@ public class MoviesDiscoverFragment extends Fragment
                 break;
             case R.id.menu_show_recommended:
                 saveSettingsTmdbUrl(RECOMMENDED_OPTION);
+                break;
+            case R.id.show_hide_watched:
+                saveSettingsShowHideWatched();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -308,15 +331,25 @@ public class MoviesDiscoverFragment extends Fragment
         editor.apply();
     }
 
+    private void saveSettingsShowHideWatched() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean(getString(R.string.settings_discover_show_watched), !isShowItemsInCollection);
+        editor.apply();
+    }
+
     private void refreshMovieList() {
         if (getActivity() != null) {
             ((MoviesActivity)getActivity()).dataChanged();
         }
     }
 
-    public void startRecommendedLoader(ArrayList<Integer> tmdbIds) {
-        this.tmdbIds = tmdbIds;
+    public void startLoader() {
         getLoaderManager().initLoader(HTTP_LOADER_ID, null, this);
+    }
+
+    public void setTmdbIds(ArrayList<Integer> tmdbIds) {
+        this.tmdbIds = tmdbIds;
     }
 
 }
