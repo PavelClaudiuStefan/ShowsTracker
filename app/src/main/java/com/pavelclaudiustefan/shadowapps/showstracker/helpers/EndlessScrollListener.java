@@ -22,7 +22,9 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
         if (totalItemCount < previousTotalItemCount) {
             this.currentPage = this.startingPageIndex;
             this.previousTotalItemCount = totalItemCount;
-            if (totalItemCount == 0) { this.loading = true; }
+            if (totalItemCount == 0) {
+                this.loading = true;
+            }
         }
 
         if (loading && (totalItemCount > previousTotalItemCount)) {

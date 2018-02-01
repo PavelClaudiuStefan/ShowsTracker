@@ -55,6 +55,8 @@ public class MoviesDiscoverFragment extends Fragment
     private int HTTP_LOADER_ID = 1;
     private int currentPage = 1;
 
+    private static boolean canLoadNewMovies;
+
     private int totalPages;
 
     private View rootView;
@@ -129,30 +131,8 @@ public class MoviesDiscoverFragment extends Fragment
             movieListView.setOnScrollListener(new EndlessScrollListener(5, 1) {
                 @Override
                 public boolean onLoadMore(int page, int totalItemsCount) {
-                    if (page <= totalPages) {
-                        // Show loading indicator when searching for new temporarMovies
-                        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-                        loadingIndicator.setVisibility(View.VISIBLE);
-
-                        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo networkInfo = null;
-                        if (connMgr != null) {
-                            networkInfo = connMgr.getActiveNetworkInfo();
-                        }
-
-                        // If there is a network connection, fetch more
-                        if (networkInfo != null && networkInfo.isConnected()) {
-                            LoaderManager loaderManager = getLoaderManager();
-                            loaderManager.initLoader(++HTTP_LOADER_ID, null, MoviesDiscoverFragment.this);
-                            currentPage++;
-                            return true;
-                        } else {
-                            loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-                            loadingIndicator.setVisibility(View.GONE);
-
-                            emptyStateTextView.setText(R.string.no_internet_connection);
-                            return false;
-                        }
+                    if (currentPage <= totalPages) {
+                        return loadMore();
                     } else {
                         return false;
                     }
@@ -230,6 +210,7 @@ public class MoviesDiscoverFragment extends Fragment
         View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
 
+        // TODO - Save the totalPages value only once
         if (!isRecommended) {
             // Get total pages from the first movie
             if (currentPage == 1) {
@@ -237,8 +218,7 @@ public class MoviesDiscoverFragment extends Fragment
             }
         }
 
-        // TODO - Find a better way to stop the adding of extra movies when returning from MovieActivity
-        if (HTTP_LOADER_ID == loader.getId() && (loader.getId()-1) * 20 == movieAdapter.getCount()) {
+        if (canLoadNewMovies) {
             // Set empty state text to display "No temporarMovies found." It's not visible if any movie is added to the adapter
             emptyStateTextView.setText(R.string.no_movies);
 
@@ -260,6 +240,7 @@ public class MoviesDiscoverFragment extends Fragment
                 movieAdapter.addAll(movies);
             }
         }
+        canLoadNewMovies = false;
     }
 
     @Override
@@ -345,7 +326,35 @@ public class MoviesDiscoverFragment extends Fragment
     }
 
     public void startLoader() {
+        canLoadNewMovies = true;
         getLoaderManager().initLoader(HTTP_LOADER_ID, null, this);
+    }
+
+    private boolean loadMore() {
+        // Show loading indicator when searching for new temporarMovies
+        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
+
+        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+        if (connMgr != null) {
+            networkInfo = connMgr.getActiveNetworkInfo();
+        }
+
+        // If there is a network connection, fetch more
+        if (networkInfo != null && networkInfo.isConnected()) {
+            LoaderManager loaderManager = getLoaderManager();
+            canLoadNewMovies = true;
+            loaderManager.initLoader(++HTTP_LOADER_ID, null, MoviesDiscoverFragment.this);
+            currentPage++;
+            return true;
+        } else {
+            loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
+
+            emptyStateTextView.setText(R.string.no_internet_connection);
+            return false;
+        }
     }
 
     public void setTmdbIds(ArrayList<Integer> tmdbIds) {
