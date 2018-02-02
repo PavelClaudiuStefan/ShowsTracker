@@ -2,7 +2,6 @@ package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         averageVoteView.setText(formatVote(currentMovie.getVote()));
 
         TextView dateView = listItemView.findViewById(R.id.date);
-        dateView.setText(currentMovie.getDate());
+        dateView.setText(currentMovie.getCinemaReleaseDate());
 
         ImageView imageView = listItemView.findViewById(R.id.movie_image);
         Picasso.with(getContext())

@@ -22,16 +22,13 @@
         </activity>
 
         <activity
-            android:name=".ui.MovieActivitySQL"
-            android:parentActivityName=".ui.MoviesActivity" />
+            android:name=".ui.MovieActivitySQL"/>
 
         <activity
-            android:name=".ui.MovieActivityHTTP"
-            android:parentActivityName=".ui.MoviesActivity" />
+            android:name=".ui.MovieActivityHTTP"/>
 
         <activity
-            android:name=".ui.SearchActivity"
-            android:parentActivityName=".ui.MoviesActivity" />
+            android:name=".ui.SearchActivity"/>
 
         <provider
             android:name=".data.MovieProvider"

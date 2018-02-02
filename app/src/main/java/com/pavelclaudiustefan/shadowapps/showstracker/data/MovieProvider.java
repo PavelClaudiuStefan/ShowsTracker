@@ -110,7 +110,7 @@ public class MovieProvider extends ContentProvider {
         }
 
         // Check that the release date is not null
-        String releaseDate = values.getAsString(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
+        String releaseDate = values.getAsString(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
             throw new IllegalArgumentException("Movie requires a release date");
         }
@@ -211,7 +211,7 @@ public class MovieProvider extends ContentProvider {
         }
 
         // Check that the release date is not null
-        String releaseDate = values.getAsString(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
+        String releaseDate = values.getAsString(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
             throw new IllegalArgumentException("Movie requires a release date");
         }

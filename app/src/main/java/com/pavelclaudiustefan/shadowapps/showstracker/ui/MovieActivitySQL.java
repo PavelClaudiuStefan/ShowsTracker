@@ -32,7 +32,9 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
     private TextView titleTextView;
     private TextView averageVoteTextView;
     private TextView voteCountTextView;
-    private TextView releaseDateTextView;
+    private TextView cinemaReleaseDateTextView;
+    private TextView digitalReleaseDateTextView;
+    private TextView physicalReleaseDateTextView;
     private TextView overviewTextView;
     private Button imdbButton;
 
@@ -58,7 +60,9 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
         titleTextView = findViewById(R.id.movie_title);
         averageVoteTextView = findViewById(R.id.average_vote);
         voteCountTextView = findViewById(R.id.vote_count);
-        releaseDateTextView = findViewById(R.id.release_date);
+        cinemaReleaseDateTextView = findViewById(R.id.cinema_release_date);
+        digitalReleaseDateTextView = findViewById(R.id.digital_release_date);
+        physicalReleaseDateTextView = findViewById(R.id.physical_release_date);
         overviewTextView = findViewById(R.id.overview);
         imdbButton = findViewById(R.id.imdb_url_button);
 
@@ -73,7 +77,9 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
                 MovieEntry.COLUMN_MOVIE_TITLE,
                 MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
                 MovieEntry.COLUMN_MOVIE_VOTE_COUNT,
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS,
                 MovieEntry.COLUMN_MOVIE_OVERVIEW,
                 MovieEntry.COLUMN_MOVIE_IMDB_URL,
                 MovieEntry.COLUMN_MOVIE_IMAGE_ID,
@@ -106,7 +112,9 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
             int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
             int voteCountColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_VOTE_COUNT);
-            int releaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
+            int cinemaReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
+            int digitalReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS);
+            int physicalReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS);
             int overviewColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_OVERVIEW);
             int imdbUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMDB_URL);
             int watchedColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_WATCHED);
@@ -118,16 +126,20 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             final String title = cursor.getString(titleColumnIndex);
             final double averageVote = cursor.getDouble(averageVoteColumnIndex);
             final int voteCount = cursor.getInt(voteCountColumnIndex);
-            final long releaseDate = cursor.getLong(releaseDateColumnIndex);
+            final long cinemaReleaseDateInMilliseconds = cursor.getLong(cinemaReleaseDateColumnIndex);
+            final long digitalReleaseDateInMilliseconds = cursor.getLong(digitalReleaseDateColumnIndex);
+            final long physicalReleaseDateInMilliseconds = cursor.getLong(physicalReleaseDateColumnIndex);
             final String overview = cursor.getString(overviewColumnIndex);
             final String imdbUrl = cursor.getString(imdbUrlColumnIndex);
             final String imageId = cursor.getString(imageIdColumnIndex);
             isWatched = cursor.getInt(watchedColumnIndex) == 1; // 1 -> true, 0 -> false
 
-            final Movie movie = new Movie(tmdbId, title, averageVote, releaseDate, imageId, imdbUrl, voteCount, overview);
+            final Movie movie = new Movie(tmdbId, title, averageVote, cinemaReleaseDateInMilliseconds, digitalReleaseDateInMilliseconds, physicalReleaseDateInMilliseconds, imageId, imdbUrl, voteCount, overview);
             movie.setWatched(isWatched);
 
-            String cinemaReleaseDate = "Released in cinema: " + movie.getDate();
+            String cinemaReleaseDate = "Cinema release: " + movie.getCinemaReleaseDate();
+            String digitalReleaseDate = "Digital release: " + movie.getDigitalReleaseDate();
+            String physicalReleaseDate = "Physical release: " + movie.getPhysicalReleaseDate();
 
             // Update the views on the screen with the values from the database
             Picasso.with(this)
@@ -136,7 +148,9 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             titleTextView.setText(movie.getTitle());
             averageVoteTextView.setText(String.valueOf(movie.getVote()));
             voteCountTextView.setText(String.valueOf(movie.getVoteCount()));
-            releaseDateTextView.setText(cinemaReleaseDate);
+            cinemaReleaseDateTextView.setText(cinemaReleaseDate);
+            digitalReleaseDateTextView.setText(digitalReleaseDate);
+            physicalReleaseDateTextView.setText(physicalReleaseDate);
             overviewTextView.setText(movie.getOverview());
 
             imdbButton.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +219,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
+        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getCinemaReleaseDateInMilliseconds());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
@@ -226,7 +240,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
+        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getCinemaReleaseDateInMilliseconds());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
         values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());

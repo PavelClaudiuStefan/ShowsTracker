@@ -36,7 +36,7 @@ public class MovieCursorAdapter extends CursorAdapter {
         int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
         int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
         int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
-        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
+        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
         int thumbnailUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
 
         int tmdbId = cursor.getInt(tmdbIdColumnIndex);
@@ -50,7 +50,7 @@ public class MovieCursorAdapter extends CursorAdapter {
         // Update the TextViews with the attributes for the current movie
         titleTextView.setText(movie.getTitle());
         averageVoteTextView.setText(String.valueOf(movie.getVote()));
-        dateTextView.setText(movie.getDate());
+        dateTextView.setText(movie.getCinemaReleaseDate());
 
         // Load movie image (landscape)
         Picasso.with(context)

@@ -30,11 +30,14 @@
 
         <menu>
             <item
-                android:id="@+id/menu_show_dvd"
-                android:title="@string/released_on_dvd" />
-            <item
                 android:id="@+id/menu_show_cinema"
-                android:title="@string/released_in_cinema" />
+                android:title="@string/cinema_released" />
+            <item
+                android:id="@+id/menu_show_digital"
+                android:title="@string/digital_released" />
+            <item
+                android:id="@+id/menu_show_physical"
+                android:title="@string/physical_released" />
         </menu>
     </item>
 

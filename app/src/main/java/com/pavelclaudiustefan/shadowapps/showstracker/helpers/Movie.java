@@ -3,13 +3,16 @@ package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class Movie {
 
     private int tmdbId;
     private String title;
     private double vote;
-    private long dateInMilliseconds;
+    private long cinemaReleaseDateInMilliseconds;
+    private long digitalReleaseDateInMilliseconds;
+    private long physicalReleaseDateInMilliseconds;
     private String imdbUrl;
     private String imageId;
     private String thumbnailUrl;
@@ -23,11 +26,12 @@ public class Movie {
 
     private int totalPages;
 
-    public Movie(int tmdbId, String title, double vote, long dateInMilliseconds, String imageId) {
+    // Constructor for the movies in lists in the Discover section
+    public Movie(int tmdbId, String title, double vote, long cinemaReleaseDateInMilliseconds, String imageId) {
         this.tmdbId = tmdbId;
         this.title = title;
         this.vote = vote;
-        this.dateInMilliseconds = dateInMilliseconds;
+        this.cinemaReleaseDateInMilliseconds = cinemaReleaseDateInMilliseconds;
         this.imageId = imageId;
         this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
         this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageId;
@@ -35,11 +39,31 @@ public class Movie {
         this.watched = false;
     }
 
-    public Movie(int tmdbId, String title, double vote, long dateInMilliseconds, String imageId, String imdbUrl, int voteCount, String overview) {
+    // Constructor for the movies in lists in the Discover section
+    public Movie(int tmdbId, String title, double vote, long cinemaReleaseDateInMilliseconds, long digitalReleaseDateInMilliseconds,
+                 long physicalReleaseDateInMilliseconds, String imageId) {
         this.tmdbId = tmdbId;
         this.title = title;
         this.vote = vote;
-        this.dateInMilliseconds = dateInMilliseconds;
+        this.cinemaReleaseDateInMilliseconds = cinemaReleaseDateInMilliseconds;
+        this.digitalReleaseDateInMilliseconds = digitalReleaseDateInMilliseconds;
+        this.physicalReleaseDateInMilliseconds = physicalReleaseDateInMilliseconds;
+        this.imageId = imageId;
+        this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
+        this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageId;
+
+        this.watched = false;
+    }
+
+    // Constructor for the movie in movie activities
+    public Movie(int tmdbId, String title, double vote, long cinemaReleaseDateInMilliseconds,
+                 long digitalReleaseDateInMilliseconds, long physicalReleaseDateInMilliseconds,  String imageId, String imdbUrl, int voteCount, String overview) {
+        this.tmdbId = tmdbId;
+        this.title = title;
+        this.vote = vote;
+        this.cinemaReleaseDateInMilliseconds = cinemaReleaseDateInMilliseconds;
+        this.digitalReleaseDateInMilliseconds = digitalReleaseDateInMilliseconds;
+        this.physicalReleaseDateInMilliseconds = physicalReleaseDateInMilliseconds;
         this.imageId = imageId;
         this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
         this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageId;
@@ -62,15 +86,45 @@ public class Movie {
         return vote;
     }
 
-    public long getDateInMilliseconds() {
-        return dateInMilliseconds;
+    public long getCinemaReleaseDateInMilliseconds() {
+        return cinemaReleaseDateInMilliseconds;
     }
 
-    public String getDate() {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    public String getCinemaReleaseDate() {
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(dateInMilliseconds);
+        calendar.setTimeInMillis(cinemaReleaseDateInMilliseconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    public long getDigitalReleaseDateInMilliseconds() {
+        return digitalReleaseDateInMilliseconds;
+    }
+
+    public String getDigitalReleaseDate() {
+        if (digitalReleaseDateInMilliseconds == Long.MAX_VALUE)
+            return "Unknown";
+
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(digitalReleaseDateInMilliseconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    public long getPhysicalReleaseDateInMilliseconds() {
+        return physicalReleaseDateInMilliseconds;
+    }
+
+    public String getPhysicalReleaseDate() {
+        if (physicalReleaseDateInMilliseconds == Long.MAX_VALUE)
+            return "Unknown";
+
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(physicalReleaseDateInMilliseconds);
         return formatter.format(calendar.getTime());
     }
 

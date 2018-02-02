@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -37,7 +38,9 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
 
     private ImageView imageView;
     private TextView titleTextView;
-    private TextView releaseDateTextView;
+    private TextView cinemaReleaseDateTextView;
+    private TextView digitalReleaseDateTextView;
+    private TextView physicalReleaseDateTextView;
     private TextView averageVoteTextView;
     private TextView voteCountTextView;
     private TextView overviewTextView;
@@ -65,7 +68,9 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         titleTextView = findViewById(R.id.movie_title);
         averageVoteTextView = findViewById(R.id.average_vote);
         voteCountTextView = findViewById(R.id.vote_count);
-        releaseDateTextView = findViewById(R.id.release_date);
+        cinemaReleaseDateTextView = findViewById(R.id.cinema_release_date);
+        digitalReleaseDateTextView = findViewById(R.id.digital_release_date);
+        physicalReleaseDateTextView = findViewById(R.id.physical_release_date);
         overviewTextView = findViewById(R.id.overview);
         imdbButton = findViewById(R.id.imdb_url_button);
 
@@ -101,6 +106,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
             Uri.Builder uriBuilder = baseUri.buildUpon();
 
             uriBuilder.appendQueryParameter("api_key", API_KEY);
+            uriBuilder.appendQueryParameter("append_to_response", "release_dates");
 
             return new MovieDataLoader(this, uriBuilder.toString());
         } else if (id == EXISTING_MOVIE_LOADER_ID){
@@ -129,7 +135,6 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         if (loader.getId() == EXISTING_MOVIE_LOADER) {
             this.movie = (Movie)data;
 
-            // Bail early if the cursor is null or there is less than 1 row in the cursor
             if (movie == null) {
                 return;
             }
@@ -144,19 +149,22 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
             String title = movie.getTitle();
             String averageVote = String.valueOf(movie.getVote());
             String voteCount = movie.getVoteCount();
-            String releaseDate = movie.getDate();
+            String cinemaReleaseDate = "Cinema release: " + movie.getCinemaReleaseDate();
+            String digitalReleaseDate = "Digital release: " + movie.getDigitalReleaseDate();
+            String physicalReleaseDate = "Physical release: " + movie.getPhysicalReleaseDate();
             String overview = movie.getOverview();
             final String imdbUrl = movie.getImdbUrl();
 
-            String cinemaReleaseDate = "Released in cinema: " + releaseDate;
-
+            setTitle(title);
             Picasso.with(this)
                     .load(imageUrl)
                     .into(imageView);
             titleTextView.setText(title);
             averageVoteTextView.setText(averageVote);
             voteCountTextView.setText(voteCount);
-            releaseDateTextView.setText(cinemaReleaseDate);
+            cinemaReleaseDateTextView.setText(cinemaReleaseDate);
+            digitalReleaseDateTextView.setText(digitalReleaseDate);
+            physicalReleaseDateTextView.setText(physicalReleaseDate);
             overviewTextView.setText(overview);
 
             imdbButton.setOnClickListener(new View.OnClickListener() {
@@ -210,21 +218,26 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
 
             final ToggleButton watchedNotWatchedButton = findViewById(R.id.watched_not_watched_movie);
             watchedNotWatchedButton.setChecked(isWatched);
-            watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    if (isChecked) {
-                        if (inUserCollection) {
-                            setMovieWatched(movie, movieId, 1);
+            long todayInMilliseconds = System.currentTimeMillis();
+            if (movie.getCinemaReleaseDateInMilliseconds() > todayInMilliseconds) {
+                watchedNotWatchedButton.setEnabled(false);
+            } else {
+                watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if (isChecked) {
+                            if (inUserCollection) {
+                                setMovieWatched(movie, movieId, 1);
+                            } else {
+                                movie.setWatched(true);
+                                addRemoveMovieButton.toggle();
+                            }
                         } else {
-                            movie.setWatched(true);
-                            addRemoveMovieButton.toggle();
+                            setMovieWatched(movie, movieId, 0);
                         }
-                    } else {
-                        setMovieWatched(movie, movieId, 0);
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -243,7 +256,9 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getCinemaReleaseDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS, movie.getDigitalReleaseDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS, movie.getPhysicalReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
         values.put(MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
         values.put(MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
@@ -264,7 +279,9 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS, movie.getDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getCinemaReleaseDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS, movie.getDigitalReleaseDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS, movie.getPhysicalReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
         values.put(MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
         values.put(MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());

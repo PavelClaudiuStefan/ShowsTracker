@@ -88,7 +88,7 @@
                 tools:text="Title" />
 
             <TextView
-                android:id="@+id/release_date"
+                android:id="@+id/cinema_release_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
@@ -96,13 +96,35 @@
                 android:layout_alignStart="@id/movie_title"
                 android:textSize="16sp"
                 android:textColor="@color/colorMovieDetails"
-                tools:text="04 Apr 1996" />
+                tools:text="Cinema release: 04 Apr 1996" />
+
+            <TextView
+                android:id="@+id/digital_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/cinema_release_date"
+                android:layout_alignStart="@id/movie_title"
+                android:textSize="16sp"
+                android:textColor="@color/colorMovieDetails"
+                tools:text="Digital release: 04 Apr 1996" />
+
+            <TextView
+                android:id="@+id/physical_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/digital_release_date"
+                android:layout_alignStart="@id/movie_title"
+                android:textSize="16sp"
+                android:textColor="@color/colorMovieDetails"
+                tools:text="Physical release: 04 Apr 1996" />
 
             <TextView
                 android:id="@+id/average_vote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/release_date"
+                android:layout_below="@id/physical_release_date"
                 android:layout_alignStart="@id/movie_title"
                 android:padding="2dp"
                 android:textSize="16sp"
@@ -114,7 +136,7 @@
                 android:id="@+id/vote_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/release_date"
+                android:layout_below="@id/physical_release_date"
                 android:layout_toEndOf="@id/average_vote"
                 android:layout_marginStart="16dp"
                 android:padding="2dp"

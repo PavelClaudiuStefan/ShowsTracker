@@ -11,13 +11,23 @@
     <string name="settings_to_watch_filter" translatable="false">to_watch_filter</string>
     <string name="settings_to_watch_filter_default" translatable="false">released_cinema</string>
 
+    <!-- Filter options in the "Collection tab -->
+    <string name="settings_collection_filter" translatable="false">collection_filter</string>
+    <string name="settings_collection_filter_default" translatable="false">all</string>
+
     <!-- Sorting options in the "To watch" tab -->
     <string name="settings_to_watch_sort" translatable="false">to_watch_sort</string>
-    <string name="settings_to_watch_sort_default" translatable="false">release_date</string>
+
+    <!-- Sorting options in the "Collection" tab -->
+    <string name="settings_collection_sort" translatable="false">collection_sort</string>
 
     <!-- Sorting direction options in the "To watch" tab -->
     <string name="settings_to_watch_sort_direction" translatable="false">to_watch_sort_direction</string>
     <string name="settings_to_watch_sort_direction_default" translatable="false">ASC</string>
+
+    <!-- Sorting direction options in the "Collection" tab -->
+    <string name="settings_collection_sort_direction" translatable="false">collection_sort_direction</string>
+    <string name="settings_collection_sort_direction_default" translatable="false">ASC</string>
 
     <string name="settings_discover_show_watched" translatable="false">show_watched_option</string>
 
@@ -43,8 +53,9 @@
     <string name="sort_by_rating">Sort by rating</string>
     <string name="popular_movies">Popular movies</string>
     <string name="recommended_movies">Recommended movies</string>
-    <string name="released_on_dvd">Released on dvd</string>
-    <string name="released_in_cinema">Released in cinema</string>
+    <string name="cinema_released">Cinema release</string>
+    <string name="digital_released">Digital release</string>
+    <string name="physical_released">Physical release</string>
     <string name="sorting_options">Sorting options</string>
     <string name="show_all">Show all</string>
     <string name="not_released">Not released</string>

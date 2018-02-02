@@ -13,7 +13,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +110,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 MovieEntry.TMDB_ID,
                 MovieEntry.COLUMN_MOVIE_TITLE,
                 MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS,
                 MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL,};
 
         // This loader will execute the ContentProvider's query method on a background thread

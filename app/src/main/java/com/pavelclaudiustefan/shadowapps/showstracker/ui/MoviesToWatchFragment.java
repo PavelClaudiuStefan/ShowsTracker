@@ -37,16 +37,18 @@ public class MoviesToWatchFragment extends MoviesFragment {
                 getString(R.string.settings_to_watch_filter),
                 getString(R.string.settings_to_watch_filter_default)
         );
-
         switch (currentFilterOption) {
             case "released_cinema":
                 displayMoviesReleasedInCinema();
                 break;
-            case "released_dvd":
-                displayMoviesReleasedOnDvd();
+            case "released_digital":
+                displayDigitalMoviesReleased();
+                break;
+            case "released_physical":
+                displayPhysicalMoviesReleased();
                 break;
             default:
-                Log.e("MoviesToWatchFragment", "Filtering error");
+                Log.e("MoviesToWatchFragment", "Filtering - displaying movies error");
                 break;
         }
 
@@ -71,7 +73,7 @@ public class MoviesToWatchFragment extends MoviesFragment {
         );
         String currentSortOption = sharedPrefs.getString(
                 getString(R.string.settings_to_watch_sort),
-                getString(R.string.settings_to_watch_sort_default)
+                MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS
         );
 
         String currentSortDirectionOption = sharedPrefs.getString(
@@ -85,18 +87,22 @@ public class MoviesToWatchFragment extends MoviesFragment {
                 MenuItem cinemaItem = menu.findItem(R.id.menu_show_cinema);
                 cinemaItem.setEnabled(false);
                 break;
-            case "released_dvd":
-                MenuItem dvdItem = menu.findItem(R.id.menu_show_dvd);
-                dvdItem.setEnabled(false);
+            case "released_digital":
+                MenuItem digitalItem = menu.findItem(R.id.menu_show_digital);
+                digitalItem.setEnabled(false);
+                break;
+            case "released_physical":
+                MenuItem physicalItem = menu.findItem(R.id.menu_show_physical);
+                physicalItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesToWatchFragment", "Filtering error");
+                Log.e("MoviesToWatchFragment", "Filtering - setting menu error");
                 break;
         }
 
         // Set active option invisible
         switch (currentSortOption) {
-            case "release_date":
+            case MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS:
                 MenuItem dateItem = menu.findItem(R.id.menu_sort_by_date);
                 dateItem.setEnabled(false);
                 break;
@@ -129,14 +135,17 @@ public class MoviesToWatchFragment extends MoviesFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_show_dvd:
-                saveSettingFilterDvd();
-                break;
             case R.id.menu_show_cinema:
                 saveSettingFilterCinema();
                 break;
+            case R.id.menu_show_digital:
+                saveSettingFilterDigital();
+                break;
+            case R.id.menu_show_physical:
+                saveSettingFilterPhysical();
+                break;
             case R.id.menu_sort_by_date:
-                saveSettingSortBy(MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS);
+                saveSettingSortBy(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
                 break;
             case R.id.menu_sort_by_rating:
                 saveSettingSortBy(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
@@ -155,10 +164,10 @@ public class MoviesToWatchFragment extends MoviesFragment {
         return true;
     }
 
-    private void displayMoviesReleasedOnDvd() {
+    private void displayMoviesReleasedInCinema() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
         String selection = MovieEntry.COLUMN_MOVIE_WATCHED + "=? AND " +
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS + ">?";
+                MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + "<?";
 
         long todayInMilliseconds = System.currentTimeMillis();
         String[] selectionArgs = {"0", String.valueOf(todayInMilliseconds)};
@@ -167,10 +176,22 @@ public class MoviesToWatchFragment extends MoviesFragment {
         setSelectionArgs(selectionArgs);
     }
 
-    private void displayMoviesReleasedInCinema() {
+    private void displayDigitalMoviesReleased() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
         String selection = MovieEntry.COLUMN_MOVIE_WATCHED + "=? AND " +
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS + "<?";
+                MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS + "<?";
+
+        long todayInMilliseconds = System.currentTimeMillis();
+        String[] selectionArgs = {"0", String.valueOf(todayInMilliseconds)};
+
+        setSelection(selection);
+        setSelectionArgs(selectionArgs);
+    }
+
+    private void displayPhysicalMoviesReleased() {
+        // Show movies that have not been watched, released on dvd, in cinema, or not released
+        String selection = MovieEntry.COLUMN_MOVIE_WATCHED + "=? AND " +
+                MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS + "<?";
 
         long todayInMilliseconds = System.currentTimeMillis();
         String[] selectionArgs = {"0", String.valueOf(todayInMilliseconds)};
@@ -184,7 +205,7 @@ public class MoviesToWatchFragment extends MoviesFragment {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy = sharedPrefs.getString(
                 getString(R.string.settings_to_watch_sort),
-                getString(R.string.settings_to_watch_sort_default)
+                MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS
         );
 
         String sortDirection = sharedPrefs.getString(
@@ -193,15 +214,14 @@ public class MoviesToWatchFragment extends MoviesFragment {
         );
 
         String sortOrder = sortBy + " " + sortDirection;
-
         setSortOrder(sortOrder);
     }
 
-    // Save in SharedPreferences: show movies released on dvd
-    private void saveSettingFilterDvd() {
+    // Save in SharedPreferences: show digital movies released
+    private void saveSettingFilterDigital() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_to_watch_filter), "released_dvd");
+        editor.putString(getString(R.string.settings_to_watch_filter), "released_digital");
         editor.apply();
     }
 
@@ -210,6 +230,14 @@ public class MoviesToWatchFragment extends MoviesFragment {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
         editor.putString(getString(R.string.settings_to_watch_filter), "released_cinema");
+        editor.apply();
+    }
+
+    // Save in SharedPreferences: show digital movies released
+    private void saveSettingFilterPhysical() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString(getString(R.string.settings_to_watch_filter), "released_physical");
         editor.apply();
     }
 

@@ -6,7 +6,7 @@ public class MoviesNotAiredFragment extends MoviesFragment {
 
     public MoviesNotAiredFragment() {
 
-        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE_IN_MILLISECONDS + ">=?";
+        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + ">=?";
         setSelection(selection);
 
         long todayInMilliseconds = System.currentTimeMillis();

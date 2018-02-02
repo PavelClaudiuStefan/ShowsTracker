@@ -194,9 +194,38 @@ public final class QueryUtils {
             String overview = movieJsonData.getString("overview");
 
             Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
-            long dateInMillseconds = date.getTime();
+            long cinemaDateInMillseconds = date.getTime();
 
-            movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl, imdbUrl, voteCount, overview);
+            long digitalReleaseDateInMilliseconds = Long.MAX_VALUE;
+            long physicalReleaseDateInMilliseconds = Long.MAX_VALUE;
+
+            JSONObject releaseDatesObject = movieJsonData.getJSONObject("release_dates");
+            JSONArray releaseDatesArray = releaseDatesObject.getJSONArray("results");
+            for (int j = 0; j < releaseDatesArray.length(); j++) {
+                JSONObject areaReleaseDates = releaseDatesArray.getJSONObject(j);
+                JSONArray typeReleaseDates = areaReleaseDates.getJSONArray("release_dates");
+                for (int t = 0; t < typeReleaseDates.length(); t++) {
+                    JSONObject typeReleaseDate = typeReleaseDates.getJSONObject(t);
+                    int type = typeReleaseDate.getInt("type");
+
+                    if (type == 4) {
+                        String digitalDateString =typeReleaseDate.getString("release_date").substring(0, 10);
+                        Date digitalDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(digitalDateString);
+                        long tempDigitalDateInMillseconds = digitalDate.getTime();
+                        if (digitalReleaseDateInMilliseconds > tempDigitalDateInMillseconds)
+                            digitalReleaseDateInMilliseconds = tempDigitalDateInMillseconds;
+                    }
+                    else if (type == 5) {
+                        String physicalDateString =typeReleaseDate.getString("release_date").substring(0, 10);
+                        Date physicalDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(physicalDateString);
+                        long tempPhysicalDateInMillseconds = physicalDate.getTime();
+                        if (physicalReleaseDateInMilliseconds > tempPhysicalDateInMillseconds)
+                            physicalReleaseDateInMilliseconds = tempPhysicalDateInMillseconds;
+                    }
+                }
+            }
+            movie = new Movie(tmdbId, title, voteAverage, cinemaDateInMillseconds, digitalReleaseDateInMilliseconds,
+                    physicalReleaseDateInMilliseconds, imageUrl, imdbUrl, voteCount, overview);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing json results", e);
