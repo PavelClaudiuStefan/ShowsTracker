@@ -65,4 +65,10 @@
     <string name="top_rated">Top rated</string>
     <string name="show_collection_movies">Show added movies</string>
     <string name="hide_collection_movies">Hide added movies</string>
+    <string name="title_activity_shows">ShowsActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

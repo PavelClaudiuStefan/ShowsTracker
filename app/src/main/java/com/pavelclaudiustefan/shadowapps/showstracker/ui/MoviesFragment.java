@@ -82,7 +82,8 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
             searchFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+//                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    Intent intent = new Intent(getActivity(), ShowsActivity.class);
                     startActivity(intent);
                 }
             });
