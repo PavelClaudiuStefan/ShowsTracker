@@ -83,7 +83,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 @Override
                 public void onClick(View view) {
 //                    Intent intent = new Intent(getActivity(), SearchActivity.class);
-                    Intent intent = new Intent(getActivity(), ShowsActivity.class);
+                    Intent intent = new Intent(getActivity(), CategoryContainerActivity.class);
                     startActivity(intent);
                 }
             });
