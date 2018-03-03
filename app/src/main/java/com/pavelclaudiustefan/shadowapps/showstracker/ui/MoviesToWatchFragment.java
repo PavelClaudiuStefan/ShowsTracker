@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.MovieEntry;
 
 public class MoviesToWatchFragment extends MoviesFragment {
 

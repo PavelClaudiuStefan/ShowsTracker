@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract;
 
 public class MoviesAllFragment extends MoviesFragment {
 
@@ -74,7 +74,7 @@ public class MoviesAllFragment extends MoviesFragment {
         );
         String currentSortOption = sharedPrefs.getString(
                 getString(R.string.settings_collection_sort),
-                MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS
+                VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS
         );
 
         String currentSortDirectionOption = sharedPrefs.getString(
@@ -111,7 +111,7 @@ public class MoviesAllFragment extends MoviesFragment {
 
         // Set active option invisible
         switch (currentSortOption) {
-            case MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS:
+            case VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS:
                 MenuItem dateItem = menu.findItem(R.id.menu_sort_by_date);
                 dateItem.setEnabled(false);
                 break;
@@ -160,10 +160,10 @@ public class MoviesAllFragment extends MoviesFragment {
                 saveSettingFilterNotReleased();
                 break;
             case R.id.menu_sort_by_date:
-                saveSettingSortBy(MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
+                saveSettingSortBy(VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
                 break;
             case R.id.menu_sort_by_rating:
-                saveSettingSortBy(MovieContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
+                saveSettingSortBy(VideoItemContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
                 break;
             case R.id.menu_sort_asc:
                 saveSettingSortDirection("ASC");
@@ -186,7 +186,7 @@ public class MoviesAllFragment extends MoviesFragment {
 
     private void displayMoviesReleasedInCinema() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
-        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + "<?";
+        String selection = VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + "<?";
 
         long todayInMilliseconds = System.currentTimeMillis();
         String[] selectionArgs = {String.valueOf(todayInMilliseconds)};
@@ -197,7 +197,7 @@ public class MoviesAllFragment extends MoviesFragment {
 
     private void displayDigitalMoviesReleased() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
-        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS + "<?";
+        String selection = VideoItemContract.MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS + "<?";
 
         long todayInMilliseconds = System.currentTimeMillis();
         String[] selectionArgs = {String.valueOf(todayInMilliseconds)};
@@ -208,7 +208,7 @@ public class MoviesAllFragment extends MoviesFragment {
 
     private void displayPhysicalMoviesReleased() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
-        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS + "<?";
+        String selection = VideoItemContract.MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS + "<?";
 
         long todayInMilliseconds = System.currentTimeMillis();
         String[] selectionArgs = {String.valueOf(todayInMilliseconds)};
@@ -219,7 +219,7 @@ public class MoviesAllFragment extends MoviesFragment {
 
     private void displayMoviesNotReleased() {
         // Show movies that have not been watched, released on dvd, in cinema, or not released
-        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + ">?";
+        String selection = VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + ">?";
 
         long todayInMilliseconds = System.currentTimeMillis();
         String[] selectionArgs = {String.valueOf(todayInMilliseconds)};
@@ -233,7 +233,7 @@ public class MoviesAllFragment extends MoviesFragment {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sortBy = sharedPrefs.getString(
                 getString(R.string.settings_collection_sort),
-                MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS
+                VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS
         );
 
         String sortDirection = sharedPrefs.getString(

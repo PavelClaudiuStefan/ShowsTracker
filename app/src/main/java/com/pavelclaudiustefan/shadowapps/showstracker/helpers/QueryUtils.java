@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
  *  Helper methods used to query data from The Movie Database (TMDb)
  */
@@ -34,7 +33,7 @@ public final class QueryUtils {
 
     private final static String LOG_TAG = "QueryUtils";
 
-    public static List<Movie> fetchMoviesData(String stringUrl) {
+    public static List<VideoMainItem> fetchMoviesData(String stringUrl) {
         URL url = createUrl(stringUrl);
 
         String jsonResponse = null;
@@ -48,6 +47,19 @@ public final class QueryUtils {
     }
 
     public static Movie fetchMovieData(String stringUrl) {
+        URL url = QueryUtils.createUrl(stringUrl);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = QueryUtils.makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return QueryUtils.extractMovieDataFromJson(jsonResponse);
+    }
+
+    public static List<VideoMainItem> fetchShowsData(String stringUrl) {
         URL url = createUrl(stringUrl);
 
         String jsonResponse = null;
@@ -57,7 +69,20 @@ public final class QueryUtils {
             e.printStackTrace();
         }
 
-        return extractMovieDataFromJson(jsonResponse);
+        return extractShowsFromJson(jsonResponse);
+    }
+
+    public static Show fetchShowData(String stringUrl) {
+        URL url = createUrl(stringUrl);
+
+        String jsonResponse = null;
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return extractShowDataFromJson(jsonResponse);
     }
 
     public static List<VideoMainItem> fetchRecommendedMoviesData(ArrayList<Integer> tmdbIds) {
@@ -133,12 +158,68 @@ public final class QueryUtils {
         return output.toString();
     }
 
-    private static List<Movie> extractMoviesFromJson(String moviesJSON) {
+    private static ArrayList<URL> createUrls(ArrayList<Integer> tmdbIds) {
+        ArrayList<URL> urls = new ArrayList<>();
+        for (Integer tmdbId:tmdbIds) {
+            try {
+                String tmdbUrl = "https://api.themoviedb.org/3/movie/" + tmdbId + "/recommendations";
+                Uri baseUri = Uri.parse(tmdbUrl);
+                Uri.Builder uriBuilder = baseUri.buildUpon();
+                uriBuilder.appendQueryParameter("api_key", "e0ff28973a330d2640142476f896da04");
+
+                URL url = new URL(uriBuilder.toString());
+                urls.add(url);
+            } catch (MalformedURLException e) {
+                Log.e(LOG_TAG, "Error while building url", e);
+            }
+        }
+        return urls;
+    }
+
+    private static ArrayList<String> makeHttpRequests(ArrayList<URL> urls) throws IOException {
+        ArrayList<String> jsonResponses = new ArrayList<>();
+
+        if (urls.isEmpty()) {
+            return jsonResponses;
+        }
+
+        for (URL url:urls) {
+            HttpURLConnection urlConnection = null;
+            InputStream inputStream = null;
+            try {
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setReadTimeout(10000 /* milliseconds */);
+                urlConnection.setConnectTimeout(15000 /* milliseconds */);
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                if (urlConnection.getResponseCode() == 200) {
+                    inputStream = urlConnection.getInputStream();
+                    jsonResponses.add(readFromStream(inputStream));
+                } else {
+                    Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
+                }
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error", e);
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+        }
+        return jsonResponses;
+    }
+
+    private static List<VideoMainItem> extractMoviesFromJson(String moviesJSON) {
         if (TextUtils.isEmpty(moviesJSON)) {
             return null;
         }
 
-        List<Movie> movies = new ArrayList<>();
+        List<VideoMainItem> movies = new ArrayList<>();
 
         try {
             JSONObject baseJsonResponse = new JSONObject(moviesJSON);
@@ -240,60 +321,79 @@ public final class QueryUtils {
         return movie;
     }
 
-    private static ArrayList<URL> createUrls(ArrayList<Integer> tmdbIds) {
-        ArrayList<URL> urls = new ArrayList<>();
-        for (Integer tmdbId:tmdbIds) {
-            try {
-                String tmdbUrl = "https://api.themoviedb.org/3/movie/" + tmdbId + "/recommendations";
-                Uri baseUri = Uri.parse(tmdbUrl);
-                Uri.Builder uriBuilder = baseUri.buildUpon();
-                uriBuilder.appendQueryParameter("api_key", "e0ff28973a330d2640142476f896da04");
-
-                URL url = new URL(uriBuilder.toString());
-                urls.add(url);
-            } catch (MalformedURLException e) {
-                Log.e(LOG_TAG, "Error while building url", e);
-            }
+    private static List<VideoMainItem> extractShowsFromJson(String showsJSON) {
+        if (TextUtils.isEmpty(showsJSON)) {
+            return null;
         }
-        return urls;
+
+        List<VideoMainItem> shows = new ArrayList<>();
+
+        try {
+            JSONObject baseJsonResponse = new JSONObject(showsJSON);
+            int totalPages = baseJsonResponse.getInt("total_pages");
+            JSONArray showsArray = baseJsonResponse.getJSONArray("results");
+
+            for (int i = 0; i < showsArray.length(); i++) {
+                JSONObject currentShow = showsArray.getJSONObject(i);
+
+                int tmdbId = currentShow.getInt("id");
+                String title = currentShow.getString("name");
+                double voteAverage = currentShow.getDouble("vote_average");
+                String releaseDate = currentShow.getString("first_air_date");
+                String imageUrl = currentShow.getString("backdrop_path");
+
+                Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
+                long dateInMillseconds = date.getTime();
+
+                Show show = new Show(tmdbId, title, voteAverage, dateInMillseconds, imageUrl);
+
+                if (i == 0)
+                    show.setTotalPages(totalPages);
+
+                shows.add(show);
+            }
+
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "extractShowsFromJson - Problem parsing json results", e);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return shows;
     }
 
-    private static ArrayList<String> makeHttpRequests(ArrayList<URL> urls) throws IOException {
-        ArrayList<String> jsonResponses = new ArrayList<>();
-
-        if (urls.isEmpty()) {
-            return jsonResponses;
+    private static Show extractShowDataFromJson(String showJSON) {
+        if (TextUtils.isEmpty(showJSON)) {
+            return null;
         }
 
-        for (URL url:urls) {
-            HttpURLConnection urlConnection = null;
-            InputStream inputStream = null;
-            try {
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setReadTimeout(10000 /* milliseconds */);
-                urlConnection.setConnectTimeout(15000 /* milliseconds */);
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
+        Show show = null;
 
-                if (urlConnection.getResponseCode() == 200) {
-                    inputStream = urlConnection.getInputStream();
-                    jsonResponses.add(readFromStream(inputStream));
-                } else {
-                    Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
-                }
+        try {
+            JSONObject showJsonData = new JSONObject(showJSON);
 
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error", e);
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            }
+            int tmdbId = showJsonData.getInt("id");
+            String title = showJsonData.getString("name");
+            double voteAverage = showJsonData.getDouble("vote_average");
+            String releaseDate = showJsonData.getString("first_air_date");
+            String imageUrl = showJsonData.getString("backdrop_path");
+            int voteCount = showJsonData.getInt("vote_count");
+            String overview = showJsonData.getString("overview");
+
+            Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
+            long releaseDateInMillseconds = date.getTime();
+
+            show = new Show(tmdbId, title, voteAverage, releaseDateInMillseconds, imageUrl);
+            show.setVoteCount(voteCount);
+            show.setOverview(overview);
+
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "extractShowDataFromJson - Problem parsing json results", e);
+        } catch (ParseException e) {
+            Log.e("LOG_TAG", "extractShowDataFromJson - stuff happened");
         }
-        return jsonResponses;
+
+        return show;
     }
 
     private static List<VideoMainItem> extractRecommendedMoviesFromJson(ArrayList<String> jsonResponses) {

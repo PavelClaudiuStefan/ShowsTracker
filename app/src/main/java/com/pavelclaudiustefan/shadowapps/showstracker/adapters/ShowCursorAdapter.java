@@ -9,14 +9,14 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.MovieEntry;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.ShowEntry;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Show;
 import com.squareup.picasso.Picasso;
 
-public class MovieCursorAdapter extends CursorAdapter {
+public class ShowCursorAdapter extends CursorAdapter {
 
-    public MovieCursorAdapter(Context context, Cursor c) {
+    public ShowCursorAdapter(Context context, Cursor c) {
         super(context, c, 0 /* flags */);
     }
 
@@ -33,11 +33,11 @@ public class MovieCursorAdapter extends CursorAdapter {
         TextView dateTextView = view.findViewById(R.id.date);
         ImageView thumbnailView = view.findViewById(R.id.thumbnail);
 
-        int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
-        int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
-        int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
-        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
-        int thumbnailUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        int tmdbIdColumnIndex = cursor.getColumnIndex(ShowEntry.TMDB_ID);
+        int titleColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_TITLE);
+        int averageVoteColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_AVERAGE_VOTE);
+        int dateColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_RELEASE_DATE_IN_MILLISECONDS);
+        int thumbnailUrlColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
 
         int tmdbId = cursor.getInt(tmdbIdColumnIndex);
         String movieName = cursor.getString(titleColumnIndex);
@@ -45,14 +45,14 @@ public class MovieCursorAdapter extends CursorAdapter {
         long movieReleaseDateInMilliseconds = cursor.getLong(dateColumnIndex);
         String thumbnailUrl = cursor.getString(thumbnailUrlColumnIndex);
 
-        Movie movie = new Movie(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, thumbnailUrl);
+        Show show = new Show(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, thumbnailUrl);
 
-        // Update the TextViews with the attributes for the current movie
-        titleTextView.setText(movie.getTitle());
-        averageVoteTextView.setText(String.valueOf(movie.getVote()));
-        dateTextView.setText(movie.getReleaseDate());
+        // Update the TextViews with the attributes for the current show
+        titleTextView.setText(show.getTitle());
+        averageVoteTextView.setText(String.valueOf(show.getVote()));
+        dateTextView.setText(show.getReleaseDate());
 
-        // Load movie image (landscape)
+        // Load show image (landscape)
         Picasso.with(context)
                 .load(thumbnailUrl)
                 .into(thumbnailView);

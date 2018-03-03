@@ -1,12 +1,12 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract;
 
 public class MoviesNotAiredFragment extends MoviesFragment {
 
     public MoviesNotAiredFragment() {
 
-        String selection = MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + ">=?";
+        String selection = VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS + ">=?";
         setSelection(selection);
 
         long todayInMilliseconds = System.currentTimeMillis();

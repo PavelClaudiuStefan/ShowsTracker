@@ -6,30 +6,30 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.DiscoverListFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.ShowsDiscoverFragment;
 
 import java.util.ArrayList;
 
-public class TmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ShowTmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private DiscoverListFragment dlf;
+    private ShowsDiscoverFragment showsDiscoverFragment;
 
-    public TmdbIdsLoader(DiscoverListFragment dlf) {
-        this.dlf = dlf;
-        dlf.getLoaderManager().initLoader(0, null, this);
+    public ShowTmdbIdsLoader(ShowsDiscoverFragment showsDiscoverFragment) {
+        this.showsDiscoverFragment = showsDiscoverFragment;
+        showsDiscoverFragment.getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
-                MovieContract.MovieEntry._ID,
-                MovieContract.MovieEntry.TMDB_ID};
+                VideoItemContract.MovieEntry._ID,
+                VideoItemContract.MovieEntry.TMDB_ID};
 
-        if (dlf.getContext() != null) {
-            return new CursorLoader(dlf.getContext(),
-                    MovieContract.MovieEntry.CONTENT_URI,
+        if (showsDiscoverFragment.getContext() != null) {
+            return new CursorLoader(showsDiscoverFragment.getContext(),
+                    VideoItemContract.MovieEntry.CONTENT_URI,
                     projection,
                     null,
                     null,
@@ -42,13 +42,13 @@ public class TmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         ArrayList<Integer> tmdbIds = new ArrayList<>();
         while (cursor.moveToNext()) {
-            int tmdbIdColumnIndex = cursor.getColumnIndex(MovieContract.MovieEntry.TMDB_ID);
+            int tmdbIdColumnIndex = cursor.getColumnIndex(VideoItemContract.MovieEntry.TMDB_ID);
             int tmdbId = cursor.getInt(tmdbIdColumnIndex);
             tmdbIds.add(tmdbId);
         }
 
-        dlf.setTmdbIds(tmdbIds);
-        dlf.startLoader();
+        showsDiscoverFragment.setTmdbIds(tmdbIds);
+        showsDiscoverFragment.startLoader();
     }
 
     @Override

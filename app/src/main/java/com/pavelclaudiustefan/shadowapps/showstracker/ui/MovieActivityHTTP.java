@@ -22,7 +22,7 @@ import android.widget.ToggleButton;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieDataLoader;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
 public class MovieActivityHTTP extends AppCompatActivity implements LoaderManager.LoaderCallbacks{
@@ -67,7 +67,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         titleTextView = findViewById(R.id.title);
         averageVoteTextView = findViewById(R.id.average_vote);
         voteCountTextView = findViewById(R.id.vote_count);
-        cinemaReleaseDateTextView = findViewById(R.id.cinema_release_date);
+        cinemaReleaseDateTextView = findViewById(R.id.release_date);
         digitalReleaseDateTextView = findViewById(R.id.digital_release_date);
         physicalReleaseDateTextView = findViewById(R.id.physical_release_date);
         overviewTextView = findViewById(R.id.overview);

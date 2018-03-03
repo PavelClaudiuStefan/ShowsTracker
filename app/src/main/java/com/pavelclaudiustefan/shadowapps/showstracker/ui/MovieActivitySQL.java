@@ -18,8 +18,8 @@ import android.widget.ToggleButton;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract;
-import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract.MovieEntry;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
 public class MovieActivitySQL extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -60,7 +60,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
         titleTextView = findViewById(R.id.title);
         averageVoteTextView = findViewById(R.id.average_vote);
         voteCountTextView = findViewById(R.id.vote_count);
-        cinemaReleaseDateTextView = findViewById(R.id.cinema_release_date);
+        cinemaReleaseDateTextView = findViewById(R.id.release_date);
         digitalReleaseDateTextView = findViewById(R.id.digital_release_date);
         physicalReleaseDateTextView = findViewById(R.id.physical_release_date);
         overviewTextView = findViewById(R.id.overview);
@@ -221,39 +221,39 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
 
     private void insertMovie(Movie movie) {
         ContentValues values = new ContentValues();
-        values.put(MovieContract.MovieEntry.TMDB_ID, movie.getTmdbId());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedAsIntValue());
+        values.put(VideoItemContract.MovieEntry.TMDB_ID, movie.getTmdbId());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedAsIntValue());
 
-        getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
+        getContentResolver().insert(VideoItemContract.MovieEntry.CONTENT_URI, values);
     }
 
     private void removeMovie(String movieId) {
-        getContentResolver().delete(Uri.withAppendedPath(MovieContract.MovieEntry.CONTENT_URI, movieId), null, null);
+        getContentResolver().delete(Uri.withAppendedPath(VideoItemContract.MovieEntry.CONTENT_URI, movieId), null, null);
     }
 
     private void setMovieWatched(Movie movie, String movieId, int isWatchedAsInt){
         ContentValues values = new ContentValues();
-        values.put(MovieContract.MovieEntry.TMDB_ID, movie.getTmdbId());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-        values.put(MovieContract.MovieEntry.COLUMN_MOVIE_WATCHED, isWatchedAsInt);
+        values.put(VideoItemContract.MovieEntry.TMDB_ID, movie.getTmdbId());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
+        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_WATCHED, isWatchedAsInt);
 
-        getContentResolver().update(Uri.withAppendedPath(MovieContract.MovieEntry.CONTENT_URI, movieId), values, null, null);
+        getContentResolver().update(Uri.withAppendedPath(VideoItemContract.MovieEntry.CONTENT_URI, movieId), values, null, null);
     }
 }

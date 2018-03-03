@@ -32,12 +32,10 @@
         <activity android:name=".ui.MovieActivityHTTP" />
         <activity android:name=".ui.SearchActivity" />
 
-        <activity
-            android:name=".ui.VideoSectionsContainerActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.ShowActivityHTTP" />
 
         <provider
-            android:name=".data.MovieProvider"
+            android:name=".data.VideoItemProvider"
             android:authorities="com.pavelclaudiustefan.shadowapps.showstracker"
             android:exported="false" />
 

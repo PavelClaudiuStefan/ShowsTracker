@@ -29,10 +29,14 @@
     <string name="settings_collection_sort_direction" translatable="false">collection_sort_direction</string>
     <string name="settings_collection_sort_direction_default" translatable="false">ASC</string>
 
-    <string name="settings_discover_show_watched" translatable="false">show_watched_option</string>
+    <string name="settings_discover_movies_show_watched" translatable="false">show_watched_movies_option</string>
+    <string name="settings_discover_shows_show_watched" translatable="false">show_watched_shows_option</string>
 
-    <string name="settings_discover_option" translatable="false">discover_option</string>
-    <string name="settings_discover_option_default" translatable="false">popular_option</string>
+    <string name="settings_discover_movies_option" translatable="false">discover_movies_option</string>
+    <string name="settings_discover_movies_option_default" translatable="false">popular_option</string>
+
+    <string name="settings_discover_shows_option" translatable="false">discover_shows_option</string>
+    <string name="settings_discover_shows_option_default" translatable="false">popular_option</string>
 
     <string name="category_movies_to_watch">To watch</string>
     <string name="category_movies_not_aired">Not aired</string>
@@ -42,6 +46,7 @@
     <string name="no_movie_data">No movie data</string>
     <string name="imdb">IMDb</string>
     <string name="movie_image_description">Movie image</string>
+    <string name="show_image_description">TV show image</string>
     <string name="overview_title">Overview:</string>
     <string name="add_movie">Add movie</string>
     <string name="remove_movie">Remove movie</string>
@@ -65,10 +70,19 @@
     <string name="top_rated">Top rated</string>
     <string name="show_collection_movies">Show added movies</string>
     <string name="hide_collection_movies">Hide added movies</string>
+    <string name="show_collection_shows">Show added shows</string>
+    <string name="hide_collection_shows">Hide added shows</string>
     <string name="title_activity_shows">ShowsActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="no_shows">No shows found</string>
+    <string name="category_shows_to_watch">To watch</string>
+    <string name="category_shows_upcoming">Upcoming</string>
+    <string name="category_shows_all">Collection</string>
+    <string name="category_shows_discover">Discover</string>
+    <string name="add_show">Add show</string>
+    <string name="remove_show">Remove show</string>
 </resources>

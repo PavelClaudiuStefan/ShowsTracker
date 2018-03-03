@@ -1,18 +1,18 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.loaders;
 
+import android.content.AsyncTaskLoader;
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+import android.support.annotation.Nullable;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Show;
 
-import java.util.List;
 
-public class ShowsListLoader extends AsyncTaskLoader<List<VideoMainItem>> {
+public class ShowDataLoader extends AsyncTaskLoader<Show> {
 
     private String url;
 
-    public ShowsListLoader(Context context, String url) {
+    public ShowDataLoader(Context context, String url) {
         super(context);
         this.url = url;
     }
@@ -22,13 +22,13 @@ public class ShowsListLoader extends AsyncTaskLoader<List<VideoMainItem>> {
         forceLoad();
     }
 
+    @Nullable
     @Override
-    public List<VideoMainItem> loadInBackground() {
+    public Show loadInBackground() {
         if (url == null) {
             return null;
         }
 
-        return new QueryUtils().fetchShowsData(url);
+        return QueryUtils.fetchShowData(url);
     }
-
 }
