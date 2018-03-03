@@ -9,17 +9,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class MovieAdapter extends ArrayAdapter<Movie> {
+public class VideoMainItemListAdapter extends ArrayAdapter<VideoMainItem> {
 
-    public MovieAdapter(Context context, ArrayList<Movie> movies) {
-        super(context, 0, movies);
+    public VideoMainItemListAdapter(Context context, ArrayList<VideoMainItem> items) {
+        super(context, 0, items);
     }
 
     @NonNull
@@ -28,23 +28,24 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
         View listItemView = convertView;
         if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.movies_list_item, parent, false);
+                    R.layout.category_list_item, parent, false);
         }
 
-        Movie currentMovie = getItem(position);
+        VideoMainItem currentItem = getItem(position);
 
-        TextView titleView = listItemView.findViewById(R.id.movie_title);
-        titleView.setText(currentMovie.getTitle());
+        TextView titleView = listItemView.findViewById(R.id.title);
+        assert currentItem != null;
+        titleView.setText(currentItem.getTitle());
 
         TextView averageVoteView = listItemView.findViewById(R.id.average_vote);
-        averageVoteView.setText(formatVote(currentMovie.getVote()));
+        averageVoteView.setText(formatVote(currentItem.getVote()));
 
         TextView dateView = listItemView.findViewById(R.id.date);
-        dateView.setText(currentMovie.getCinemaReleaseDate());
+        dateView.setText(currentItem.getReleaseDate());
 
-        ImageView imageView = listItemView.findViewById(R.id.movie_image);
+        ImageView imageView = listItemView.findViewById(R.id.thumbnail);
         Picasso.with(getContext())
-                .load(currentMovie.getThumbnailUrl())
+                .load(currentItem.getThumbnailUrl())
                 .into(imageView);
 
         return listItemView;
@@ -56,7 +57,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     }
 
     @Override
-    public void addAll(Movie... items) {
+    public void addAll(VideoMainItem... items) {
         super.addAll(items);
     }
 }

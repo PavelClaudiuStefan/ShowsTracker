@@ -6,19 +6,18 @@ import android.support.v4.content.Loader;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
-import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
-import com.pavelclaudiustefan.shadowapps.showstracker.loaders.RecommendedMoviesListLoader;
+import com.pavelclaudiustefan.shadowapps.showstracker.loaders.ShowsListLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class MoviesDiscoverFragment extends DiscoverListFragment {
+public class ShowsDiscoverFragment extends DiscoverListFragment{
 
-    public MoviesDiscoverFragment() {
+    public ShowsDiscoverFragment() {
         super();
-        setTopRatedUrl("https://api.themoviedb.org/3/movie/top_rated");
-        setPopularUrl("https://api.themoviedb.org/3/movie/popular");
+        setTopRatedUrl("https://api.themoviedb.org/3/tv/top_rated");
+        setPopularUrl("https://api.themoviedb.org/3/tv/popular");
     }
 
     @Override
@@ -43,18 +42,20 @@ public class MoviesDiscoverFragment extends DiscoverListFragment {
 
     @Override
     public Loader<List<VideoMainItem>> recommendedList(ArrayList<Integer> tmdbIds) {
-        return new RecommendedMoviesListLoader(getActivity(), tmdbIds);
+        // TODO
+        return null;
     }
 
     @Override
     public Loader<List<VideoMainItem>> popularOrTopRatedList(String url) {
-        return new MovieListLoader(getActivity(), url);
+        return new ShowsListLoader(getActivity(), url);
     }
 
     @Override
     public void refreshList() {
         if (getActivity() != null) {
-            ((MoviesActivity)getActivity()).dataChanged();
+            ((ShowsActivity)getActivity()).dataChanged();
         }
     }
+
 }

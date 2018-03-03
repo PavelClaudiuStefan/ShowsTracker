@@ -46,7 +46,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.movies_list, container, false);
+        rootView = inflater.inflate(R.layout.category_list, container, false);
 
         ListView movieListView = rootView.findViewById(R.id.list);
 
@@ -77,13 +77,12 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         // Kick off the loader
         getLoaderManager().initLoader(MOVIE_LOADER, null, this);
 
-        FloatingActionButton searchFab = rootView.findViewById(R.id.search_movie_fab);
+        FloatingActionButton searchFab = rootView.findViewById(R.id.search_fab);
         if (isFabVisible) {
             searchFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Intent intent = new Intent(getActivity(), SearchActivity.class);
-                    Intent intent = new Intent(getActivity(), CategoryContainerActivity.class);
+                    Intent intent = new Intent(getActivity(), SearchActivity.class);
                     startActivity(intent);
                 }
             });

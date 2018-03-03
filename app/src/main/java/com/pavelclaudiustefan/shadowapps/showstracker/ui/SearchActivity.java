@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -17,14 +17,14 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MovieAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.VideoMainItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
 import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>> {
+public class SearchActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<VideoMainItem>> {
 
     private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
     private static int MOVIES_LOADER_ID = 0;
@@ -33,11 +33,11 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
     private TextView emptyStateTextView;
     private SearchView searchView;
 
-    private MovieAdapter movieAdapter;
+    private VideoMainItemListAdapter videoMainItemListAdapter;
 
     private String query;
 
-    private ArrayList<Movie> movies = new ArrayList<>();
+    private ArrayList<VideoMainItem> items = new ArrayList<>();
 
     private Parcelable state;
 
@@ -45,7 +45,7 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
-        setTitle("Search movies");
+        setTitle("Search items");
 
         searchView = findViewById(R.id.search_view);
         searchView.setIconifiedByDefault(false);
@@ -69,7 +69,7 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onPause() {
         super.onPause();
-        if (movieAdapter != null) {
+        if (videoMainItemListAdapter != null) {
             state = movieListView.onSaveInstanceState();
         }
     }
@@ -86,8 +86,8 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
         emptyStateTextView = findViewById(R.id.empty_view);
         movieListView.setEmptyView(emptyStateTextView);
 
-        movieAdapter = new MovieAdapter(this, movies);
-        movieListView.setAdapter(movieAdapter);
+        videoMainItemListAdapter = new VideoMainItemListAdapter(this, items);
+        movieListView.setAdapter(videoMainItemListAdapter);
 
         ConnectivityManager connMgr = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
@@ -112,8 +112,8 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 // Create new intent to go to {@link MovieActivityHTTP}
                 Intent intent = new Intent(SearchActivity.this, MovieActivityHTTP.class);
-                Movie movie = movies.get(position);
-                intent.putExtra("tmdb_id", String.valueOf(movie.getTmdbId()));
+                VideoMainItem item = items.get(position);
+                intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
                 startActivity(intent);
             }
         });
@@ -121,7 +121,7 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
 
 
     @Override
-    public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
+    public Loader<List<VideoMainItem>> onCreateLoader(int id, Bundle args) {
         searchView.clearFocus();
 
         String tmdbUrl = "https://api.themoviedb.org/3/search/movie";
@@ -135,18 +135,18 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+    public void onLoadFinished(Loader<List<VideoMainItem>> loader, List<VideoMainItem> movies) {
         // Hide loading indicator because the data has been loaded
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
 
-        // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
+        // Set empty state text to display "No items found." It's not visible if any movie is added to the adapter
         emptyStateTextView.setText(R.string.no_movies);
 
-        movieAdapter.clear();
+        videoMainItemListAdapter.clear();
 
         if (movies != null && !movies.isEmpty()) {
-            movieAdapter.addAll(movies);
+            videoMainItemListAdapter.addAll(movies);
         }
 
         if(state != null) {
@@ -155,7 +155,7 @@ public class SearchActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
-        movieAdapter.clear();
+    public void onLoaderReset(Loader<List<VideoMainItem>> loader) {
+        videoMainItemListAdapter.clear();
     }
 }

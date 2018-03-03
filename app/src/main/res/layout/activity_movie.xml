@@ -15,7 +15,7 @@
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/movie_image"
+            android:id="@+id/thumbnail"
             android:contentDescription="@string/movie_image_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,12 +79,12 @@
             android:background="@android:color/white">
 
             <TextView
-                android:id="@+id/movie_title"
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:textSize="24sp"
-                android:textColor="@color/colorMovieTitle"
+                android:textColor="@color/colorTitle"
                 tools:text="Title" />
 
             <TextView
@@ -92,10 +92,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:layout_below="@id/movie_title"
-                android:layout_alignStart="@id/movie_title"
+                android:layout_below="@id/title"
+                android:layout_alignStart="@id/title"
                 android:textSize="16sp"
-                android:textColor="@color/colorMovieDetails"
+                android:textColor="@color/colorItemDetails"
                 tools:text="Cinema release: 04 Apr 1996" />
 
             <TextView
@@ -104,9 +104,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:layout_below="@id/cinema_release_date"
-                android:layout_alignStart="@id/movie_title"
+                android:layout_alignStart="@id/title"
                 android:textSize="16sp"
-                android:textColor="@color/colorMovieDetails"
+                android:textColor="@color/colorItemDetails"
                 tools:text="Digital release: 04 Apr 1996" />
 
             <TextView
@@ -115,9 +115,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:layout_below="@id/digital_release_date"
-                android:layout_alignStart="@id/movie_title"
+                android:layout_alignStart="@id/title"
                 android:textSize="16sp"
-                android:textColor="@color/colorMovieDetails"
+                android:textColor="@color/colorItemDetails"
                 tools:text="Physical release: 04 Apr 1996" />
 
             <TextView
@@ -125,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/physical_release_date"
-                android:layout_alignStart="@id/movie_title"
+                android:layout_alignStart="@id/title"
                 android:padding="2dp"
                 android:textSize="16sp"
                 android:textColor="#ffffff"
@@ -141,7 +141,7 @@
                 android:layout_marginStart="16dp"
                 android:padding="2dp"
                 android:textSize="16sp"
-                android:textColor="@color/colorMovieDetails"
+                android:textColor="@color/colorItemDetails"
                 tools:text="200 votes"/>
 
         </RelativeLayout>
@@ -159,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:textSize="24sp"
-                android:textColor="@color/colorMovieTitle"
+                android:textColor="@color/colorTitle"
                 android:text="@string/overview_title"/>
 
             <TextView
@@ -169,7 +169,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/overview_title"
                 android:textSize="16sp"
-                android:textColor="@color/colorMovieDetails"
+                android:textColor="@color/colorItemDetails"
                 tools:text="I need a lot of text here because this is gonna be the overview of this movie, or show, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
 
 

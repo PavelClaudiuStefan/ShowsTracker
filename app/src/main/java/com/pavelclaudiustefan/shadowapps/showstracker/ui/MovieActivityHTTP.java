@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -64,8 +63,8 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         Intent intent = getIntent();
         tmdbId = intent.getExtras().getString("tmdb_id");
 
-        imageView = findViewById(R.id.movie_image);
-        titleTextView = findViewById(R.id.movie_title);
+        imageView = findViewById(R.id.thumbnail);
+        titleTextView = findViewById(R.id.title);
         averageVoteTextView = findViewById(R.id.average_vote);
         voteCountTextView = findViewById(R.id.vote_count);
         cinemaReleaseDateTextView = findViewById(R.id.cinema_release_date);
@@ -148,8 +147,8 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
             String imageUrl = movie.getImageUrl();
             String title = movie.getTitle();
             String averageVote = String.valueOf(movie.getVote());
-            String voteCount = movie.getVoteCount();
-            String cinemaReleaseDate = "Cinema release: " + movie.getCinemaReleaseDate();
+            int voteCount = movie.getVoteCount();
+            String cinemaReleaseDate = "Cinema release: " + movie.getReleaseDate();
             String digitalReleaseDate = "Digital release: " + movie.getDigitalReleaseDate();
             String physicalReleaseDate = "Physical release: " + movie.getPhysicalReleaseDate();
             String overview = movie.getOverview();
@@ -161,7 +160,8 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
                     .into(imageView);
             titleTextView.setText(title);
             averageVoteTextView.setText(averageVote);
-            voteCountTextView.setText(voteCount);
+            String voteCountStr = voteCount + " votes";
+            voteCountTextView.setText(voteCountStr);
             cinemaReleaseDateTextView.setText(cinemaReleaseDate);
             digitalReleaseDateTextView.setText(digitalReleaseDate);
             physicalReleaseDateTextView.setText(physicalReleaseDate);
@@ -219,7 +219,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
             final ToggleButton watchedNotWatchedButton = findViewById(R.id.watched_not_watched_movie);
             watchedNotWatchedButton.setChecked(isWatched);
             long todayInMilliseconds = System.currentTimeMillis();
-            if (movie.getCinemaReleaseDateInMilliseconds() > todayInMilliseconds) {
+            if (movie.getReleaseDateInMilliseconds() > todayInMilliseconds) {
                 watchedNotWatchedButton.setEnabled(false);
             } else {
                 watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -256,7 +256,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getCinemaReleaseDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS, movie.getDigitalReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS, movie.getPhysicalReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
@@ -264,7 +264,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         values.put(MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
         values.put(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
         values.put(MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-        values.put(MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedIntValue());
+        values.put(MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedAsIntValue());
 
         getContentResolver().insert(MovieEntry.CONTENT_URI, values);
     }
@@ -279,7 +279,7 @@ public class MovieActivityHTTP extends AppCompatActivity implements LoaderManage
         values.put(MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
         values.put(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
         values.put(MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getCinemaReleaseDateInMilliseconds());
+        values.put(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS, movie.getDigitalReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS, movie.getPhysicalReleaseDateInMilliseconds());
         values.put(MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());

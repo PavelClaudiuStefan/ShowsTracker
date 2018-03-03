@@ -1,14 +1,19 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
-import android.util.Log;
+import android.os.Bundle;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCategoryAdapter;
 
-public class ShowsActivity extends CategoryContainerActivity {
+public class ShowsActivity extends VideoSectionsContainerActivity {
 
     @Override
-    public void setContentViewLayout() {
-        setContentView(R.layout.activity_shows);
-        Log.i("Claudiu", "ShowsActivity");
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle("TV Shows");
+    }
+
+    @Override
+    public void initAdapter() {
+        adapter = new ShowsCategoryAdapter(this, getSupportFragmentManager());
     }
 }

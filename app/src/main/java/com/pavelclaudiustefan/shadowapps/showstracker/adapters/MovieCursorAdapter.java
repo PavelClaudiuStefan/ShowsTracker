@@ -23,15 +23,15 @@ public class MovieCursorAdapter extends CursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         // Inflate a list item view using the layout specified in list_item.xml
-        return LayoutInflater.from(context).inflate(R.layout.movies_list_item, parent, false);
+        return LayoutInflater.from(context).inflate(R.layout.category_list_item, parent, false);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView titleTextView = view.findViewById(R.id.movie_title);
+        TextView titleTextView = view.findViewById(R.id.title);
         TextView averageVoteTextView = view.findViewById(R.id.average_vote);
         TextView dateTextView = view.findViewById(R.id.date);
-        ImageView thumbnailView = view.findViewById(R.id.movie_image);
+        ImageView thumbnailView = view.findViewById(R.id.thumbnail);
 
         int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
         int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
@@ -50,7 +50,7 @@ public class MovieCursorAdapter extends CursorAdapter {
         // Update the TextViews with the attributes for the current movie
         titleTextView.setText(movie.getTitle());
         averageVoteTextView.setText(String.valueOf(movie.getVote()));
-        dateTextView.setText(movie.getCinemaReleaseDate());
+        dateTextView.setText(movie.getReleaseDate());
 
         // Load movie image (landscape)
         Picasso.with(context)

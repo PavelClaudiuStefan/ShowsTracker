@@ -7,17 +7,17 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.data.MovieContract;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.MoviesDiscoverFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.DiscoverListFragment;
 
 import java.util.ArrayList;
 
 public class TmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private MoviesDiscoverFragment mdf;
+    private DiscoverListFragment dlf;
 
-    public TmdbIdsLoader(MoviesDiscoverFragment mdf) {
-        this.mdf = mdf;
-        mdf.getLoaderManager().initLoader(0, null, this);
+    public TmdbIdsLoader(DiscoverListFragment dlf) {
+        this.dlf = dlf;
+        dlf.getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -27,8 +27,8 @@ public class TmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
                 MovieContract.MovieEntry._ID,
                 MovieContract.MovieEntry.TMDB_ID};
 
-        if (mdf.getContext() != null) {
-            return new CursorLoader(mdf.getContext(),
+        if (dlf.getContext() != null) {
+            return new CursorLoader(dlf.getContext(),
                     MovieContract.MovieEntry.CONTENT_URI,
                     projection,
                     null,
@@ -47,8 +47,8 @@ public class TmdbIdsLoader implements LoaderManager.LoaderCallbacks<Cursor> {
             tmdbIds.add(tmdbId);
         }
 
-        mdf.setTmdbIds(tmdbIds);
-        mdf.startLoader();
+        dlf.setTmdbIds(tmdbIds);
+        dlf.startLoader();
     }
 
     @Override

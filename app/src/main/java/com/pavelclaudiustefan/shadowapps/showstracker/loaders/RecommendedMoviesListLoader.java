@@ -5,11 +5,12 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecommendedMoviesListLoader extends AsyncTaskLoader<List<Movie>> {
+public class RecommendedMoviesListLoader extends AsyncTaskLoader<List<VideoMainItem>> {
 
     private ArrayList<Integer> tmdbIds;
 
@@ -24,7 +25,7 @@ public class RecommendedMoviesListLoader extends AsyncTaskLoader<List<Movie>> {
     }
 
     @Override
-    public List<Movie> loadInBackground() {
+    public List<VideoMainItem> loadInBackground() {
         if (tmdbIds == null) {
             return null;
         }

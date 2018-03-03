@@ -60,7 +60,7 @@ public final class QueryUtils {
         return extractMovieDataFromJson(jsonResponse);
     }
 
-    public static List<Movie> fetchRecommendedMoviesData(ArrayList<Integer> tmdbIds) {
+    public static List<VideoMainItem> fetchRecommendedMoviesData(ArrayList<Integer> tmdbIds) {
         ArrayList<URL> urls = createUrls(tmdbIds);
 
         ArrayList<String> jsonResponses = null;
@@ -224,8 +224,12 @@ public final class QueryUtils {
                     }
                 }
             }
-            movie = new Movie(tmdbId, title, voteAverage, cinemaDateInMillseconds, digitalReleaseDateInMilliseconds,
-                    physicalReleaseDateInMilliseconds, imageUrl, imdbUrl, voteCount, overview);
+            movie = new Movie(tmdbId, title, voteAverage, cinemaDateInMillseconds, imageUrl);
+            movie.setDigitalReleaseDateInMilliseconds(digitalReleaseDateInMilliseconds);
+            movie.setPhysicalReleaseDateInMilliseconds(physicalReleaseDateInMilliseconds);
+            movie.setImdbUrl(imdbUrl);
+            movie.setVoteCount(voteCount);
+            movie.setOverview(overview);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, "Problem parsing json results", e);
@@ -292,8 +296,8 @@ public final class QueryUtils {
         return jsonResponses;
     }
 
-    private static List<Movie> extractRecommendedMoviesFromJson(ArrayList<String> jsonResponses) {
-        List<Movie> movies = new ArrayList<>();
+    private static List<VideoMainItem> extractRecommendedMoviesFromJson(ArrayList<String> jsonResponses) {
+        List<VideoMainItem> movies = new ArrayList<>();
 
         if (jsonResponses.isEmpty()) {
             return null;
@@ -323,7 +327,7 @@ public final class QueryUtils {
                     Movie movie = new Movie(tmdbId, title, voteAverage, dateInMillseconds, imageUrl);
 
                     boolean isAlreadyInMovies = false;
-                    for (Movie savedMovie:movies) {
+                    for (VideoMainItem savedMovie:movies) {
                         if (savedMovie.getTmdbId() == movie.getTmdbId())
                             isAlreadyInMovies = true;
                     }
@@ -341,9 +345,9 @@ public final class QueryUtils {
         }
 
         // Order by rating
-        Collections.sort(movies, new Comparator<Movie>() {
+        Collections.sort(movies, new Comparator<VideoMainItem>() {
             @Override
-            public int compare(Movie m1, Movie m2) {
+            public int compare(VideoMainItem m1, VideoMainItem m2) {
                 if (m1.getVote() > m2.getVote())
                     return -1;
                 else if (m1.getVote() < m2.getVote())

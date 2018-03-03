@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,14 +17,16 @@ import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 
-public abstract class CategoryContainerActivity extends AppCompatActivity
+public abstract class VideoSectionsContainerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    FragmentStatePagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentViewLayout();
+        setContentView(R.layout.activity_video_category);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -34,6 +39,15 @@ public abstract class CategoryContainerActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        ViewPager viewPager = findViewById(R.id.viewpager);
+        initAdapter();
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
     @Override
@@ -91,5 +105,9 @@ public abstract class CategoryContainerActivity extends AppCompatActivity
         return true;
     }
 
-    public abstract void setContentViewLayout();
+    public void dataChanged() {
+        adapter.notifyDataSetChanged();
+    }
+
+    public abstract void initAdapter();
 }

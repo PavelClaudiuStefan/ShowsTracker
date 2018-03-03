@@ -9,8 +9,8 @@
     <!-- Accent color of the app -->
     <color name="colorAccent">#2196F3</color>
 
-    <color name="colorMovieTitle">#000000</color>
-    <color name="colorMovieDetails">#3f4243</color>
+    <color name="colorTitle">#000000</color>
+    <color name="colorItemDetails">#3f4243</color>
 
     <color name="colorMovieListBackground">#B3E5FC</color>
 
