@@ -31,14 +31,15 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.VideoMainItemListAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
-import com.pavelclaudiustefan.shadowapps.showstracker.loaders.TmdbIdsLoader;
+import com.pavelclaudiustefan.shadowapps.showstracker.loaders.ShowTmdbIdsLoader;
+import com.pavelclaudiustefan.shadowapps.showstracker.loaders.ShowsListLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class DiscoverListFragment extends Fragment
-            implements LoaderManager.LoaderCallbacks<List<VideoMainItem>> {
+public class ShowsDiscoverFragment extends Fragment
+        implements LoaderManager.LoaderCallbacks<List<VideoMainItem>> {
 
     //TODO - Hide the API key
     private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
@@ -76,8 +77,10 @@ public abstract class DiscoverListFragment extends Fragment
 
     private Parcelable state;
 
-    public DiscoverListFragment() {
+    public ShowsDiscoverFragment() {
         setHasOptionsMenu(true);
+        topRatedUrl = "https://api.themoviedb.org/3/tv/top_rated";
+        popularUrl = "https://api.themoviedb.org/3/tv/popular";
     }
 
     @Nullable
@@ -109,7 +112,7 @@ public abstract class DiscoverListFragment extends Fragment
         // If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
             // Loads tmdbIds and then starts the items loader
-            new TmdbIdsLoader(this);
+            new ShowTmdbIdsLoader(this);
 
         } else {
             // First, hide loading indicator so error message will be visible
@@ -123,7 +126,7 @@ public abstract class DiscoverListFragment extends Fragment
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
+                Intent intent = new Intent(getActivity(), ShowActivityHTTP.class);
                 VideoMainItem item = items.get(position);
                 intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
                 startActivity(intent);
@@ -154,9 +157,6 @@ public abstract class DiscoverListFragment extends Fragment
 
         return rootView;
     }
-
-    // Initialize tmdbUrl, isRecommended, showItemsInCollections
-    public abstract void init();
 
     @Override
     public void onPause() {
@@ -195,7 +195,7 @@ public abstract class DiscoverListFragment extends Fragment
 
         if (canLoadNewItems) {
             // Set empty state text to display "No videoMainItems found." It's not visible if any VideoMainItem is added to the adapter
-            emptyStateTextView.setText(R.string.no_movies);
+            emptyStateTextView.setText(R.string.no_shows);
 
             // If showItemsInCollection = false -> hide watched
             if (!showItemsInCollection) {
@@ -231,14 +231,9 @@ public abstract class DiscoverListFragment extends Fragment
             uriBuilder.appendQueryParameter("api_key", API_KEY);
             uriBuilder.appendQueryParameter("page", page);
 
-            return popularOrTopRatedList(uriBuilder.toString());
+            return new ShowsListLoader(getActivity(), uriBuilder.toString());
         }
     }
-
-    //TODO - Change Movies to VideoMainItem
-    public abstract Loader<List<VideoMainItem>> recommendedList(ArrayList<Integer> tmdbIds);
-
-    public abstract Loader<List<VideoMainItem>> popularOrTopRatedList(String url);
 
     @Override
     public void onLoaderReset(Loader<List<VideoMainItem>> loader) {
@@ -273,7 +268,7 @@ public abstract class DiscoverListFragment extends Fragment
         }
         if (showItemsInCollection) {
             MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
-            showWatchedItem.setTitle(R.string.hide_collection_movies);
+            showWatchedItem.setTitle(R.string.hide_collection_shows);
         }
 
     }
@@ -305,19 +300,16 @@ public abstract class DiscoverListFragment extends Fragment
     private void saveSettingsOption(String option) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_discover_option), option);
+        editor.putString(getString(R.string.settings_discover_shows_option), option);
         editor.apply();
     }
 
     private void saveSettingsShowHideWatched() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putBoolean(getString(R.string.settings_discover_show_watched), !showItemsInCollection);
+        editor.putBoolean(getString(R.string.settings_discover_shows_show_watched), !showItemsInCollection);
         editor.apply();
     }
-
-    // Refresh the movie/show list
-    public abstract void refreshList();
 
     public void startLoader() {
         canLoadNewItems = true;
@@ -339,7 +331,7 @@ public abstract class DiscoverListFragment extends Fragment
         if (networkInfo != null && networkInfo.isConnected()) {
             LoaderManager loaderManager = getLoaderManager();
             canLoadNewItems = true;
-            loaderManager.initLoader(++HTTP_LOADER_ID, null, com.pavelclaudiustefan.shadowapps.showstracker.ui.DiscoverListFragment.this);
+            loaderManager.initLoader(++HTTP_LOADER_ID, null, com.pavelclaudiustefan.shadowapps.showstracker.ui.ShowsDiscoverFragment.this);
             currentPage++;
             return true;
         } else {
@@ -365,18 +357,6 @@ public abstract class DiscoverListFragment extends Fragment
         this.tmdbIds = tmdbIds;
     }
 
-    public void setTopRatedUrl(String topRatedUrl) {
-        this.topRatedUrl = topRatedUrl;
-    }
-
-    public void setPopularUrl(String popularUrl) {
-        this.popularUrl = popularUrl;
-    }
-
-    public void setRecommended(boolean recommended) {
-        isRecommended = recommended;
-    }
-
     public void setOption(String option) {
         this.option = option;
     }
@@ -384,4 +364,34 @@ public abstract class DiscoverListFragment extends Fragment
     public void setShowItemsInCollection(boolean showItemsInCollection) {
         this.showItemsInCollection = showItemsInCollection;
     }
+
+    public void init()  {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        option = sharedPrefs.getString(
+                getString(R.string.settings_discover_shows_option),
+                getString(R.string.settings_discover_shows_option_default)
+        );
+
+        if (Objects.equals(option, "recommended_option")) {
+            isRecommended = true;
+        }
+
+        boolean showItemsInCollection = sharedPrefs.getBoolean(
+                getString(R.string.settings_discover_shows_show_watched),
+                true
+        );
+        setShowItemsInCollection(showItemsInCollection);
+    }
+
+    public Loader<List<VideoMainItem>> recommendedList(ArrayList<Integer> tmdbIds) {
+        // TODO
+        return null;
+    }
+
+    public void refreshList() {
+        if (getActivity() != null) {
+            ((ShowsActivity)getActivity()).dataChanged();
+        }
+    }
+
 }
