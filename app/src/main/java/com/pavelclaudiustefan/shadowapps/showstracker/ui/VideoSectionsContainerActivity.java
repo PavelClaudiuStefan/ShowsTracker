@@ -16,11 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.ShowsActivity;
 
 public abstract class VideoSectionsContainerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    FragmentStatePagerAdapter adapter;
+    private FragmentStatePagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,14 @@ public abstract class VideoSectionsContainerActivity extends AppCompatActivity
 
     public void dataChanged() {
         adapter.notifyDataSetChanged();
+    }
+
+    public FragmentStatePagerAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(FragmentStatePagerAdapter adapter) {
+        this.adapter = adapter;
     }
 
     public abstract void initAdapter();

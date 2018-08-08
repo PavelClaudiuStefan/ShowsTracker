@@ -132,60 +132,43 @@ public class VideoItemProvider extends ContentProvider {
         }
 
         // Check that the name is not null
-        String name = values.getAsString(MovieEntry.COLUMN_MOVIE_TITLE);
+        String name = values.getAsString(MovieEntry.MOVIE_TITLE);
         if (name == null) {
             throw new IllegalArgumentException("Movie requires a name");
         }
 
         // Check that the release date is not null
-        String releaseDate = values.getAsString(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
+        String releaseDate = values.getAsString(MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
             throw new IllegalArgumentException("Movie requires a release date");
         }
 
         // Check that the average vote is not null
-        String averageVote = values.getAsString(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
+        String averageVote = values.getAsString(MovieEntry.MOVIE_AVERAGE_VOTE);
         if (averageVote == null) {
             throw new IllegalArgumentException("Movie requires an average vote");
         }
 
         // Check that the imdb id is not null
-        String imdbId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMDB_URL);
+        String imdbId = values.getAsString(MovieEntry.MOVIE_IMDB_URL);
         if (imdbId == null) {
             throw new IllegalArgumentException("Movie requires an imdb id");
         }
 
-        // Check that the thumbnail url is not null
-        String thumbnailUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
-        if (thumbnailUrl == null) {
-            throw new IllegalArgumentException("Movie requires a thumbnail url");
-        }
-
-        String voteCount = values.getAsString(MovieEntry.COLUMN_MOVIE_VOTE_COUNT);
+        String voteCount = values.getAsString(MovieEntry.MOVIE_VOTE_COUNT);
         if (voteCount == null) {
             throw new IllegalArgumentException("Movie requires a vote count");
         }
 
-        String overview = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        String overview = values.getAsString(MovieEntry.MOVIE_OVERVIEW);
         if (overview == null) {
             throw new IllegalArgumentException("Movie requires an overview");
         }
 
-        String watched = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
-        if (watched == null) {
-            throw new IllegalArgumentException("Movie requires a watched value");
-        }
-
         // Check that the image id is not null
-        String imageId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
+        String imageId = values.getAsString(MovieEntry.MOVIE_IMAGE_ID);
         if (imageId == null) {
             throw new IllegalArgumentException("Movie requires an image id");
-        }
-
-        // Check that the image url is not null
-        String imageUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
-        if (imageUrl == null) {
-            throw new IllegalArgumentException("Movie requires an image url");
         }
 
         // Get writeable database
@@ -218,54 +201,37 @@ public class VideoItemProvider extends ContentProvider {
         }
 
         // Check that the name is not null
-        String name = values.getAsString(ShowEntry.COLUMN_SHOW_TITLE);
+        String name = values.getAsString(ShowEntry.SHOW_TITLE);
         if (name == null) {
             throw new IllegalArgumentException("Show requires a name");
         }
 
         // Check that the release date is not null
-        String releaseDate = values.getAsString(ShowEntry.COLUMN_SHOW_RELEASE_DATE_IN_MILLISECONDS);
+        String releaseDate = values.getAsString(ShowEntry.SHOW_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
             throw new IllegalArgumentException("Show requires a release date");
         }
 
         // Check that the average vote is not null
-        String averageVote = values.getAsString(ShowEntry.COLUMN_SHOW_AVERAGE_VOTE);
+        String averageVote = values.getAsString(ShowEntry.SHOW_AVERAGE_VOTE);
         if (averageVote == null) {
             throw new IllegalArgumentException("Show requires an average vote");
         }
 
-        // Check that the thumbnail url is not null
-        String thumbnailUrl = values.getAsString(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
-        if (thumbnailUrl == null) {
-            throw new IllegalArgumentException("Show requires a thumbnail url");
-        }
-
-        String voteCount = values.getAsString(ShowEntry.COLUMN_SHOW_VOTE_COUNT);
+        String voteCount = values.getAsString(ShowEntry.SHOW_VOTE_COUNT);
         if (voteCount == null) {
             throw new IllegalArgumentException("Show requires a vote count");
         }
 
-        String overview = values.getAsString(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
+        String overview = values.getAsString(ShowEntry.SHOW_OVERVIEW);
         if (overview == null) {
             throw new IllegalArgumentException("Show requires an overview");
         }
 
-        String watched = values.getAsString(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
-        if (watched == null) {
-            throw new IllegalArgumentException("Show requires a watched value");
-        }
-
         // Check that the image id is not null
-        String imageId = values.getAsString(ShowEntry.COLUMN_SHOW_IMAGE_URL);
+        String imageId = values.getAsString(ShowEntry.SHOW_IMAGE_ID);
         if (imageId == null) {
             throw new IllegalArgumentException("Show requires an image id");
-        }
-
-        // Check that the image url is not null
-        String imageUrl = values.getAsString(ShowEntry.COLUMN_SHOW_IMAGE_URL);
-        if (imageUrl == null) {
-            throw new IllegalArgumentException("Show requires an image url");
         }
 
         // Get writeable database
@@ -322,60 +288,48 @@ public class VideoItemProvider extends ContentProvider {
         }
 
         // Check that the name is not null
-        String name = values.getAsString(MovieEntry.COLUMN_MOVIE_TITLE);
+        String name = values.getAsString(MovieEntry.MOVIE_TITLE);
         if (name == null) {
             throw new IllegalArgumentException("Movie requires a name");
         }
 
         // Check that the release date is not null
-        String releaseDate = values.getAsString(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
+        String releaseDate = values.getAsString(MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
             throw new IllegalArgumentException("Movie requires a release date");
         }
 
         // Check that the average vote is not null
-        String averageVote = values.getAsString(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
+        String averageVote = values.getAsString(MovieEntry.MOVIE_AVERAGE_VOTE);
         if (averageVote == null) {
             throw new IllegalArgumentException("Movie requires an average vote");
         }
 
         // Check that the imdb id is not null
-        String imdbId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMDB_URL);
+        String imdbId = values.getAsString(MovieEntry.MOVIE_IMDB_URL);
         if (imdbId == null) {
             throw new IllegalArgumentException("Movie requires an imdb id");
         }
 
-        String voteCount = values.getAsString(MovieEntry.COLUMN_MOVIE_VOTE_COUNT);
+        String voteCount = values.getAsString(MovieEntry.MOVIE_VOTE_COUNT);
         if (voteCount == null) {
             throw new IllegalArgumentException("Movie requires a vote count");
         }
 
-        String overview = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        String overview = values.getAsString(MovieEntry.MOVIE_OVERVIEW);
         if (overview == null) {
             throw new IllegalArgumentException("Movie requires an overview");
         }
 
-        String watched = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        String watched = values.getAsString(MovieEntry.MOVIE_WATCHED);
         if (watched == null) {
             throw new IllegalArgumentException("Movie requires a watched value");
         }
 
         // Check that the image id is not null
-        String imageId = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
+        String imageId = values.getAsString(MovieEntry.MOVIE_IMAGE_ID);
         if (imageId == null) {
             throw new IllegalArgumentException("Movie requires an image id");
-        }
-
-        // Check that the image url is not null
-        String thumbnailUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
-        if (thumbnailUrl == null) {
-            throw new IllegalArgumentException("Movie requires a thumbnail url");
-        }
-
-        // Check that the image url is not null
-        String imageUrl = values.getAsString(MovieEntry.COLUMN_MOVIE_IMAGE_URL);
-        if (imageUrl == null) {
-            throw new IllegalArgumentException("Movie requires an image url");
         }
 
         // If there are no values to update, then don't try to update the database
@@ -407,54 +361,42 @@ public class VideoItemProvider extends ContentProvider {
         }
 
         // Check that the name is not null
-        String name = values.getAsString(ShowEntry.COLUMN_SHOW_TITLE);
+        String name = values.getAsString(ShowEntry.SHOW_TITLE);
         if (name == null) {
             throw new IllegalArgumentException("Show requires a name");
         }
 
         // Check that the release date is not null
-        String releaseDate = values.getAsString(ShowEntry.COLUMN_SHOW_RELEASE_DATE_IN_MILLISECONDS);
+        String releaseDate = values.getAsString(ShowEntry.SHOW_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
             throw new IllegalArgumentException("Show requires a release date");
         }
 
         // Check that the average vote is not null
-        String averageVote = values.getAsString(ShowEntry.COLUMN_SHOW_AVERAGE_VOTE);
+        String averageVote = values.getAsString(ShowEntry.SHOW_AVERAGE_VOTE);
         if (averageVote == null) {
             throw new IllegalArgumentException("Show requires an average vote");
         }
 
-        String voteCount = values.getAsString(ShowEntry.COLUMN_SHOW_VOTE_COUNT);
+        String voteCount = values.getAsString(ShowEntry.SHOW_VOTE_COUNT);
         if (voteCount == null) {
             throw new IllegalArgumentException("Show requires a vote count");
         }
 
-        String overview = values.getAsString(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
+        String overview = values.getAsString(ShowEntry.SHOW_OVERVIEW);
         if (overview == null) {
             throw new IllegalArgumentException("Show requires an overview");
         }
 
-        String watched = values.getAsString(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
+        String watched = values.getAsString(ShowEntry.SHOW_WATCHED);
         if (watched == null) {
             throw new IllegalArgumentException("Show requires a watched value");
         }
 
         // Check that the image id is not null
-        String imageId = values.getAsString(ShowEntry.COLUMN_SHOW_IMAGE_URL);
+        String imageId = values.getAsString(ShowEntry.SHOW_IMAGE_ID);
         if (imageId == null) {
             throw new IllegalArgumentException("Show requires an image id");
-        }
-
-        // Check that the image url is not null
-        String thumbnailUrl = values.getAsString(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
-        if (thumbnailUrl == null) {
-            throw new IllegalArgumentException("Show requires a thumbnail url");
-        }
-
-        // Check that the image url is not null
-        String imageUrl = values.getAsString(ShowEntry.COLUMN_SHOW_IMAGE_URL);
-        if (imageUrl == null) {
-            throw new IllegalArgumentException("Show requires an image url");
         }
 
         // If there are no values to update, then don't try to update the database

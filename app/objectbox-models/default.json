@@ -1,0 +1,70 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:3811424328553684967",
+      "lastPropertyId": "11:4380582158223734865",
+      "name": "Show",
+      "properties": [
+        {
+          "id": "1:6366613526905082729",
+          "name": "tmdbId"
+        },
+        {
+          "id": "2:2374839344930100067",
+          "name": "title"
+        },
+        {
+          "id": "3:3280006406927607046",
+          "name": "vote"
+        },
+        {
+          "id": "4:5682368192120688607",
+          "name": "releaseDateInMilliseconds"
+        },
+        {
+          "id": "5:2999574997904356651",
+          "name": "imdbUrl"
+        },
+        {
+          "id": "6:5304382526880846584",
+          "name": "imageId"
+        },
+        {
+          "id": "7:333467250072482271",
+          "name": "voteCount"
+        },
+        {
+          "id": "8:8423328316945328636",
+          "name": "overview"
+        },
+        {
+          "id": "9:3773785591033636038",
+          "name": "watched"
+        },
+        {
+          "id": "10:8071026358500684124",
+          "name": "thumbnailSize"
+        },
+        {
+          "id": "11:4380582158223734865",
+          "name": "imageSize"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "1:3811424328553684967",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

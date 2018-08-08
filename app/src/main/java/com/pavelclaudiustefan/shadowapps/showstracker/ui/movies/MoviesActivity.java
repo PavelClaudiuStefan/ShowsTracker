@@ -1,8 +1,9 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.ui;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
 import android.os.Bundle;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MoviesCategoryAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.VideoSectionsContainerActivity;
 
 public class MoviesActivity extends VideoSectionsContainerActivity {
 
@@ -14,7 +15,7 @@ public class MoviesActivity extends VideoSectionsContainerActivity {
 
     @Override
     public void initAdapter() {
-        adapter = new MoviesCategoryAdapter(this, getSupportFragmentManager());
+        setAdapter(new MoviesCategoryAdapter(this, getSupportFragmentManager()));
     }
 
 }

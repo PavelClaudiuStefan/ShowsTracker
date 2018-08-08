@@ -7,7 +7,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.MoviesDiscoverFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesDiscoverFragment;
 
 import java.util.ArrayList;
 

@@ -1,9 +1,12 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
+package com.pavelclaudiustefan.shadowapps.showstracker.models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 /**
  * A VideoMainItem can be only a movie or a TV show.
@@ -17,8 +20,6 @@ public class VideoMainItem {
     private long releaseDateInMilliseconds;         // Cinema release date for movies, first TV appearance for TV shows
     private String imdbUrl;
     private String imageId;
-    private String thumbnailUrl;
-    private String imageUrl;
     private int voteCount;
     private String overview;
     private boolean watched;
@@ -36,8 +37,6 @@ public class VideoMainItem {
         this.vote = vote;
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
         this.imageId = imageId;
-        this.thumbnailUrl = "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
-        this.imageUrl = "http://image.tmdb.org/t/p/" + imageSize + imageId;
 
         this.watched = false;
     }
@@ -79,11 +78,11 @@ public class VideoMainItem {
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return "http://image.tmdb.org/t/p/" + imageSize + imageId;
     }
 
     public String getThumbnailUrl() {
-        return thumbnailUrl;
+        return "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
     }
 
     public void setVoteCount(int voteCount) {
@@ -117,10 +116,12 @@ public class VideoMainItem {
         return 0;
     }
 
+    // TODO - make this available in settings
     public void setThumbnailSize(String thumbnailSize) {
         this.thumbnailSize = thumbnailSize;
     }
 
+    // TODO - make this available in settings
     public void setImageSize(String imageSize) {
         this.imageSize = imageSize;
     }
@@ -133,4 +134,20 @@ public class VideoMainItem {
         VideoMainItem.totalPages = totalPages;
     }
 
+    @Override
+    public String toString() {
+        return "VideoMainItem{" +
+                "tmdbId=" + tmdbId +
+                ", title='" + title + '\'' +
+                ", vote=" + vote +
+                ", releaseDateInMilliseconds=" + releaseDateInMilliseconds +
+                ", imdbUrl='" + imdbUrl + '\'' +
+                ", imageId='" + imageId + '\'' +
+                ", voteCount=" + voteCount +
+                ", overview='" + overview + '\'' +
+                ", watched=" + watched +
+                ", thumbnailSize='" + thumbnailSize + '\'' +
+                ", imageSize='" + imageSize + '\'' +
+                '}';
+    }
 }

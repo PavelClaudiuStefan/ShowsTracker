@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.ui;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui.shows;
 
 import android.content.ContentUris;
 import android.content.Intent;
@@ -23,6 +23,8 @@ import android.widget.TextView;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowCursorAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.ShowEntry;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivitySQL;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.SearchActivity;
 
 public class ShowsAllFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private View rootView;
@@ -102,10 +104,10 @@ public class ShowsAllFragment extends Fragment implements LoaderManager.LoaderCa
         String[] projection = {
                 ShowEntry._ID,
                 ShowEntry.TMDB_ID,
-                ShowEntry.COLUMN_SHOW_TITLE,
-                ShowEntry.COLUMN_SHOW_AVERAGE_VOTE,
-                ShowEntry.COLUMN_SHOW_RELEASE_DATE_IN_MILLISECONDS,
-                ShowEntry.COLUMN_SHOW_THUMBNAIL_URL,};
+                ShowEntry.SHOW_TITLE,
+                ShowEntry.SHOW_AVERAGE_VOTE,
+                ShowEntry.SHOW_RELEASE_DATE_IN_MILLISECONDS,
+                ShowEntry.SHOW_IMAGE_ID};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(getContext(),   // Parent activity context

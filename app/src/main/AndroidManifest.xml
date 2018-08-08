@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pavelclaudiustefan.shadowapps.showstracker">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,7 +16,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.MoviesActivity"
+            android:name=".ui.movies.MoviesActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">
             <intent-filter>
@@ -25,14 +27,17 @@
         </activity>
 
         <activity
-            android:name=".ui.ShowsActivity"
+            android:name=".ui.shows.ShowsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name=".ui.MovieActivitySQL" />
-        <activity android:name=".ui.MovieActivityHTTP" />
+        <activity android:name=".ui.movies.MovieActivitySQL" />
+
+        <activity android:name=".ui.movies.MovieActivityHTTP" />
+
         <activity android:name=".ui.SearchActivity" />
 
-        <activity android:name=".ui.ShowActivityHTTP" />
+        <activity android:name=".ui.shows.ShowActivityHTTP" />
+
 
         <provider
             android:name=".data.VideoItemProvider"

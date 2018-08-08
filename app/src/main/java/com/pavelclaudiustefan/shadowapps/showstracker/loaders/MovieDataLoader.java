@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.content.AsyncTaskLoader;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 
 

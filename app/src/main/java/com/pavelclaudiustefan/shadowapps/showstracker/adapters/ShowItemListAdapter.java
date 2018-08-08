@@ -10,15 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.VideoMainItem;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class VideoMainItemListAdapter extends ArrayAdapter<VideoMainItem> {
+public class ShowItemListAdapter extends ArrayAdapter<Show> {
 
-    public VideoMainItemListAdapter(Context context, ArrayList<VideoMainItem> items) {
+    public ShowItemListAdapter(Context context, ArrayList<Show> items) {
         super(context, 0, items);
     }
 
@@ -31,7 +32,7 @@ public class VideoMainItemListAdapter extends ArrayAdapter<VideoMainItem> {
                     R.layout.category_list_item, parent, false);
         }
 
-        VideoMainItem currentItem = getItem(position);
+        Show currentItem = getItem(position);
 
         TextView titleView = listItemView.findViewById(R.id.title);
         assert currentItem != null;
@@ -59,7 +60,7 @@ public class VideoMainItemListAdapter extends ArrayAdapter<VideoMainItem> {
     }
 
     @Override
-    public void addAll(VideoMainItem... items) {
+    public void addAll(Show... items) {
         super.addAll(items);
     }
 }

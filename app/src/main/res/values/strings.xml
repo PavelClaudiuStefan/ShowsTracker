@@ -1,5 +1,7 @@
 <resources>
+    <!-- Show is a hypernym of movie and TV show -->
     <string name="app_name">Shows Tracker</string>
+
     <string name="no_internet_connection">No internet connection</string>
     <string name="no_movies">No movies</string>
 

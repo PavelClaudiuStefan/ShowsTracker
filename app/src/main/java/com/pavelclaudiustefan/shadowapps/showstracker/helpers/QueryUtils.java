@@ -4,6 +4,10 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.VideoMainItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,32 +61,6 @@ public final class QueryUtils {
         }
 
         return QueryUtils.extractMovieDataFromJson(jsonResponse);
-    }
-
-    public static List<VideoMainItem> fetchShowsData(String stringUrl) {
-        URL url = createUrl(stringUrl);
-
-        String jsonResponse = null;
-        try {
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return extractShowsFromJson(jsonResponse);
-    }
-
-    public static Show fetchShowData(String stringUrl) {
-        URL url = createUrl(stringUrl);
-
-        String jsonResponse = null;
-        try {
-            jsonResponse = makeHttpRequest(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return extractShowDataFromJson(jsonResponse);
     }
 
     public static List<VideoMainItem> fetchRecommendedMoviesData(ArrayList<Integer> tmdbIds) {
@@ -321,15 +299,15 @@ public final class QueryUtils {
         return movie;
     }
 
-    private static List<VideoMainItem> extractShowsFromJson(String showsJSON) {
+    public static List<Show> extractShowsFromJson(String showsJSON) {
         if (TextUtils.isEmpty(showsJSON)) {
             return null;
         }
 
-        List<VideoMainItem> shows = new ArrayList<>();
+        List<Show> shows = new ArrayList<>();
 
-        try {
-            JSONObject baseJsonResponse = new JSONObject(showsJSON);
+            try {
+                JSONObject baseJsonResponse = new JSONObject(showsJSON);
             int totalPages = baseJsonResponse.getInt("total_pages");
             JSONArray showsArray = baseJsonResponse.getJSONArray("results");
 
@@ -346,10 +324,6 @@ public final class QueryUtils {
                 long dateInMillseconds = date.getTime();
 
                 Show show = new Show(tmdbId, title, voteAverage, dateInMillseconds, imageUrl);
-
-                if (i == 0)
-                    show.setTotalPages(totalPages);
-
                 shows.add(show);
             }
 
@@ -362,7 +336,24 @@ public final class QueryUtils {
         return shows;
     }
 
-    private static Show extractShowDataFromJson(String showJSON) {
+    public static int getNumberOfShowsPagesFromJson(String showsJSON) {
+        if (TextUtils.isEmpty(showsJSON)) {
+            return 0;
+        }
+
+        int numberOfPages = 0;
+
+        try {
+            JSONObject baseJsonResponse = new JSONObject(showsJSON);
+            numberOfPages = baseJsonResponse.getInt("total_pages");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return numberOfPages;
+    }
+
+    public static Show extractShowDataFromJson(String showJSON) {
         if (TextUtils.isEmpty(showJSON)) {
             return null;
         }
@@ -390,7 +381,7 @@ public final class QueryUtils {
         } catch (JSONException e) {
             Log.e(LOG_TAG, "extractShowDataFromJson - Problem parsing json results", e);
         } catch (ParseException e) {
-            Log.e("LOG_TAG", "extractShowDataFromJson - stuff happened");
+            Log.e(LOG_TAG, "extractShowDataFromJson - stuff happened");
         }
 
         return show;

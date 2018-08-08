@@ -9,7 +9,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.MovieEntry;
 import com.squareup.picasso.Picasso;
@@ -34,18 +34,18 @@ public class MovieCursorAdapter extends CursorAdapter {
         ImageView thumbnailView = view.findViewById(R.id.thumbnail);
 
         int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
-        int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
-        int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
-        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
-        int thumbnailUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL);
+        int titleColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_TITLE);
+        int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_AVERAGE_VOTE);
+        int dateColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
+        int imageIdColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_IMAGE_ID);
 
         int tmdbId = cursor.getInt(tmdbIdColumnIndex);
         String movieName = cursor.getString(titleColumnIndex);
         double movieAverageVote = cursor.getDouble(averageVoteColumnIndex);
         long movieReleaseDateInMilliseconds = cursor.getLong(dateColumnIndex);
-        String thumbnailUrl = cursor.getString(thumbnailUrlColumnIndex);
+        String imageId = cursor.getString(imageIdColumnIndex);
 
-        Movie movie = new Movie(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, thumbnailUrl);
+        Movie movie = new Movie(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, imageId);
 
         // Update the TextViews with the attributes for the current movie
         titleTextView.setText(movie.getTitle());
@@ -53,8 +53,8 @@ public class MovieCursorAdapter extends CursorAdapter {
         dateTextView.setText(movie.getReleaseDate());
 
         // Load movie image (landscape)
-        Picasso.with(context)
-                .load(thumbnailUrl)
+        Picasso.get()
+                .load(movie.getThumbnailUrl())
                 .into(thumbnailView);
     }
 }

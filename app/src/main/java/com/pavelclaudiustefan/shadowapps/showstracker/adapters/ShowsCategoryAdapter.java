@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.ShowsAllFragment;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.ShowsDiscoverFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.ShowsAllFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.ShowsDiscoverFragment;
 
 public class ShowsCategoryAdapter extends FragmentStatePagerAdapter {
 

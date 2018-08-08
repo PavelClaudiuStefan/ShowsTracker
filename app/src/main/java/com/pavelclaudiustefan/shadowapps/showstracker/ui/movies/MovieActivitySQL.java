@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.ui;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
 import android.app.LoaderManager;
 import android.content.ContentValues;
@@ -16,13 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.MovieEntry;
 import com.squareup.picasso.Picasso;
 
-public class MovieActivitySQL extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MovieActivitySQL extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int EXISTING_MOVIE_LOADER = 0;
 
@@ -74,16 +75,16 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
         String[] projection = {
                 MovieEntry._ID,
                 MovieEntry.TMDB_ID,
-                MovieEntry.COLUMN_MOVIE_TITLE,
-                MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE,
-                MovieEntry.COLUMN_MOVIE_VOTE_COUNT,
-                MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS,
-                MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS,
-                MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS,
-                MovieEntry.COLUMN_MOVIE_OVERVIEW,
-                MovieEntry.COLUMN_MOVIE_IMDB_URL,
-                MovieEntry.COLUMN_MOVIE_IMAGE_ID,
-                MovieEntry.COLUMN_MOVIE_WATCHED};
+                MovieEntry.MOVIE_TITLE,
+                MovieEntry.MOVIE_AVERAGE_VOTE,
+                MovieEntry.MOVIE_VOTE_COUNT,
+                MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS,
+                MovieEntry.MOVIE_OVERVIEW,
+                MovieEntry.MOVIE_IMDB_URL,
+                MovieEntry.MOVIE_IMAGE_ID,
+                MovieEntry.MOVIE_WATCHED};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
@@ -109,16 +110,16 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             // Find the columns of movie attributes that we're interested in
             int movieIdColumnIndex = cursor.getColumnIndex(MovieEntry._ID);
             int tmdbIdColumnIndex = cursor.getColumnIndex(MovieEntry.TMDB_ID);
-            int titleColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE);
-            int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE);
-            int voteCountColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_VOTE_COUNT);
-            int cinemaReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
-            int digitalReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS);
-            int physicalReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS);
-            int overviewColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_OVERVIEW);
-            int imdbUrlColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMDB_URL);
-            int watchedColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_WATCHED);
-            int imageIdColumnIndex = cursor.getColumnIndex(MovieEntry.COLUMN_MOVIE_IMAGE_ID);
+            int titleColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_TITLE);
+            int averageVoteColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_AVERAGE_VOTE);
+            int voteCountColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_VOTE_COUNT);
+            int cinemaReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS);
+            int digitalReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_DIGITAL_RELEASE_DATE_IN_MILLISECONDS);
+            int physicalReleaseDateColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_PHYSICAL_RELEASE_DATE_IN_MILLISECONDS);
+            int overviewColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_OVERVIEW);
+            int imdbUrlColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_IMDB_URL);
+            int watchedColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_WATCHED);
+            int imageIdColumnIndex = cursor.getColumnIndex(MovieEntry.MOVIE_IMAGE_ID);
 
             // Extract out the value from the Cursor for the given column index
             final String movieId = cursor.getString(movieIdColumnIndex);
@@ -148,7 +149,7 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
             String physicalReleaseDate = "Physical release: " + movie.getPhysicalReleaseDate();
 
             // Update the views on the screen with the values from the database
-            Picasso.with(this)
+            Picasso.get()
                     .load(movie.getImageUrl())
                     .into(imageView);
             titleTextView.setText(movie.getTitle());
@@ -222,16 +223,14 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
     private void insertMovie(Movie movie) {
         ContentValues values = new ContentValues();
         values.put(VideoItemContract.MovieEntry.TMDB_ID, movie.getTmdbId());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_WATCHED, movie.getWatchedAsIntValue());
+        values.put(VideoItemContract.MovieEntry.MOVIE_TITLE, movie.getTitle());
+        values.put(VideoItemContract.MovieEntry.MOVIE_AVERAGE_VOTE, movie.getVote());
+        values.put(VideoItemContract.MovieEntry.MOVIE_VOTE_COUNT, movie.getVoteCount());
+        values.put(VideoItemContract.MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
+        values.put(VideoItemContract.MovieEntry.MOVIE_OVERVIEW, movie.getOverview());
+        values.put(VideoItemContract.MovieEntry.MOVIE_IMDB_URL, movie.getImdbUrl());
+        values.put(VideoItemContract.MovieEntry.MOVIE_IMAGE_ID, movie.getImageId());
+        values.put(VideoItemContract.MovieEntry.MOVIE_WATCHED, movie.getWatchedAsIntValue());
 
         getContentResolver().insert(VideoItemContract.MovieEntry.CONTENT_URI, values);
     }
@@ -243,16 +242,14 @@ public class MovieActivitySQL extends AppCompatActivity implements LoaderManager
     private void setMovieWatched(Movie movie, String movieId, int isWatchedAsInt){
         ContentValues values = new ContentValues();
         values.put(VideoItemContract.MovieEntry.TMDB_ID, movie.getTmdbId());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_AVERAGE_VOTE, movie.getVote());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_VOTE_COUNT, movie.getVoteCount());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getOverview());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMDB_URL, movie.getImdbUrl());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_ID, movie.getImageId());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_THUMBNAIL_URL, movie.getThumbnailUrl());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_IMAGE_URL, movie.getImageUrl());
-        values.put(VideoItemContract.MovieEntry.COLUMN_MOVIE_WATCHED, isWatchedAsInt);
+        values.put(VideoItemContract.MovieEntry.MOVIE_TITLE, movie.getTitle());
+        values.put(VideoItemContract.MovieEntry.MOVIE_AVERAGE_VOTE, movie.getVote());
+        values.put(VideoItemContract.MovieEntry.MOVIE_VOTE_COUNT, movie.getVoteCount());
+        values.put(VideoItemContract.MovieEntry.MOVIE_CINEMA_RELEASE_DATE_IN_MILLISECONDS, movie.getReleaseDateInMilliseconds());
+        values.put(VideoItemContract.MovieEntry.MOVIE_OVERVIEW, movie.getOverview());
+        values.put(VideoItemContract.MovieEntry.MOVIE_IMDB_URL, movie.getImdbUrl());
+        values.put(VideoItemContract.MovieEntry.MOVIE_IMAGE_ID, movie.getImageId());
+        values.put(VideoItemContract.MovieEntry.MOVIE_WATCHED, isWatchedAsInt);
 
         getContentResolver().update(Uri.withAppendedPath(VideoItemContract.MovieEntry.CONTENT_URI, movieId), values, null, null);
     }

@@ -18,8 +18,9 @@ import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.VideoMainItemListAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.VideoMainItem;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.VideoMainItem;
 import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityHTTP;
 
 import java.util.ArrayList;
 import java.util.List;

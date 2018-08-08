@@ -2,6 +2,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.VideoItemContract.ShowEntry;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 import com.squareup.picasso.Picasso;
 
 public class ShowCursorAdapter extends CursorAdapter {
@@ -34,18 +35,20 @@ public class ShowCursorAdapter extends CursorAdapter {
         ImageView thumbnailView = view.findViewById(R.id.thumbnail);
 
         int tmdbIdColumnIndex = cursor.getColumnIndex(ShowEntry.TMDB_ID);
-        int titleColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_TITLE);
-        int averageVoteColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_AVERAGE_VOTE);
-        int dateColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_RELEASE_DATE_IN_MILLISECONDS);
-        int thumbnailUrlColumnIndex = cursor.getColumnIndex(ShowEntry.COLUMN_SHOW_THUMBNAIL_URL);
+        int titleColumnIndex = cursor.getColumnIndex(ShowEntry.SHOW_TITLE);
+        int averageVoteColumnIndex = cursor.getColumnIndex(ShowEntry.SHOW_AVERAGE_VOTE);
+        int dateColumnIndex = cursor.getColumnIndex(ShowEntry.SHOW_RELEASE_DATE_IN_MILLISECONDS);
+        int imageIdColumnIndex = cursor.getColumnIndex(ShowEntry.SHOW_IMAGE_ID);
 
         int tmdbId = cursor.getInt(tmdbIdColumnIndex);
         String movieName = cursor.getString(titleColumnIndex);
         double movieAverageVote = cursor.getDouble(averageVoteColumnIndex);
         long movieReleaseDateInMilliseconds = cursor.getLong(dateColumnIndex);
-        String thumbnailUrl = cursor.getString(thumbnailUrlColumnIndex);
+        String imageId = cursor.getString(imageIdColumnIndex);
 
-        Show show = new Show(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, thumbnailUrl);
+        Show show = new Show(tmdbId, movieName, movieAverageVote, movieReleaseDateInMilliseconds, imageId);
+
+        Log.i("ShadowDebug", show.toString());
 
         // Update the TextViews with the attributes for the current show
         titleTextView.setText(show.getTitle());
@@ -53,8 +56,8 @@ public class ShowCursorAdapter extends CursorAdapter {
         dateTextView.setText(show.getReleaseDate());
 
         // Load show image (landscape)
-        Picasso.with(context)
-                .load(thumbnailUrl)
+        Picasso.get()
+                .load(show.getThumbnailUrl())
                 .into(thumbnailView);
     }
 }
