@@ -25,8 +25,6 @@ public class ShowsCategoryAdapter extends FragmentStatePagerAdapter {
         } else if (position == 1) {
             return new ShowsAllFragment();
         } else if (position == 2) {
-            return new ShowsAllFragment();
-        } else if (position == 3) {
             return new ShowsDiscoverFragment();
         }
         return null;
@@ -34,7 +32,7 @@ public class ShowsCategoryAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -42,8 +40,6 @@ public class ShowsCategoryAdapter extends FragmentStatePagerAdapter {
         if (position == 0) {
             return context.getString(R.string.category_shows_to_watch);
         } else if (position == 1) {
-            return context.getString(R.string.category_shows_upcoming);
-        } else if (position == 2) {
             return context.getString(R.string.category_shows_all);
         } else {
             return context.getString(R.string.category_shows_discover);

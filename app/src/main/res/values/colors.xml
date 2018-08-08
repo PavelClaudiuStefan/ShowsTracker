@@ -9,6 +9,8 @@
     <!-- Accent color of the app -->
     <color name="colorAccent">#2196F3</color>
 
+    <color name="colorPrimaryDarker">#005b9f</color>
+
     <color name="colorTitle">#000000</color>
     <color name="colorItemDetails">#3f4243</color>
 
@@ -21,4 +23,5 @@
     <color name="colorIMDbButton">#FDD835</color>
     <color name="divider_background">#E0E0E0</color>
     <color name="tab_indicator">#000000</color>
+    <color name="slothIconBackground">#527E9E</color>
 </resources>

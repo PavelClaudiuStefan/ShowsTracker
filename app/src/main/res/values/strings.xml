@@ -87,4 +87,21 @@
     <string name="category_shows_discover">Discover</string>
     <string name="add_show">Add show</string>
     <string name="remove_show">Remove show</string>
+    <string name="logo">Logo</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up_link">Create an account</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="create_account">Create account</string>
+    <string name="already_a_member_login">Already a member? Log in</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="sloth_icon">Sloth icon</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="feed">Feed</string>
+    <string name="movies">Movies</string>
+    <string name="groups">Groups</string>
+    <string name="log_out">Log out</string>
+    <string name="shows">Shows</string>
 </resources>

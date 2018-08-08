@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ShowsDiscoverFragment extends Fragment {
 
     public static final String TAG = "ShowsDiscoverFragment";
@@ -65,7 +68,10 @@ public class ShowsDiscoverFragment extends Fragment {
 
     private View rootView;
 
-    private static ArrayList<Show> items = new ArrayList<>();
+    @BindView(R.id.loading_indicator)
+    View loadingIndicator;
+
+    private static ArrayList<Show> shows = new ArrayList<>();
 
     private ShowItemListAdapter showItemListAdapter;
 
@@ -87,6 +93,8 @@ public class ShowsDiscoverFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.category_list, container, false);
 
+        ButterKnife.bind(this, rootView);
+
         init();
         setTmdbUrl();
 
@@ -99,7 +107,7 @@ public class ShowsDiscoverFragment extends Fragment {
         emptyStateTextView = rootView.findViewById(R.id.empty_view);
         listView.setEmptyView(emptyStateTextView);
 
-        showItemListAdapter = new ShowItemListAdapter(getActivity(), items);
+        showItemListAdapter = new ShowItemListAdapter(getActivity(), shows);
         listView.setAdapter(showItemListAdapter);
 
         if (!isRecommended) {
@@ -118,9 +126,7 @@ public class ShowsDiscoverFragment extends Fragment {
 
         } else {
             // First, hide loading indicator so error message will be visible
-            View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.GONE);
-
             emptyStateTextView.setText(R.string.no_internet_connection);
         }
 
@@ -129,7 +135,7 @@ public class ShowsDiscoverFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ShowActivityHTTP.class);
-                Show item = items.get(position);
+                Show item = shows.get(position);
                 intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
                 startActivity(intent);
             }

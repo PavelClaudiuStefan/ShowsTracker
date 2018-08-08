@@ -3,28 +3,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_group_1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_main"
+            android:icon="@drawable/ic_play_arrow"
+            android:title="@string/feed" />
         <item
             android:id="@+id/nav_movies"
-            android:icon="@drawable/ic_movies"
-            android:title="Movies" />
+            android:icon="@drawable/ic_movie"
+            android:title="@string/movies" />
         <item
-            android:id="@+id/nav_tv_shows"
-            android:icon="@drawable/ic_tv_shows"
-            android:title="TV Shows" />
+            android:id="@+id/nav_shows"
+            android:icon="@drawable/ic_show"
+            android:title="@string/shows" />
+        <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/ic_group"
+            android:title="@string/groups" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+    <group
+        android:id="@+id/nav_group_2"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/settings" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_info"
+            android:title="@string/about" />
+
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/log_out" />
+    </group>
 
 </menu>
