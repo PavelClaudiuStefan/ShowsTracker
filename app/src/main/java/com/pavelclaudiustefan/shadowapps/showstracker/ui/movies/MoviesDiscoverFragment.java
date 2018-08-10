@@ -7,14 +7,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,22 +24,31 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.Priority;
+import com.androidnetworking.error.ANError;
+import com.androidnetworking.interfaces.AnalyticsListener;
+import com.androidnetworking.interfaces.StringRequestListener;
+import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.VideoMainItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.VideoMainItem;
-import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieListLoader;
-import com.pavelclaudiustefan.shadowapps.showstracker.loaders.RecommendedMoviesListLoader;
-import com.pavelclaudiustefan.shadowapps.showstracker.loaders.MovieTmdbIdsLoader;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.objectbox.Box;
 
+public class MoviesDiscoverFragment extends Fragment {
 
-public class MoviesDiscoverFragment extends Fragment
-        implements LoaderManager.LoaderCallbacks<List<VideoMainItem>> {
+    public static final String TAG = "MoviesDiscoverFragment";
 
     //TODO - Hide the API key
     private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
@@ -58,27 +64,29 @@ public class MoviesDiscoverFragment extends Fragment
 
     private boolean isRecommended = false;
 
-    private int DATABASE_LOADER_ID = 0;
-    private int HTTP_LOADER_ID = 1;
-    private int currentPage = 1;
+    // These fields are saved in the bundle in onSaveInstanceState(Bundle outState)
+    // and restored in onCreateView
+    private int currentPage = 1;    // The current page last loaded
+    private int totalPages;         // Number of pages with movies
+    private static ArrayList<Movie> movies = new ArrayList<>();
 
-    private static boolean canLoadNewItems;
+    @BindView(R.id.loading_indicator)
+    View loadingIndicator;
 
-    private int totalPages;
+    @BindView(R.id.empty_view)
+    TextView emptyStateTextView;
 
-    private View rootView;
+    @BindView(R.id.list)
+    ListView listView;
 
-    private static ArrayList<VideoMainItem> items = new ArrayList<>();
-    private ArrayList<Integer> tmdbIds;
+    @BindView(R.id.search_fab)
+    FloatingActionButton fab;
 
-    private VideoMainItemListAdapter videoMainItemListAdapter;
+    private ShowItemListAdapter<Movie> movieItemListAdapter;
 
     private boolean showItemsInCollection;
 
-    private TextView emptyStateTextView;
-    private ListView listView;
-
-    private Parcelable state;
+    private Box<Movie> moviesBox;
 
     public MoviesDiscoverFragment() {
         setHasOptionsMenu(true);
@@ -88,41 +96,38 @@ public class MoviesDiscoverFragment extends Fragment
 
     @Nullable
     @Override
+    @SuppressWarnings("unchecked")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.category_list, container, false);
+        View rootView = inflater.inflate(R.layout.category_list, container, false);
+
+        ButterKnife.bind(this, rootView);
 
         init();
         setTmdbUrl();
 
-        FloatingActionButton fab = rootView.findViewById(R.id.search_fab);
         fab.setVisibility(View.GONE);
 
-        listView = rootView.findViewById(R.id.list);
-
-        //Only visible if no temporarMovies are found
-        emptyStateTextView = rootView.findViewById(R.id.empty_view);
-        listView.setEmptyView(emptyStateTextView);
-
-        videoMainItemListAdapter = new VideoMainItemListAdapter(getActivity(), items);
-        listView.setAdapter(videoMainItemListAdapter);
-
-        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = null;
-        if (connMgr != null) {
-            networkInfo = connMgr.getActiveNetworkInfo();
+        if (savedInstanceState != null) {
+            movies = (ArrayList<Movie>) savedInstanceState.getSerializable("movies");
+            currentPage = (int) savedInstanceState.getSerializable("currentPage");
+            totalPages = (int) savedInstanceState.getSerializable("totalPages");
+            loadingIndicator.setVisibility(View.GONE);
         }
 
-        // If there is a network connection, fetch data
-        if (networkInfo != null && networkInfo.isConnected()) {
-            // Loads tmdbIds and then starts the items loader
-            new MovieTmdbIdsLoader(this);
+        movieItemListAdapter = new ShowItemListAdapter<>(getActivity(), movies);
+        listView.setAdapter(movieItemListAdapter);
 
-        } else {
-            // First, hide loading indicator so error message will be visible
-            View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-            loadingIndicator.setVisibility(View.GONE);
+        if (movies.isEmpty() && !isRecommended) {
+            // Request movies only if savedInstanceState has none and the recommended option is not active
+            requestAndAddMovies();
+        }
 
-            emptyStateTextView.setText(R.string.no_internet_connection);
+        //Only visible if no movies are found
+        listView.setEmptyView(emptyStateTextView);
+
+        if (getActivity() != null) {
+            // Used to retrieve tmdbIds for hiding collection movies
+            moviesBox = ((MyApp)getActivity().getApplication()).getBoxStore().boxFor(Movie.class);
         }
 
         // Setup the item click listener
@@ -130,7 +135,7 @@ public class MoviesDiscoverFragment extends Fragment
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
-                VideoMainItem item = items.get(position);
+                Show item = movies.get(position);
                 intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
                 startActivity(intent);
             }
@@ -140,11 +145,7 @@ public class MoviesDiscoverFragment extends Fragment
             listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
                 @Override
                 public boolean onLoadMore(int page, int totalItemsCount) {
-                    if (currentPage <= totalPages) {
-                        return loadMore();
-                    } else {
-                        return false;
-                    }
+                    return currentPage <= totalPages && loadMore();
                 }
             });
         }
@@ -162,85 +163,86 @@ public class MoviesDiscoverFragment extends Fragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        state = listView.onSaveInstanceState();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(state != null) {
-            listView.onRestoreInstanceState(state);
-        }
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable("movies", movies);
+        outState.putSerializable("currentPage", currentPage);
+        outState.putSerializable("totalPages", totalPages);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        AndroidNetworking.cancel(this);
     }
 
+    // Requests movies and adds them to the movieItemListAdapter
+    public void requestAndAddMovies() {
+        String page = String.valueOf(currentPage);
 
+        Uri baseUri = Uri.parse(tmdbUrl);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
 
-    @Override
-    public void onLoadFinished(Loader<List<VideoMainItem>> loader, List<VideoMainItem> items) {
-        // Hide loading indicator because the data has been loaded
-        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.GONE);
+        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("page", page);
+        AndroidNetworking.get(uriBuilder.toString())
+                .setTag(this)
+                .setPriority(Priority.LOW)
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
+                .build()
+                .setAnalyticsListener(new AnalyticsListener() {
+                    @Override
+                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
+                        Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage);
+                    }
+                })
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        loadingIndicator.setVisibility(View.GONE);
 
-        // TODO - Save the totalPages value only once
-        if (!isRecommended) {
-            // Get total pages from the first movie
-            if (currentPage == 1) {
-                totalPages = items.get(0).getTotalPages();
-            }
-        }
+                        List<Movie> movies = QueryUtils.extractMoviesFromJson(response);
 
-        if (canLoadNewItems) {
-            // Set empty state text to display "No videoMainItems found." It's not visible if any VideoMainItem is added to the adapter
-            emptyStateTextView.setText(R.string.no_movies);
+                        if (currentPage == 1) {
+                            totalPages = QueryUtils.getTotalPagesFromJson(response);
+                        }
 
-            // If showItemsInCollection = false -> hide watched
-            if (!showItemsInCollection) {
-                ArrayList<VideoMainItem> itemsToDelete = new ArrayList<>();
-                for (VideoMainItem item : items) {
-                    int movieTmdbId = item.getTmdbId();
-                    for (int tmdbId:tmdbIds) {
-                        if (movieTmdbId == tmdbId) {
-                            itemsToDelete.add(item);
+                        // TODO - Hide movies already in collection
+                        if (movies != null) {
+                            if (!showItemsInCollection) {
+                                removeCollectionMovies(movies);
+                            }
+
+                            movieItemListAdapter.addAll(movies);
+                        } else {
+                            Log.e("ShadowDebug", "MoviesDiscoverFragment - No tvShows extracted from Json response");
                         }
                     }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        displayError();
+                        Log.e("ShadowDebug", "MoviesDiscoverFragment - " + anError.getErrorBody());
+                    }
+                });
+    }
+
+    private void removeCollectionMovies(List<Movie> movies) {
+        long[] tmdbIds = getTmdbIds();
+        ArrayList<Movie> itemsToDelete = new ArrayList<>();
+        for (Movie item : movies) {
+            long movieTmdbId = item.getTmdbId();
+            for (long tmdbId : tmdbIds) {
+                if (movieTmdbId == tmdbId) {
+                    itemsToDelete.add(item);
                 }
-                items.removeAll(itemsToDelete);
-            }
-
-            if (items != null && !items.isEmpty()) {
-                videoMainItemListAdapter.addAll(items);
             }
         }
-        canLoadNewItems = false;
+        movies.removeAll(itemsToDelete);
     }
 
-    @Override
-    public Loader<List<VideoMainItem>> onCreateLoader(int id, Bundle args) {
-        if (isRecommended) {
-            return new RecommendedMoviesListLoader(getActivity(), tmdbIds);
-        } else {
-            String page = String.valueOf(currentPage);
-
-            Uri baseUri = Uri.parse(tmdbUrl);
-            Uri.Builder uriBuilder = baseUri.buildUpon();
-
-            uriBuilder.appendQueryParameter("api_key", API_KEY);
-            uriBuilder.appendQueryParameter("page", page);
-
-            return new MovieListLoader(getActivity(), uriBuilder.toString());
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<VideoMainItem>> loader) {
-        videoMainItemListAdapter.clear();
+    private long[] getTmdbIds() {
+        return moviesBox.query().build().findIds();
     }
 
     @Override
@@ -266,7 +268,7 @@ public class MoviesDiscoverFragment extends Fragment
                 recommendedItem.setEnabled(false);
                 break;
             default:
-                Log.e("DiscoverListFragment", "Filtering error");
+                Log.e("MoviesDiscoverFragment", "Filtering error");
                 break;
         }
         if (showItemsInCollection) {
@@ -314,17 +316,15 @@ public class MoviesDiscoverFragment extends Fragment
         editor.apply();
     }
 
-    public void startLoader() {
-        canLoadNewItems = true;
-        getLoaderManager().initLoader(HTTP_LOADER_ID, null, this);
-    }
 
     private boolean loadMore() {
-        // Show loading indicator when searching for new temporarMovies
-        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+        // TvShow loading indicator when searching for new temporarMovies
         loadingIndicator.setVisibility(View.VISIBLE);
 
-        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = null;
+        if (getActivity() != null) {
+            connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
         NetworkInfo networkInfo = null;
         if (connMgr != null) {
             networkInfo = connMgr.getActiveNetworkInfo();
@@ -332,16 +332,10 @@ public class MoviesDiscoverFragment extends Fragment
 
         // If there is a network connection, fetch more
         if (networkInfo != null && networkInfo.isConnected()) {
-            LoaderManager loaderManager = getLoaderManager();
-            canLoadNewItems = true;
-            loaderManager.initLoader(++HTTP_LOADER_ID, null, MoviesDiscoverFragment.this);
             currentPage++;
+            requestAndAddMovies();
             return true;
         } else {
-            loadingIndicator = rootView.findViewById(R.id.loading_indicator);
-            loadingIndicator.setVisibility(View.GONE);
-
-            emptyStateTextView.setText(R.string.no_internet_connection);
             return false;
         }
     }
@@ -354,10 +348,6 @@ public class MoviesDiscoverFragment extends Fragment
         } else {
             tmdbUrl = null;
         }
-    }
-
-    public void setTmdbIds(ArrayList<Integer> tmdbIds) {
-        this.tmdbIds = tmdbIds;
     }
 
     public void setShowItemsInCollection(boolean showItemsInCollection) {
@@ -384,7 +374,33 @@ public class MoviesDiscoverFragment extends Fragment
 
     public void refreshList() {
         if (getActivity() != null) {
+            movieItemListAdapter.clear();
+            currentPage = 1;
             ((MoviesActivity)getActivity()).dataChanged();
         }
+    }
+
+    private void displayError() {
+        // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
+        showEmptyStateTextView(R.string.no_movies);
+
+        // Check if there is a more specific error
+        if (getActivity() != null) {
+            // Used to test internet connection
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connMgr != null) {
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo == null || !networkInfo.isConnected()) {
+                    // First, hide loading indicator so error message will be visible
+                    loadingIndicator.setVisibility(View.GONE);
+                    showEmptyStateTextView(R.string.no_internet_connection);
+                }
+            }
+        }
+    }
+
+    private void showEmptyStateTextView(int resid) {
+        emptyStateTextView.setVisibility(View.VISIBLE);
+        emptyStateTextView.setText(resid);
     }
 }

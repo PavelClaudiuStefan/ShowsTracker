@@ -8,6 +8,10 @@ import java.util.Locale;
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 
+/**
+ * Show is a hypernym of movie and tv show
+ */
+
 @Entity
 public class Show {
 
@@ -15,6 +19,7 @@ public class Show {
     private long tmdbId;
     private String title;
     private double vote;
+    // if equals Long.MAX_VALUE -> Unknown release date
     private long releaseDateInMilliseconds;         // Cinema release date for movies, first TV appearance for TV shows
     private String imdbUrl;
     private String imageId;
@@ -24,9 +29,6 @@ public class Show {
 
     private String thumbnailSize = "w300";
     private String imageSize = "w780";
-
-    //TODO - save the total pages number in a different way
-    private static int totalPages;
 
     public Show() {}
 
@@ -58,6 +60,9 @@ public class Show {
     }
 
     public String getReleaseDate() {
+        if (releaseDateInMilliseconds == Long.MAX_VALUE) {
+            return "Unknown";
+        }
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
         Calendar calendar = Calendar.getInstance();
@@ -116,32 +121,6 @@ public class Show {
         return 0;
     }
 
-    // TODO - make this available in settings
-    public void setThumbnailSize(String thumbnailSize) {
-        this.thumbnailSize = thumbnailSize;
-    }
-
-    // TODO - make this available in settings
-    public void setImageSize(String imageSize) {
-        this.imageSize = imageSize;
-    }
-
-    public int getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(int totalPages) {
-        Show.totalPages = totalPages;
-    }
-
-    public String getThumbnailSize() {
-        return thumbnailSize;
-    }
-
-    public String getImageSize() {
-        return imageSize;
-    }
-
     public void setTmdbId(long tmdbId) {
         this.tmdbId = tmdbId;
     }
@@ -162,10 +141,27 @@ public class Show {
         this.imageId = imageId;
     }
 
+    public String getThumbnailSize() {
+        return thumbnailSize;
+    }
+
+    public String getImageSize() {
+        return imageSize;
+    }
+
+    // TODO - make this available in settings
+    public void setThumbnailSize(String thumbnailSize) {
+        this.thumbnailSize = thumbnailSize;
+    }
+
+    // TODO - make this available in settings
+    public void setImageSize(String imageSize) {
+        this.imageSize = imageSize;
+    }
+
     @Override
     public String toString() {
-        return "VideoMainItem{" +
-                "tmdbId=" + tmdbId +
+        return  "{tmdbId=" + tmdbId +
                 ", title='" + title + '\'' +
                 ", vote=" + vote +
                 ", releaseDateInMilliseconds=" + releaseDateInMilliseconds +

@@ -6,14 +6,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.ShowsAllFragment;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.ShowsDiscoverFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsAllFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsDiscoverFragment;
 
-public class ShowsCategoryAdapter extends FragmentStatePagerAdapter {
+public class TvShowsCategoryAdapter extends FragmentStatePagerAdapter {
 
     private Context context;
 
-    public ShowsCategoryAdapter(Context context, FragmentManager fm) {
+    public TvShowsCategoryAdapter(Context context, FragmentManager fm) {
         super(fm);
         this.context = context;
     }
@@ -21,11 +21,11 @@ public class ShowsCategoryAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new ShowsAllFragment();
+            return new TvShowsAllFragment();
         } else if (position == 1) {
-            return new ShowsAllFragment();
+            return new TvShowsAllFragment();
         } else if (position == 2) {
-            return new ShowsDiscoverFragment();
+            return new TvShowsDiscoverFragment();
         }
         return null;
     }

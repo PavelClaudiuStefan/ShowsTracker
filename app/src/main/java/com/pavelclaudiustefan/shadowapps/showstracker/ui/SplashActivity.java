@@ -10,8 +10,6 @@ import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static final String TAG = "MainEmptyActivity";
-
     private FirebaseAuth firebaseAuth;
 
     @Override

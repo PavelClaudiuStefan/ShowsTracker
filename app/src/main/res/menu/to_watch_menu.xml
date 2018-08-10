@@ -4,8 +4,8 @@
 
     <item android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort_options"
-        android:title="@string/filter_options"
-        app:showAsAction="ifRoom">
+        android:title="@string/sorting_options"
+        app:showAsAction="never">
 
         <menu>
             <item
@@ -38,7 +38,14 @@
             <item
                 android:id="@+id/menu_show_physical"
                 android:title="@string/physical_released" />
+            <item
+                android:id="@+id/menu_show_upcoming"
+                android:title="@string/upcoming" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/menu_update_data"
+        android:title="@string/update_data" />
 
 </menu>

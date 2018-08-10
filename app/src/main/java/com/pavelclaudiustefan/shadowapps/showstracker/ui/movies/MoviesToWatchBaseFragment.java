@@ -20,15 +20,14 @@ import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie_;
 
 import java.util.List;
 
-public class MoviesAllFragment extends MoviesBaseFragment {
+public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
 
     private String currentFilterOption;
-    private int currentSortByOption;
+    private int currentSortOption;
     private int currentSortDirectionOption;
 
-    public MoviesAllFragment() {
+    public MoviesToWatchBaseFragment() {
         setHasOptionsMenu(true);
-        setSearchFabVisibility(true);
     }
 
     @Nullable
@@ -41,27 +40,19 @@ public class MoviesAllFragment extends MoviesBaseFragment {
     @Override
     public List<Movie> requestMoviesFromDb() {
         switch (currentFilterOption) {
-            case "all":
-                return requestAllMovies();
             case "released_cinema":
                 return requestMoviesReleasedInCinema();
             case "released_digital":
                 return requestDigitalMoviesReleased();
             case "released_physical":
                 return requestPhysicalMoviesReleased();
-            case "not_released":
-                return requestMoviesNotReleased();
+            case "upcoming":
+                return requestUpcomingMovies();
             default:
-                Log.e("MoviesAllFragment", "Filtering - displaying movies error");
+                Log.e("ShadowDebug", "Filtering - displaying movies error");
                 return null;
         }
-    }
 
-    private List<Movie> requestAllMovies() {
-        return getMoviesBox().query()
-                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
     }
 
     private List<Movie> requestMoviesReleasedInCinema() {
@@ -69,7 +60,8 @@ public class MoviesAllFragment extends MoviesBaseFragment {
 
         return getMoviesBox().query()
                 .less(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
-                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
+                .equal(Movie_.watched, false)
+                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -79,7 +71,8 @@ public class MoviesAllFragment extends MoviesBaseFragment {
 
         return getMoviesBox().query()
                 .less(Movie_.digitalReleaseDateInMilliseconds, todayInMilliseconds)
-                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
+                .equal(Movie_.watched, false)
+                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -89,17 +82,19 @@ public class MoviesAllFragment extends MoviesBaseFragment {
 
         return getMoviesBox().query()
                 .less(Movie_.physicalReleaseDateInMilliseconds, todayInMilliseconds)
-                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
+                .equal(Movie_.watched, false)
+                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
 
-    private List<Movie> requestMoviesNotReleased() {
+    private List<Movie> requestUpcomingMovies() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .greater(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
-                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
+                .equal(Movie_.watched, false)
+                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -107,16 +102,15 @@ public class MoviesAllFragment extends MoviesBaseFragment {
     private void initFilteringAndSortingOptionsValues() {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         currentFilterOption = sharedPrefs.getString(
-                getString(R.string.settings_collection_filter),
-                getString(R.string.settings_collection_filter_default)
+                getString(R.string.settings_to_watch_filter),
+                getString(R.string.settings_to_watch_filter_default)
         );
-        currentSortByOption = sharedPrefs.getInt(
-                getString(R.string.settings_collection_sort),
+        currentSortOption = sharedPrefs.getInt(
+                getString(R.string.settings_to_watch_sort_by),
                 MovieComparator.BY_DATE
         );
-
         currentSortDirectionOption = sharedPrefs.getInt(
-                getString(R.string.settings_collection_sort_direction),
+                getString(R.string.settings_to_watch_sort_direction),
                 MovieComparator.ASCENDING
         );
     }
@@ -124,17 +118,13 @@ public class MoviesAllFragment extends MoviesBaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
-        inflater.inflate(R.menu.collection_menu,menu);
+        inflater.inflate(R.menu.to_watch_menu,menu);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         // Set active option invisible
         switch (currentFilterOption) {
-            case "all":
-                MenuItem allItem = menu.findItem(R.id.menu_show_all);
-                allItem.setEnabled(false);
-                break;
             case "released_cinema":
                 MenuItem cinemaItem = menu.findItem(R.id.menu_show_cinema);
                 cinemaItem.setEnabled(false);
@@ -147,17 +137,17 @@ public class MoviesAllFragment extends MoviesBaseFragment {
                 MenuItem physicalItem = menu.findItem(R.id.menu_show_physical);
                 physicalItem.setEnabled(false);
                 break;
-            case "not_released":
-                MenuItem notReleasedItem = menu.findItem(R.id.menu_show_not_released);
-                notReleasedItem.setEnabled(false);
+            case "upcoming":
+                MenuItem upcomingItem = menu.findItem(R.id.menu_show_upcoming);
+                upcomingItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesAllFragment", "Filtering - setting menu error");
+                Log.e("ShadowDebug", "Filtering - setting menu error");
                 break;
         }
 
         // Set active option invisible
-        switch (currentSortByOption) {
+        switch (currentSortOption) {
             case MovieComparator.BY_DATE:
                 MenuItem dateItem = menu.findItem(R.id.menu_sort_by_date);
                 dateItem.setEnabled(false);
@@ -167,7 +157,7 @@ public class MoviesAllFragment extends MoviesBaseFragment {
                 ratingItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesAllFragment", "Sorting error");
+                Log.e("ShadowDebug", "Sorting error");
                 break;
         }
 
@@ -182,7 +172,7 @@ public class MoviesAllFragment extends MoviesBaseFragment {
                 descItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesAllFragment", "Sorting direction error");
+                Log.e("ShadowDebug", "Sorting direction error");
                 break;
         }
     }
@@ -191,32 +181,29 @@ public class MoviesAllFragment extends MoviesBaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_show_all:
-                saveSettingFilterAll();
-                break;
             case R.id.menu_show_cinema:
-                saveSettingFilterCinema();
+                saveFilterOption("released_cinema");
                 break;
             case R.id.menu_show_digital:
-                saveSettingFilterDigital();
+                saveFilterOption("released_digital");
                 break;
             case R.id.menu_show_physical:
-                saveSettingFilterPhysical();
+                saveFilterOption("released_physical");
                 break;
-            case R.id.menu_show_not_released:
-                saveSettingFilterNotReleased();
+            case R.id.menu_show_upcoming:
+                saveFilterOption("upcoming");
                 break;
             case R.id.menu_sort_by_date:
-                saveSettingSortBy(MovieComparator.BY_DATE);
+                saveSortByOption(MovieComparator.BY_DATE);
                 break;
             case R.id.menu_sort_by_rating:
-                saveSettingSortBy(MovieComparator.BY_RATING);
+                saveSortByOption(MovieComparator.BY_RATING);
                 break;
             case R.id.menu_sort_asc:
-                saveSettingSortDirection(MovieComparator.ASCENDING);
+                saveSortDirectionOption(MovieComparator.ASCENDING);
                 break;
             case R.id.menu_sort_desc:
-                saveSettingSortDirection(MovieComparator.DESCENDING);
+                saveSortDirectionOption(MovieComparator.DESCENDING);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -226,57 +213,24 @@ public class MoviesAllFragment extends MoviesBaseFragment {
         return true;
     }
 
-    // Save in SharedPreferences: show all movies
-    private void saveSettingFilterAll() {
+    private void saveFilterOption(String filterOption) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_collection_filter), "all");
+        editor.putString(getString(R.string.settings_to_watch_filter), filterOption);
         editor.apply();
     }
 
-    // Save in SharedPreferences: show movies released in cinema
-    private void saveSettingFilterCinema() {
+    private void saveSortByOption(int sortBy) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_collection_filter), "released_cinema");
+        editor.putInt(getString(R.string.settings_to_watch_sort_by), sortBy);
         editor.apply();
     }
 
-    // Save in SharedPreferences: show digital movies released
-    private void saveSettingFilterDigital() {
+    private void saveSortDirectionOption(int sortDirection) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_collection_filter), "released_digital");
-        editor.apply();
-    }
-
-    // Save in SharedPreferences: show physical movies released
-    private void saveSettingFilterPhysical() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_collection_filter), "released_physical");
-        editor.apply();
-    }
-
-    // Save in SharedPreferences: show movies not released
-    private void saveSettingFilterNotReleased() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_collection_filter), "not_released");
-        editor.apply();
-    }
-
-    private void saveSettingSortBy(int sortBy) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putInt(getString(R.string.settings_collection_sort), sortBy);
-        editor.apply();
-    }
-
-    private void saveSettingSortDirection(int sortDirection) {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putInt(getString(R.string.settings_collection_sort_direction), sortDirection);
+        editor.putInt(getString(R.string.settings_to_watch_sort_direction), sortDirection);
         editor.apply();
     }
 

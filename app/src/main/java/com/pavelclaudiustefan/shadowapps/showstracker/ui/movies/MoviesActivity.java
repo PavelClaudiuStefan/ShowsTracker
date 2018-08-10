@@ -2,14 +2,14 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MoviesCategoryAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.VideoSectionsContainerActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.base.ShowsSectionsContainerActivity;
 
-public class MoviesActivity extends VideoSectionsContainerActivity {
+public class MoviesActivity extends ShowsSectionsContainerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +18,8 @@ public class MoviesActivity extends VideoSectionsContainerActivity {
     }
 
     @Override
-    public void initAdapter() {
-        setAdapter(new MoviesCategoryAdapter(this, getSupportFragmentManager()));
+    public FragmentStatePagerAdapter getFragmentPagerAdapter() {
+        return new MoviesCategoryAdapter(this, getSupportFragmentManager());
     }
 
     @Override

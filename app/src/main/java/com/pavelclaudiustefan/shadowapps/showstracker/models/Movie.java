@@ -1,14 +1,24 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.models;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Movie extends VideoMainItem{
+import io.objectbox.annotation.Entity;
 
+@Entity
+public class Movie extends Show implements Serializable{
+
+    // if equals Long.MAX_VALUE -> Unknown release date
     private long digitalReleaseDateInMilliseconds;
+    // if equals Long.MAX_VALUE -> Unknown release date
     private long physicalReleaseDateInMilliseconds;
+
+    public Movie() {
+        super();
+    }
 
     public Movie(int tmdbId, String title, double vote, long cinemaReleaseDateInMilliseconds, String imageId) {
         super(tmdbId, title, vote, cinemaReleaseDateInMilliseconds, imageId);
@@ -52,4 +62,8 @@ public class Movie extends VideoMainItem{
         return formatter.format(calendar.getTime());
     }
 
+    @Override
+    public String toString() {
+        return "Movie" + super.toString();
+    }
 }

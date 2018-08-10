@@ -26,11 +26,11 @@
 
         <activity
             android:name=".ui.LoginActivity"
-            android:theme="@style/AppTheme.MyTheme" />
+            android:theme="@style/AppTheme.AuthTheme" />
 
         <activity
             android:name=".ui.SignupActivity"
-            android:theme="@style/AppTheme.MyTheme" />
+            android:theme="@style/AppTheme.AuthTheme" />
 
         <activity
             android:name=".ui.movies.MoviesActivity"
@@ -38,16 +38,19 @@
             android:launchMode="singleTop" />
 
         <activity
-            android:name=".ui.shows.ShowsActivity"
+            android:name=".ui.tvshows.TvShowsActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name=".ui.movies.MovieActivitySQL" />
+        <activity android:name=".ui.movies.MovieActivityDb" />
 
         <activity android:name=".ui.movies.MovieActivityHTTP" />
 
-        <activity android:name=".ui.SearchActivity" />
+        <activity android:name=".ui.tvshows.TvShowActivityHTTP" />
 
-        <activity android:name=".ui.shows.ShowActivityHTTP" />
+        <activity
+            android:name=".ui.search.MovieSearchActivity"/>
+
+        <activity android:name=".ui.search.TvShowSearchActivity" />
 
         <provider
             android:name=".data.VideoItemProvider"

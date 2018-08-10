@@ -14,17 +14,15 @@
                 android:title="@string/top_rated" />
             <item
                 android:id="@+id/menu_show_popular"
-                android:title="@string/popular_movies" />
+                android:title="@string/popular" />
             <item
                 android:id="@+id/menu_show_recommended"
-                android:title="@string/recommended_movies" />
+                android:title="@string/recommended" />
         </menu>
     </item>
 
     <item
         android:id="@+id/show_hide_watched"
-        android:title="@string/show_collection_movies">
-
-    </item>
+        android:title="@string/show_collection_movies" />
 
 </menu>

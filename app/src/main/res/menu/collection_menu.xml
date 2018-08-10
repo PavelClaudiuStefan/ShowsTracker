@@ -5,7 +5,7 @@
     <item android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort_options"
         android:title="@string/sorting_options"
-        app:showAsAction="ifRoom">
+        app:showAsAction="never">
 
         <menu>
             <item
@@ -46,5 +46,9 @@
                 android:title="@string/not_released" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/menu_update_data"
+        android:title="@string/update_data" />
 
 </menu>

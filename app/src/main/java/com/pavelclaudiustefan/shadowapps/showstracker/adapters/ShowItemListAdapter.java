@@ -11,15 +11,26 @@ import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.VideoMainItem;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class ShowItemListAdapter extends ArrayAdapter<Show> {
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    public ShowItemListAdapter(Context context, ArrayList<Show> items) {
+public class ShowItemListAdapter<T extends Show> extends ArrayAdapter<T> {
+
+    @BindView(R.id.title)
+    TextView titleView;
+    @BindView(R.id.average_vote)
+    TextView averageVoteView;
+    @BindView(R.id.date)
+    TextView dateView;
+    @BindView(R.id.thumbnail)
+    ImageView imageView;
+
+    public ShowItemListAdapter(Context context, ArrayList<T> items) {
         super(context, 0, items);
     }
 
@@ -32,23 +43,23 @@ public class ShowItemListAdapter extends ArrayAdapter<Show> {
                     R.layout.category_list_item, parent, false);
         }
 
-        Show currentItem = getItem(position);
+        ButterKnife.bind(this, listItemView);
 
-        TextView titleView = listItemView.findViewById(R.id.title);
+        T currentItem = getItem(position);
+
         assert currentItem != null;
         titleView.setText(currentItem.getTitle());
-
-        TextView averageVoteView = listItemView.findViewById(R.id.average_vote);
         averageVoteView.setText(formatVote(currentItem.getVote()));
-
-        TextView dateView = listItemView.findViewById(R.id.date);
         dateView.setText(currentItem.getReleaseDate());
 
-        ImageView imageView = listItemView.findViewById(R.id.thumbnail);
 
         Picasso picasso = Picasso.get();
         picasso.setIndicatorsEnabled(true);
         picasso.load(currentItem.getThumbnailUrl())
+                .into(imageView);
+
+        Picasso.get()
+                .load(currentItem.getThumbnailUrl())
                 .into(imageView);
 
         return listItemView;
@@ -59,8 +70,9 @@ public class ShowItemListAdapter extends ArrayAdapter<Show> {
         return magnitudeFormat.format(vote);
     }
 
+    @SafeVarargs
     @Override
-    public void addAll(Show... items) {
+    public final void addAll(T... items) {
         super.addAll(items);
     }
 }

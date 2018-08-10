@@ -197,41 +197,41 @@ public class VideoItemProvider extends ContentProvider {
         // Check that the tmdb id is not null
         String tmdbId = values.getAsString(ShowEntry.TMDB_ID);
         if (tmdbId == null) {
-            throw new IllegalArgumentException("Show requires a tmdb id");
+            throw new IllegalArgumentException("TvShow requires a tmdb id");
         }
 
         // Check that the name is not null
         String name = values.getAsString(ShowEntry.SHOW_TITLE);
         if (name == null) {
-            throw new IllegalArgumentException("Show requires a name");
+            throw new IllegalArgumentException("TvShow requires a name");
         }
 
         // Check that the release date is not null
         String releaseDate = values.getAsString(ShowEntry.SHOW_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
-            throw new IllegalArgumentException("Show requires a release date");
+            throw new IllegalArgumentException("TvShow requires a release date");
         }
 
         // Check that the average vote is not null
         String averageVote = values.getAsString(ShowEntry.SHOW_AVERAGE_VOTE);
         if (averageVote == null) {
-            throw new IllegalArgumentException("Show requires an average vote");
+            throw new IllegalArgumentException("TvShow requires an average vote");
         }
 
         String voteCount = values.getAsString(ShowEntry.SHOW_VOTE_COUNT);
         if (voteCount == null) {
-            throw new IllegalArgumentException("Show requires a vote count");
+            throw new IllegalArgumentException("TvShow requires a vote count");
         }
 
         String overview = values.getAsString(ShowEntry.SHOW_OVERVIEW);
         if (overview == null) {
-            throw new IllegalArgumentException("Show requires an overview");
+            throw new IllegalArgumentException("TvShow requires an overview");
         }
 
         // Check that the image id is not null
         String imageId = values.getAsString(ShowEntry.SHOW_IMAGE_ID);
         if (imageId == null) {
-            throw new IllegalArgumentException("Show requires an image id");
+            throw new IllegalArgumentException("TvShow requires an image id");
         }
 
         // Get writeable database
@@ -357,46 +357,46 @@ public class VideoItemProvider extends ContentProvider {
         // Check that the tmdb id is not null
         String tmdbId = values.getAsString(ShowEntry.TMDB_ID);
         if (tmdbId == null) {
-            throw new IllegalArgumentException("Show requires a tmdb id");
+            throw new IllegalArgumentException("TvShow requires a tmdb id");
         }
 
         // Check that the name is not null
         String name = values.getAsString(ShowEntry.SHOW_TITLE);
         if (name == null) {
-            throw new IllegalArgumentException("Show requires a name");
+            throw new IllegalArgumentException("TvShow requires a name");
         }
 
         // Check that the release date is not null
         String releaseDate = values.getAsString(ShowEntry.SHOW_RELEASE_DATE_IN_MILLISECONDS);
         if (releaseDate == null) {
-            throw new IllegalArgumentException("Show requires a release date");
+            throw new IllegalArgumentException("TvShow requires a release date");
         }
 
         // Check that the average vote is not null
         String averageVote = values.getAsString(ShowEntry.SHOW_AVERAGE_VOTE);
         if (averageVote == null) {
-            throw new IllegalArgumentException("Show requires an average vote");
+            throw new IllegalArgumentException("TvShow requires an average vote");
         }
 
         String voteCount = values.getAsString(ShowEntry.SHOW_VOTE_COUNT);
         if (voteCount == null) {
-            throw new IllegalArgumentException("Show requires a vote count");
+            throw new IllegalArgumentException("TvShow requires a vote count");
         }
 
         String overview = values.getAsString(ShowEntry.SHOW_OVERVIEW);
         if (overview == null) {
-            throw new IllegalArgumentException("Show requires an overview");
+            throw new IllegalArgumentException("TvShow requires an overview");
         }
 
         String watched = values.getAsString(ShowEntry.SHOW_WATCHED);
         if (watched == null) {
-            throw new IllegalArgumentException("Show requires a watched value");
+            throw new IllegalArgumentException("TvShow requires a watched value");
         }
 
         // Check that the image id is not null
         String imageId = values.getAsString(ShowEntry.SHOW_IMAGE_ID);
         if (imageId == null) {
-            throw new IllegalArgumentException("Show requires an image id");
+            throw new IllegalArgumentException("TvShow requires an image id");
         }
 
         // If there are no values to update, then don't try to update the database

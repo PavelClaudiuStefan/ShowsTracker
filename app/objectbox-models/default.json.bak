@@ -106,69 +106,9 @@
         }
       ],
       "relations": []
-    },
-    {
-      "id": "3:2611539171277373176",
-      "lastPropertyId": "13:8457002107281151000",
-      "name": "Movie",
-      "properties": [
-        {
-          "id": "1:6072460810050060488",
-          "name": "tmdbId"
-        },
-        {
-          "id": "2:7398654242653851034",
-          "name": "title"
-        },
-        {
-          "id": "3:565813051375614579",
-          "name": "vote"
-        },
-        {
-          "id": "4:2345562335624190419",
-          "name": "releaseDateInMilliseconds"
-        },
-        {
-          "id": "5:1782202058926885397",
-          "name": "imdbUrl"
-        },
-        {
-          "id": "6:868454011860335967",
-          "name": "imageId"
-        },
-        {
-          "id": "7:8668291133824277807",
-          "name": "voteCount"
-        },
-        {
-          "id": "8:5977380726799067659",
-          "name": "overview"
-        },
-        {
-          "id": "9:835021236522491801",
-          "name": "watched"
-        },
-        {
-          "id": "10:5481113198660265831",
-          "name": "thumbnailSize"
-        },
-        {
-          "id": "11:3464072421583038345",
-          "name": "imageSize"
-        },
-        {
-          "id": "12:4397195387931181226",
-          "name": "digitalReleaseDateInMilliseconds"
-        },
-        {
-          "id": "13:8457002107281151000",
-          "name": "physicalReleaseDateInMilliseconds"
-        }
-      ],
-      "relations": []
     }
   ],
-  "lastEntityId": "3:2611539171277373176",
+  "lastEntityId": "2:599848540055697503",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

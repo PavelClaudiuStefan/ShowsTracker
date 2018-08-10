@@ -1,13 +1,10 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.ui;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui.base;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,17 +15,18 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.LoginActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.ShowsActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class VideoSectionsContainerActivity extends AppCompatActivity
+public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FragmentStatePagerAdapter adapter;
     private FirebaseAuth firebaseAuth;
 
     @BindView(R.id.drawer_layout)
@@ -55,25 +53,20 @@ public abstract class VideoSectionsContainerActivity extends AppCompatActivity
 
         // Set logged user display name (Username or email)
         View headerView = navigationView.getHeaderView(0);
-        TextView emailTextView = headerView.findViewById(R.id.display_name);
-        if (firebaseAuth.getCurrentUser() != null) {
-            if (firebaseAuth.getCurrentUser().getDisplayName() != null) {
-                emailTextView.setText(firebaseAuth.getCurrentUser().getDisplayName());
+        TextView userDisplayTextView = headerView.findViewById(R.id.display_name);
+
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            String displayName = currentUser.getDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                userDisplayTextView.setText(displayName);
             } else {
-                emailTextView.setText(firebaseAuth.getCurrentUser().getEmail());
+                String email = currentUser.getEmail();
+                userDisplayTextView.setText(email);
             }
         } else {
-            emailTextView.setText(R.string.not_logged_in);
+            userDisplayTextView.setText(R.string.not_logged_in);
         }
-
-        ViewPager viewPager = findViewById(R.id.viewpager);
-        initAdapter();
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
     @Override
@@ -97,7 +90,7 @@ public abstract class VideoSectionsContainerActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // as you specify a parent activity in AndroidManifest.searchable_movies.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -120,7 +113,7 @@ public abstract class VideoSectionsContainerActivity extends AppCompatActivity
             startActivity(new Intent(this, MoviesActivity.class));
             finish();
         } else if (id == R.id.nav_shows) {
-            startActivity(new Intent(this, ShowsActivity.class));
+            startActivity(new Intent(this, TvShowsActivity.class));
             finish();
         } else if (id == R.id.nav_groups) {
 
@@ -141,14 +134,4 @@ public abstract class VideoSectionsContainerActivity extends AppCompatActivity
     public void closeDrawer() {
         drawer.closeDrawer(GravityCompat.START);
     }
-
-    public void dataChanged() {
-        adapter.notifyDataSetChanged();
-    }
-
-    public void setAdapter(FragmentStatePagerAdapter adapter) {
-        this.adapter = adapter;
-    }
-
-    public abstract void initAdapter();
 }

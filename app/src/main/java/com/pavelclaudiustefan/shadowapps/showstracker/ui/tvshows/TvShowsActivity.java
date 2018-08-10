@@ -1,14 +1,15 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.ui.shows;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCategoryAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.VideoSectionsContainerActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.TvShowsCategoryAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.base.ShowsSectionsContainerActivity;
 
-public class ShowsActivity extends VideoSectionsContainerActivity {
+public class TvShowsActivity extends ShowsSectionsContainerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,8 +18,8 @@ public class ShowsActivity extends VideoSectionsContainerActivity {
     }
 
     @Override
-    public void initAdapter() {
-        setAdapter(new ShowsCategoryAdapter(this, getSupportFragmentManager()));
+    public FragmentStatePagerAdapter getFragmentPagerAdapter() {
+        return new TvShowsCategoryAdapter(this, getSupportFragmentManager());
     }
 
     @Override

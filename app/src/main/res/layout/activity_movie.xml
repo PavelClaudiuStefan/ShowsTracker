@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:background="#E0E0E0"
-    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivitySQL">
+    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityDb">
 
 
     <LinearLayout
@@ -170,7 +170,7 @@
                 android:layout_below="@id/overview_title"
                 android:textSize="16sp"
                 android:textColor="@color/colorItemDetails"
-                tools:text="I need a lot of text here because this is gonna be the overview of this movie, or show, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
+                tools:text="I need a lot of text here because this is gonna be the overview of this movie, or tvShow, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
 
 
         </RelativeLayout>

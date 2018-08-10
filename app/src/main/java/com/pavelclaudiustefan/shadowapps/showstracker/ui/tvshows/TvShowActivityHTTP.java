@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.ui.shows;
+package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,16 +22,16 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.TimeUnit;
 
 import io.objectbox.Box;
 
-public class ShowActivityHTTP extends AppCompatActivity{
+public class TvShowActivityHTTP extends AppCompatActivity{
 
-    public static final String TAG = "ShowActivityHTTP";
+    public static final String TAG = "TvShowActivityHTTP";
 
     //TODO - Hide the API key
     private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
@@ -49,20 +49,20 @@ public class ShowActivityHTTP extends AppCompatActivity{
 
     private boolean inUserCollection;
 
-    private Show show;
-    private Box<Show> showsBox;
+    private TvShow tvShow;
+    private Box<TvShow> showsBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
-        setTitle("TV show");
+        setTitle("TV tvShow");
 
-        showsBox = ((MyApp)getApplication()).getBoxStore().boxFor(Show.class);
+        showsBox = ((MyApp)getApplication()).getBoxStore().boxFor(TvShow.class);
 
         // TODO - Better way of sending tmdbId through intent
         Intent intent = getIntent();
-        tmdbId = intent.getExtras().getString("tmdb_id");
+        tmdbId = intent.getStringExtra("tmdb_id");
 
         imageView = findViewById(R.id.thumbnail);
         titleTextView = findViewById(R.id.title);
@@ -73,51 +73,8 @@ public class ShowActivityHTTP extends AppCompatActivity{
 
         requestAndDisplayShow();
 
-        //Only visible if no show is found
+        //Only visible if no tvShow is found
         emptyStateTextView = findViewById(R.id.empty_view);
-    }
-
-
-    private void displayShow() {
-        View loadingIndicator = findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.GONE);
-
-        String imageUrl = show.getImageUrl();
-        String title = show.getTitle();
-        String averageVote = String.valueOf(show.getVote());
-        int voteCount = show.getVoteCount();
-        String releaseDate = "Air date: " + show.getReleaseDate();
-        String overview = show.getOverview();
-
-        setTitle(title);
-        Picasso.get()
-                .load(imageUrl)
-                .into(imageView);
-        titleTextView.setText(title);
-        averageVoteTextView.setText(averageVote);
-        String voteCountStr = voteCount + " votes";
-        voteCountTextView.setText(voteCountStr);
-        releaseDateTextView.setText(releaseDate);
-        overviewTextView.setText(overview);
-
-        setUpAddButton();
-
-        // TODO - Check logic - idk if I got it right
-        // If there is no network connection, or data cached - Display no internet connection message
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = null;
-        if (connMgr != null) {
-            networkInfo = connMgr.getActiveNetworkInfo();
-        }
-        if ((networkInfo == null || !networkInfo.isConnected()) && show == null) {
-            loadingIndicator.setVisibility(View.GONE);
-            emptyStateTextView.setText(R.string.no_internet_connection);
-        } else if (title != null && !title.isEmpty()) {
-            emptyStateTextView.setVisibility(View.GONE);
-        } else {
-            // Set empty state text to display "No movies found." It's not visible if any show is added to the adapter
-            emptyStateTextView.setText(R.string.no_movie_data);
-        }
     }
 
     private void requestAndDisplayShow() {
@@ -140,7 +97,7 @@ public class ShowActivityHTTP extends AppCompatActivity{
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        show = QueryUtils.extractShowDataFromJson(response);
+                        tvShow = QueryUtils.extractShowDataFromJson(response);
                         displayShow();
                     }
 
@@ -151,9 +108,51 @@ public class ShowActivityHTTP extends AppCompatActivity{
                 });
     }
 
+    private void displayShow() {
+        View loadingIndicator = findViewById(R.id.loading_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+
+        String imageUrl = tvShow.getImageUrl();
+        String title = tvShow.getTitle();
+        String averageVote = String.valueOf(tvShow.getVote());
+        int voteCount = tvShow.getVoteCount();
+        String releaseDate = "Air date: " + tvShow.getReleaseDate();
+        String overview = tvShow.getOverview();
+
+        setTitle(title);
+        Picasso.get()
+                .load(imageUrl)
+                .into(imageView);
+        titleTextView.setText(title);
+        averageVoteTextView.setText(averageVote);
+        String voteCountStr = voteCount + " votes";
+        voteCountTextView.setText(voteCountStr);
+        releaseDateTextView.setText(releaseDate);
+        overviewTextView.setText(overview);
+
+        setUpAddButton();
+
+        // TODO - Check logic - idk if I got it right
+        // If there is no network connection, or data cached - Display no internet connection message
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+        if (connMgr != null) {
+            networkInfo = connMgr.getActiveNetworkInfo();
+        }
+        if ((networkInfo == null || !networkInfo.isConnected()) && tvShow == null) {
+            loadingIndicator.setVisibility(View.GONE);
+            emptyStateTextView.setText(R.string.no_internet_connection);
+        } else if (title != null && !title.isEmpty()) {
+            emptyStateTextView.setVisibility(View.GONE);
+        } else {
+            // Set empty state text to display "No movies found." It's not visible if any tvShow is added to the adapter
+            emptyStateTextView.setText(R.string.no_movie_data);
+        }
+    }
+
     // Set the toggle button state (Add to collection button)
     private void setUpAddButton() {
-        if (showsBox.get(show.getTmdbId()) != null) {
+        if (showsBox.get(tvShow.getTmdbId()) != null) {
             inUserCollection = true;
         }
 
@@ -163,18 +162,18 @@ public class ShowActivityHTTP extends AppCompatActivity{
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked) {
-                    insertShow(show);
+                    insertShow(tvShow);
                     inUserCollection = true;
                 } else {
-                    removeShow(show.getTmdbId());
+                    removeShow(tvShow.getTmdbId());
                     inUserCollection = false;
                 }
             }
         });
     }
 
-    private void insertShow(Show show) {
-        showsBox.put(show);
+    private void insertShow(TvShow tvShow) {
+        showsBox.put(tvShow);
     }
 
     private void removeShow(long showTmdbId) {
