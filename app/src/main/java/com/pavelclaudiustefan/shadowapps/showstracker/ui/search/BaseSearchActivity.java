@@ -22,6 +22,7 @@ import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
@@ -34,8 +35,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivity {
-
-    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
     @BindView(R.id.list)
     ListView listView;
@@ -142,7 +141,7 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
 
         Uri baseUri = Uri.parse(tmdbUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
         uriBuilder.appendQueryParameter("query", query);
         uriBuilder.appendQueryParameter("page", page);
         AndroidNetworking.get(uriBuilder.toString())

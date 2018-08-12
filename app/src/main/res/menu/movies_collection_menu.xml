@@ -15,6 +15,9 @@
                 android:id="@+id/menu_sort_by_rating"
                 android:title="@string/sort_by_rating" />
             <item
+                android:id="@+id/menu_sort_alphabetically"
+                android:title="@string/sort_alphabetically" />
+            <item
                 android:id="@+id/menu_sort_asc"
                 android:title="@string/ascending_order" />
             <item

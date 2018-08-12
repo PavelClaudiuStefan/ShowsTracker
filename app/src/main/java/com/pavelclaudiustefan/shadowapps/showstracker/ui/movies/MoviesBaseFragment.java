@@ -37,6 +37,8 @@ public abstract class MoviesBaseFragment extends Fragment{
     View loadingIndicator;
     @BindView(R.id.search_fab)
     FloatingActionButton searchFab;
+    @BindView(R.id.swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private boolean isFabVisible = false;
     private ShowItemListAdapter<Movie> movieItemListAdapter;
@@ -45,28 +47,39 @@ public abstract class MoviesBaseFragment extends Fragment{
     private ArrayList<Movie> movies;
 
     public MoviesBaseFragment() {
-        // Required empty constructor
+        setHasOptionsMenu(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.category_list, container, false);
-
         ButterKnife.bind(this, rootView);
         if (getActivity() != null) {
             moviesBox = ((MyApp) getActivity().getApplication()).getBoxStore().boxFor(Movie.class);
         }
 
+        initFilteringAndSortingOptionsValues();
+        requestAndAddToAdapterMovies();
+        setUpListView();
+        setUpSearchFab();
+
+        return rootView;
+    }
+
+    public abstract void initFilteringAndSortingOptionsValues();
+
+    private void requestAndAddToAdapterMovies() {
+        movies = (ArrayList<Movie>) requestMoviesFromDb();
+        movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
+        loadingIndicator.setVisibility(View.GONE);
+    }
+
+    private void setUpListView() {
         //Only visible if no movies are found
-        emptyStateTextView = rootView.findViewById(R.id.empty_view);
         movieListView.setEmptyView(emptyStateTextView);
 
-        movies = (ArrayList<Movie>) requestMoviesFromDb();
-
-        movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
         movieListView.setAdapter(movieItemListAdapter);
-        loadingIndicator.setVisibility(View.GONE);
 
         // Setup the item click listener
         movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -79,7 +92,20 @@ public abstract class MoviesBaseFragment extends Fragment{
             }
         });
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshMovieList();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
 
+    public void enableSearchFab(boolean value) {
+        isFabVisible = value;
+    }
+
+    private void setUpSearchFab() {
         if (isFabVisible) {
             searchFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,21 +117,6 @@ public abstract class MoviesBaseFragment extends Fragment{
         } else {
             searchFab.setVisibility(View.GONE);
         }
-
-        final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshMovieList();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-
-        return rootView;
-    }
-
-    public void setSearchFabVisibility(boolean value) {
-        isFabVisible = value;
     }
 
     public void refreshMovieList() {

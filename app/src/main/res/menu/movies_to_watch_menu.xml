@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_sort"
+        android:icon="@drawable/ic_sort_options"
+        android:title="@string/sorting_options"
+        app:showAsAction="never">
+
+        <menu>
+            <item
+                android:id="@+id/menu_sort_by_date"
+                android:title="@string/sort_by_date" />
+            <item
+                android:id="@+id/menu_sort_by_rating"
+                android:title="@string/sort_by_rating" />
+            <item
+                android:id="@+id/menu_sort_alphabetically"
+                android:title="@string/sort_alphabetically" />
+            <item
+                android:id="@+id/menu_sort_asc"
+                android:title="@string/ascending_order" />
+            <item
+                android:id="@+id/menu_sort_desc"
+                android:title="@string/descending_order" />
+        </menu>
+    </item>
+
+    <item android:id="@+id/menu_filter"
+        android:icon="@drawable/ic_filter_options"
+        android:title="@string/filter_options"
+        app:showAsAction="ifRoom">
+
+        <menu>
+            <item
+                android:id="@+id/menu_show_cinema"
+                android:title="@string/cinema_released" />
+            <item
+                android:id="@+id/menu_show_digital"
+                android:title="@string/digital_released" />
+            <item
+                android:id="@+id/menu_show_physical"
+                android:title="@string/physical_released" />
+            <item
+                android:id="@+id/menu_show_upcoming"
+                android:title="@string/upcoming" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_update_data"
+        android:title="@string/update_data" />
+
+</menu>

@@ -22,6 +22,7 @@ import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.squareup.picasso.Picasso;
@@ -33,9 +34,6 @@ import io.objectbox.Box;
 public class MovieActivityHTTP extends AppCompatActivity{
 
     public static final String TAG = "MovieActivityHTTP";
-
-    //TODO - Hide the API key
-    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
     private long tmdbId;
 
@@ -90,11 +88,10 @@ public class MovieActivityHTTP extends AppCompatActivity{
     }
 
     private void requestAndDisplayMovie() {
-        String tmdbUrl = "https://api.themoviedb.org/3/movie/" + tmdbId;
+        String tmdbUrl = TmdbConstants.MOVIES_URL + tmdbId;
         Uri baseUri = Uri.parse(tmdbUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
         uriBuilder.appendQueryParameter("append_to_response", "release_dates");
         AndroidNetworking.get(uriBuilder.toString())
                 .setTag(this)

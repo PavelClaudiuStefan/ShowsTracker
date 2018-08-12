@@ -34,7 +34,8 @@ dependencies {
     // Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     // FastAndroidNetworking
-    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+    //implementation 'com.amitshekhar.android:android-networking:1.0.2'
+    implementation 'com.amitshekhar.android:rx2-android-networking:1.0.1'
     // FireBase
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-auth:16.0.2'

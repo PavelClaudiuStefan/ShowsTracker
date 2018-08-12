@@ -1,17 +1,11 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
@@ -20,21 +14,27 @@ import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie_;
 
 import java.util.List;
 
-public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
+public class MoviesToWatchFragment extends MoviesBaseFragment {
 
     private String currentFilterOption;
-    private int currentSortOption;
+    private int currentSortByOption;
     private int currentSortDirectionOption;
 
-    public MoviesToWatchBaseFragment() {
-        setHasOptionsMenu(true);
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        initFilteringAndSortingOptionsValues();
-        return super.onCreateView(inflater, container, savedInstanceState);
+    public void initFilteringAndSortingOptionsValues() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        currentFilterOption = sharedPrefs.getString(
+                getString(R.string.settings_movies_to_watch_filter),
+                getString(R.string.settings_movies_to_watch_filter_default)
+        );
+        currentSortByOption = sharedPrefs.getInt(
+                getString(R.string.settings_movies_to_watch_sort_by),
+                MovieComparator.BY_DATE
+        );
+        currentSortDirectionOption = sharedPrefs.getInt(
+                getString(R.string.settings_movies_to_watch_sort_direction),
+                MovieComparator.ASCENDING
+        );
     }
 
     @Override
@@ -52,7 +52,6 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
                 Log.e("ShadowDebug", "Filtering - displaying movies error");
                 return null;
         }
-
     }
 
     private List<Movie> requestMoviesReleasedInCinema() {
@@ -61,7 +60,7 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
         return getMoviesBox().query()
                 .less(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
-                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
+                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -72,7 +71,7 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
         return getMoviesBox().query()
                 .less(Movie_.digitalReleaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
-                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
+                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -83,7 +82,7 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
         return getMoviesBox().query()
                 .less(Movie_.physicalReleaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
-                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
+                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -94,31 +93,15 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
         return getMoviesBox().query()
                 .greater(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
-                .sort(new MovieComparator(currentSortOption, currentSortDirectionOption))
+                .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
                 .build()
                 .find();
-    }
-
-    private void initFilteringAndSortingOptionsValues() {
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        currentFilterOption = sharedPrefs.getString(
-                getString(R.string.settings_to_watch_filter),
-                getString(R.string.settings_to_watch_filter_default)
-        );
-        currentSortOption = sharedPrefs.getInt(
-                getString(R.string.settings_to_watch_sort_by),
-                MovieComparator.BY_DATE
-        );
-        currentSortDirectionOption = sharedPrefs.getInt(
-                getString(R.string.settings_to_watch_sort_direction),
-                MovieComparator.ASCENDING
-        );
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
-        inflater.inflate(R.menu.to_watch_menu,menu);
+        inflater.inflate(R.menu.movies_to_watch_menu,menu);
     }
 
     @Override
@@ -147,7 +130,7 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
         }
 
         // Set active option invisible
-        switch (currentSortOption) {
+        switch (currentSortByOption) {
             case MovieComparator.BY_DATE:
                 MenuItem dateItem = menu.findItem(R.id.menu_sort_by_date);
                 dateItem.setEnabled(false);
@@ -156,6 +139,9 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
                 MenuItem ratingItem = menu.findItem(R.id.menu_sort_by_rating);
                 ratingItem.setEnabled(false);
                 break;
+            case MovieComparator.ALPHABETICALLY:
+                MenuItem alphabeticallyItem = menu.findItem(R.id.menu_sort_alphabetically);
+                alphabeticallyItem.setEnabled(false);
             default:
                 Log.e("ShadowDebug", "Sorting error");
                 break;
@@ -199,6 +185,9 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
             case R.id.menu_sort_by_rating:
                 saveSortByOption(MovieComparator.BY_RATING);
                 break;
+            case R.id.menu_sort_alphabetically:
+                saveSortByOption(MovieComparator.ALPHABETICALLY);
+                break;
             case R.id.menu_sort_asc:
                 saveSortDirectionOption(MovieComparator.ASCENDING);
                 break;
@@ -216,21 +205,21 @@ public class MoviesToWatchBaseFragment extends MoviesBaseFragment {
     private void saveFilterOption(String filterOption) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putString(getString(R.string.settings_to_watch_filter), filterOption);
+        editor.putString(getString(R.string.settings_movies_to_watch_filter), filterOption);
         editor.apply();
     }
 
     private void saveSortByOption(int sortBy) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putInt(getString(R.string.settings_to_watch_sort_by), sortBy);
+        editor.putInt(getString(R.string.settings_movies_to_watch_sort_by), sortBy);
         editor.apply();
     }
 
     private void saveSortDirectionOption(int sortDirection) {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        editor.putInt(getString(R.string.settings_to_watch_sort_direction), sortDirection);
+        editor.putInt(getString(R.string.settings_movies_to_watch_sort_direction), sortDirection);
         editor.apply();
     }
 

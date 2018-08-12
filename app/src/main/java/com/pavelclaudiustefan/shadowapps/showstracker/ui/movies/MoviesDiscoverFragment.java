@@ -32,8 +32,11 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedMoviesList;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 
@@ -50,16 +53,11 @@ public class MoviesDiscoverFragment extends Fragment {
 
     public static final String TAG = "MoviesDiscoverFragment";
 
-    //TODO - Hide the API key
-    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
-
     private static final String TOP_RATED_OPTION = "top_rated_option";
     private static final String POPULAR_OPTION = "popular_option";
     private static final String RECOMMENDED_OPTION = "recommended_option";
     private String option;
 
-    private String topRatedUrl;
-    private String popularUrl;
     private String tmdbUrl;
 
     private boolean isRecommended = false;
@@ -72,15 +70,14 @@ public class MoviesDiscoverFragment extends Fragment {
 
     @BindView(R.id.loading_indicator)
     View loadingIndicator;
-
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-
     @BindView(R.id.list)
     ListView listView;
-
     @BindView(R.id.search_fab)
     FloatingActionButton fab;
+    @BindView(R.id.swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private ShowItemListAdapter<Movie> movieItemListAdapter;
 
@@ -90,8 +87,6 @@ public class MoviesDiscoverFragment extends Fragment {
 
     public MoviesDiscoverFragment() {
         setHasOptionsMenu(true);
-        topRatedUrl = "https://api.themoviedb.org/3/movie/top_rated";
-        popularUrl = "https://api.themoviedb.org/3/movie/popular";
     }
 
     @Nullable
@@ -101,34 +96,50 @@ public class MoviesDiscoverFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.category_list, container, false);
 
         ButterKnife.bind(this, rootView);
-
-        init();
-        setTmdbUrl();
-
         fab.setVisibility(View.GONE);
-
-        if (savedInstanceState != null) {
-            movies = (ArrayList<Movie>) savedInstanceState.getSerializable("movies");
-            currentPage = (int) savedInstanceState.getSerializable("currentPage");
-            totalPages = (int) savedInstanceState.getSerializable("totalPages");
-            loadingIndicator.setVisibility(View.GONE);
-        }
-
-        movieItemListAdapter = new ShowItemListAdapter<>(getActivity(), movies);
-        listView.setAdapter(movieItemListAdapter);
-
-        if (movies.isEmpty() && !isRecommended) {
-            // Request movies only if savedInstanceState has none and the recommended option is not active
-            requestAndAddMovies();
-        }
-
-        //Only visible if no movies are found
-        listView.setEmptyView(emptyStateTextView);
-
         if (getActivity() != null) {
             // Used to retrieve tmdbIds for hiding collection movies
             moviesBox = ((MyApp)getActivity().getApplication()).getBoxStore().boxFor(Movie.class);
         }
+
+        init();
+
+        movieItemListAdapter = new ShowItemListAdapter<>(getActivity(), movies);
+        loadingIndicator.setVisibility(View.VISIBLE);
+        if (isRecommended) {
+            // Recommended movies section
+            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, getTmdbIds(), new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING));
+            //movies = recommendedMoviesList.getList();
+            //movieItemListAdapter.addAll(movies);
+            //movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
+            recommendedMoviesList.addRecommendedToAdapter(movieItemListAdapter);
+        } else {
+            // Popular movies / Top rated movies section
+            setTmdbUrl();
+
+            if (savedInstanceState != null) {
+                movies = (ArrayList<Movie>) savedInstanceState.getSerializable("movies");
+                currentPage = (int) savedInstanceState.getSerializable("currentPage");
+                totalPages = (int) savedInstanceState.getSerializable("totalPages");
+                loadingIndicator.setVisibility(View.GONE);
+            }
+
+            if (movies.isEmpty()) {
+                // Request movies only if savedInstanceState has none and the recommended option is not active
+                requestAndAddMovies();
+            }
+        }
+
+        setUpListView();
+
+        return rootView;
+    }
+
+    private void setUpListView() {
+        //Only visible if no movies are found
+        listView.setEmptyView(emptyStateTextView);
+
+        listView.setAdapter(movieItemListAdapter);
 
         // Setup the item click listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -150,7 +161,6 @@ public class MoviesDiscoverFragment extends Fragment {
             });
         }
 
-        final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -158,8 +168,6 @@ public class MoviesDiscoverFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
-        return rootView;
     }
 
     @Override
@@ -183,7 +191,7 @@ public class MoviesDiscoverFragment extends Fragment {
         Uri baseUri = Uri.parse(tmdbUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
         uriBuilder.appendQueryParameter("page", page);
         AndroidNetworking.get(uriBuilder.toString())
                 .setTag(this)
@@ -207,7 +215,6 @@ public class MoviesDiscoverFragment extends Fragment {
                             totalPages = QueryUtils.getTotalPagesFromJson(response);
                         }
 
-                        // TODO - Hide movies already in collection
                         if (movies != null) {
                             if (!showItemsInCollection) {
                                 removeCollectionMovies(movies);
@@ -342,9 +349,9 @@ public class MoviesDiscoverFragment extends Fragment {
 
     public void setTmdbUrl() {
         if (Objects.equals(option, TOP_RATED_OPTION)) {
-            tmdbUrl = topRatedUrl;
+            tmdbUrl = TmdbConstants.TOP_RATED_MOVIES_URL;
         } else if (Objects.equals(option, POPULAR_OPTION)) {
-            tmdbUrl = popularUrl;
+            tmdbUrl = TmdbConstants.POPULAR_MOVIES_URL;
         } else {
             tmdbUrl = null;
         }
@@ -367,7 +374,7 @@ public class MoviesDiscoverFragment extends Fragment {
 
         boolean showItemsInCollection = sharedPrefs.getBoolean(
                 getString(R.string.settings_discover_movies_show_watched),
-                true
+                false
         );
         setShowItemsInCollection(showItemsInCollection);
     }
@@ -402,5 +409,9 @@ public class MoviesDiscoverFragment extends Fragment {
     private void showEmptyStateTextView(int resid) {
         emptyStateTextView.setVisibility(View.VISIBLE);
         emptyStateTextView.setText(resid);
+    }
+
+    public void onMoviesListLoaded() {
+        loadingIndicator.setVisibility(View.GONE);
     }
 }

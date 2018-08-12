@@ -22,10 +22,10 @@ public class MyApp extends Application {
         // http://localhost:8090/index.html
         // adb forward tcp:8090 tcp:8090
         boxStore = MyObjectBox.builder().androidContext(MyApp.this).build();
-        if (BuildConfig.DEBUG) {
-            boolean started = new AndroidObjectBrowser(boxStore).start(this);
-            Log.i("ObjectBrowser", "Started: " + started);
-        }
+//        if (BuildConfig.DEBUG) {
+//            boolean started = new AndroidObjectBrowser(boxStore).start(this);
+//            Log.i("ObjectBrowser", "Started: " + started);
+//        }
 
         Log.d("MyApp", "Using ObjectBox " + BoxStore.getVersion() + " (" + BoxStore.getVersionNative() + ")");
     }

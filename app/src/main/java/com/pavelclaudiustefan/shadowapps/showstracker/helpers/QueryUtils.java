@@ -178,7 +178,7 @@ public final class QueryUtils {
         return tvShows;
     }
 
-    public static TvShow extractShowDataFromJson(String showJSON) {
+    public static TvShow extractTvShowDataFromJson(String showJSON) {
         if (TextUtils.isEmpty(showJSON)) {
             return null;
         }
@@ -209,9 +209,9 @@ public final class QueryUtils {
             tvShow.setOverview(overview);
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, "extractShowDataFromJson - Problem parsing json results", e);
+            Log.e(LOG_TAG, "extractTvShowDataFromJson - Problem parsing json results", e);
         } catch (ParseException e) {
-            Log.e(LOG_TAG, "extractShowDataFromJson - stuff happened");
+            Log.e(LOG_TAG, "extractTvShowDataFromJson - stuff happened");
         }
 
         return tvShow;

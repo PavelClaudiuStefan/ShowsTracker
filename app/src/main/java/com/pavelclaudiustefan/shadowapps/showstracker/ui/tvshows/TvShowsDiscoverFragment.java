@@ -29,10 +29,14 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TvShowComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedTvShowsList;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 
 import java.util.ArrayList;
@@ -42,21 +46,17 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.objectbox.Box;
 
 public class TvShowsDiscoverFragment extends Fragment {
 
     public static final String TAG = "TvShowsDiscoverFragment";
-
-    //TODO - Hide the API key
-    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
     private static final String TOP_RATED_OPTION = "top_rated_option";
     private static final String POPULAR_OPTION = "popular_option";
     private static final String RECOMMENDED_OPTION = "recommended_option";
     private String option;
 
-    private String topRatedUrl;
-    private String popularUrl;
     private String tmdbUrl;
 
     // TODO - Recommended section
@@ -72,24 +72,23 @@ public class TvShowsDiscoverFragment extends Fragment {
 
     @BindView(R.id.loading_indicator)
     View loadingIndicator;
-
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-
     @BindView(R.id.list)
     ListView listView;
-
     @BindView(R.id.search_fab)
     FloatingActionButton fab;
+    @BindView(R.id.swiperefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private ShowItemListAdapter<TvShow> tvShowItemListAdapter;
+
+    private Box<TvShow> tvShowsBox;
 
     private boolean showItemsInCollection;
 
     public TvShowsDiscoverFragment() {
         setHasOptionsMenu(true);
-        topRatedUrl = "https://api.themoviedb.org/3/tv/top_rated";
-        popularUrl = "https://api.themoviedb.org/3/tv/popular";
     }
 
     @Nullable
@@ -99,50 +98,43 @@ public class TvShowsDiscoverFragment extends Fragment {
         rootView = inflater.inflate(R.layout.category_list, container, false);
 
         ButterKnife.bind(this, rootView);
+        fab.setVisibility(View.GONE);
+        if (getActivity() != null) {
+            // Used to retrieve tmdbIds for hiding collection movies
+            tvShowsBox = ((MyApp)getActivity().getApplication()).getBoxStore().boxFor(TvShow.class);
+        }
 
         init();
-        setTmdbUrl();
 
-        fab.setVisibility(View.GONE);
+        tvShowItemListAdapter = new ShowItemListAdapter<>(getActivity(), tvShows);
+        loadingIndicator.setVisibility(View.VISIBLE);
 
+        if (isRecommended) {
+            RecommendedTvShowsList recommendedTvShowsList = new RecommendedTvShowsList(this, getTmdbIds(), new TvShowComparator(TvShowComparator.BY_RATING, TvShowComparator.DESCENDING));
+            recommendedTvShowsList.addRecommendedToAdapter(tvShowItemListAdapter);
+        } else {
+            setTmdbUrl();
+            if (savedInstanceState != null) {
+                tvShows = (ArrayList<TvShow>) savedInstanceState.getSerializable("tvShows");
+                currentPage = (int) savedInstanceState.getSerializable("currentPage");
+                totalPages = (int) savedInstanceState.getSerializable("totalPages");
+            }
+            if (tvShows.isEmpty()) {
+                // Request tvShows only if savedInstanceState has none and the recommended option is not active
+                requestAndAddTvShows();
+            }
+        }
+
+        setUpListView();
+
+        return rootView;
+    }
+
+    private void setUpListView() {
         //Only visible if no tv shows are found
         listView.setEmptyView(emptyStateTextView);
 
-        if (savedInstanceState != null) {
-            tvShows = (ArrayList<TvShow>) savedInstanceState.getSerializable("tvShows");
-            currentPage = (int) savedInstanceState.getSerializable("currentPage");
-            totalPages = (int) savedInstanceState.getSerializable("totalPages");
-        }
-
-        tvShowItemListAdapter = new ShowItemListAdapter<>(getActivity(), tvShows);
         listView.setAdapter(tvShowItemListAdapter);
-
-        if (tvShows.isEmpty() && !isRecommended) {
-            // Request tvShows only if savedInstanceState has none and the recommended option is not active
-            requestAndAddTvShows();
-        } else {
-            // We already have tvShows in memory so we change the currentPage and hide the loading indicator
-            loadingIndicator.setVisibility(View.GONE);
-        }
-
-
-        ConnectivityManager connMgr = null;
-        if (getActivity() != null) {
-            connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        }
-        NetworkInfo networkInfo = null;
-        if (connMgr != null) {
-            networkInfo = connMgr.getActiveNetworkInfo();
-        }
-
-        if (networkInfo != null && networkInfo.isConnected()) {
-            // TODO - Get tmdbIds from database to hide tvShows already in colection
-            Log.i("ShadowDebug", "TvShowsDiscoverFragment Recommended - Don't forget me");
-        } else {
-            // First, hide loading indicator so error message will be visible
-            loadingIndicator.setVisibility(View.GONE);
-            emptyStateTextView.setText(R.string.no_internet_connection);
-        }
 
         // Setup the item click listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -164,7 +156,6 @@ public class TvShowsDiscoverFragment extends Fragment {
             });
         }
 
-        final SwipeRefreshLayout swipeRefreshLayout = rootView.findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -172,8 +163,6 @@ public class TvShowsDiscoverFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
-        return rootView;
     }
 
     @Override
@@ -197,7 +186,7 @@ public class TvShowsDiscoverFragment extends Fragment {
         Uri baseUri = Uri.parse(tmdbUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
         uriBuilder.appendQueryParameter("page", page);
 
         AndroidNetworking.get(uriBuilder.toString())
@@ -224,6 +213,9 @@ public class TvShowsDiscoverFragment extends Fragment {
 
                         if (tvShows != null) {
                             // TODO - hide tv shows already in collectin
+                            if (!showItemsInCollection) {
+                                removeCollectionTvShows(tvShows);
+                            }
                             tvShowItemListAdapter.addAll(tvShows);
                         } else {
                             Log.e("ShadowDebug", "TvShowsDiscoverFragment - No tvShows extracted from Json response");
@@ -235,6 +227,24 @@ public class TvShowsDiscoverFragment extends Fragment {
                         Log.e("ShadowDebug", anError.getErrorBody());
                     }
                 });
+    }
+
+    private void removeCollectionTvShows(List<TvShow> tvShows) {
+        long[] tmdbIds = getTmdbIds();
+        ArrayList<TvShow> itemsToDelete = new ArrayList<>();
+        for (TvShow tvShow : tvShows) {
+            long movieTmdbId = tvShow.getTmdbId();
+            for (long tmdbId : tmdbIds) {
+                if (movieTmdbId == tmdbId) {
+                    itemsToDelete.add(tvShow);
+                }
+            }
+        }
+        tvShows.removeAll(itemsToDelete);
+    }
+
+    private long[] getTmdbIds() {
+        return tvShowsBox.query().build().findIds();
     }
 
     @Override
@@ -337,9 +347,9 @@ public class TvShowsDiscoverFragment extends Fragment {
 
     public void setTmdbUrl() {
         if (Objects.equals(option, TOP_RATED_OPTION)) {
-            tmdbUrl = topRatedUrl;
+            tmdbUrl = TmdbConstants.TOP_RATED_TV_SHOWS_URL;
         } else if (Objects.equals(option, POPULAR_OPTION)) {
-            tmdbUrl = popularUrl;
+            tmdbUrl = TmdbConstants.POPULAR_TV_SHOWS_URL;
         } else {
             tmdbUrl = null;
         }
@@ -373,6 +383,10 @@ public class TvShowsDiscoverFragment extends Fragment {
             currentPage = 1;
             ((TvShowsActivity)getActivity()).dataChanged();
         }
+    }
+
+    public void onShowsListLoaded() {
+        loadingIndicator.setVisibility(View.GONE);
     }
 
 }

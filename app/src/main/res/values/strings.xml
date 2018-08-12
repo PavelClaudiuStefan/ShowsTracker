@@ -9,27 +9,37 @@
     <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_popularity_desc</string>
     <string name="settings_sort_by_popularity_desc" translatable="false">popularity.desc</string>
 
-    <!-- Filter options in the "To watch" tab -->
-    <string name="settings_to_watch_filter" translatable="false">to_watch_filter</string>
-    <string name="settings_to_watch_filter_default" translatable="false">released_cinema</string>
+    <!-- Filter options in the "Movies - To watch" tab -->
+    <string name="settings_movies_to_watch_filter" translatable="false">movies_to_watch_filter</string>
+    <string name="settings_movies_to_watch_filter_default" translatable="false">released_cinema</string>
+    <!-- Filter options in the "Movies - Collection tab -->
+    <string name="settings_movies_collection_filter" translatable="false">movies_collection_filter</string>
+    <string name="settings_movies_collection_filter_default" translatable="false">all</string>
+    <!-- Sorting options in the "Movies - To watch" tab -->
+    <string name="settings_movies_to_watch_sort_by" translatable="false">movies_to_watch_sort</string>
+    <!-- Sorting options in the "Movies - Collection" tab -->
+    <string name="settings_movies_collection_sort" translatable="false">movies_collection_sort</string>
+    <!-- Sorting direction options in the "Movies - To watch" tab -->
+    <string name="settings_movies_to_watch_sort_direction" translatable="false">movies_to_watch_sort_direction</string>
+    <!-- Sorting direction options in the "Movies - Collection" tab -->
+    <string name="settings_movies_collection_sort_direction" translatable="false">movies_collection_sort_direction</string>
 
-    <!-- Filter options in the "Collection tab -->
-    <string name="settings_collection_filter" translatable="false">collection_filter</string>
-    <string name="settings_collection_filter_default" translatable="false">all</string>
+    <!-- Filter options in the "Tv shows - To watch" tab -->
+    <string name="settings_tv_shows_to_watch_filter" translatable="false">tv_shows_to_watch_filter</string>
+    <string name="settings_tv_shows_to_watch_filter_default" translatable="false">released</string>
+    <!-- Filter options in the "Tv shows - Collection tab -->
+    <string name="settings_tv_shows_collection_filter" translatable="false">tv_shows_collection_filter</string>
+    <string name="settings_tv_shows_collection_filter_default" translatable="false">all</string>
+    <!-- Sorting options in the "Tv shows - To watch" tab -->
+    <string name="settings_tv_shows_to_watch_sort_by" translatable="false">tv_shows_to_watch_sort</string>
+    <!-- Sorting options in the "Tv shows - Collection" tab -->
+    <string name="settings_tv_shows_collection_sort" translatable="false">tv_shows_collection_sort</string>
+    <!-- Sorting direction options in the "Tv shows - To watch" tab -->
+    <string name="settings_tv_shows_to_watch_sort_direction" translatable="false">tv_shows_to_watch_sort_direction</string>
+    <!-- Sorting direction options in the "Tv shows - Collection" tab -->
+    <string name="settings_tv_shows_collection_sort_direction" translatable="false">tv_shows_collection_sort_direction</string>
 
-    <!-- Sorting options in the "To watch" tab -->
-    <string name="settings_to_watch_sort_by" translatable="false">to_watch_sort</string>
 
-    <!-- Sorting options in the "Collection" tab -->
-    <string name="settings_collection_sort" translatable="false">collection_sort</string>
-
-    <!-- Sorting direction options in the "To watch" tab -->
-    <string name="settings_to_watch_sort_direction" translatable="false">to_watch_sort_direction</string>
-    <string name="settings_to_watch_sort_direction_default" translatable="false">ASC</string>
-
-    <!-- Sorting direction options in the "Collection" tab -->
-    <string name="settings_collection_sort_direction" translatable="false">collection_sort_direction</string>
-    <string name="settings_collection_sort_direction_default" translatable="false">ASC</string>
 
     <string name="settings_discover_movies_show_watched" translatable="false">show_watched_movies_option</string>
     <string name="settings_discover_shows_show_watched" translatable="false">show_watched_shows_option</string>
@@ -104,9 +114,12 @@
     <string name="movies">Movies</string>
     <string name="groups">Groups</string>
     <string name="log_out">Log out</string>
-    <string name="tvShows">Shows</string>
+    <string name="tvShows">TV Shows</string>
     <string name="upcoming">Upcoming</string>
     <string name="update_data">Update data</string>
-    <string name="search_show">Search new shows...</string>
+    <string name="search_show">Search new shows…</string>
     <string name="action_search">Search</string>
+    <string name="sort_alphabetically">Sort alphabetically</string>
+    <string name="released">Released</string>
+    <string name="aired">Aired</string>
 </resources>

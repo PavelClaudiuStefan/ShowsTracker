@@ -21,6 +21,7 @@ import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.squareup.picasso.Picasso;
@@ -32,9 +33,6 @@ import io.objectbox.Box;
 public class TvShowActivityHTTP extends AppCompatActivity{
 
     public static final String TAG = "TvShowActivityHTTP";
-
-    //TODO - Hide the API key
-    private final static String API_KEY = "e0ff28973a330d2640142476f896da04";
 
     private String tmdbId;
 
@@ -78,10 +76,10 @@ public class TvShowActivityHTTP extends AppCompatActivity{
     }
 
     private void requestAndDisplayShow() {
-        String tmdbUrl = "https://api.themoviedb.org/3/tv/" + tmdbId;
+        String tmdbUrl = TmdbConstants.TV_SHOWS_URL + tmdbId;
         Uri baseUri = Uri.parse(tmdbUrl);
         Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter("api_key", API_KEY);
+        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
 
         AndroidNetworking.get(uriBuilder.toString())
                 .setTag(this)
@@ -97,7 +95,7 @@ public class TvShowActivityHTTP extends AppCompatActivity{
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        tvShow = QueryUtils.extractShowDataFromJson(response);
+                        tvShow = QueryUtils.extractTvShowDataFromJson(response);
                         displayShow();
                     }
 

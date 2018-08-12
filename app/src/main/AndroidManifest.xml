@@ -52,11 +52,6 @@
 
         <activity android:name=".ui.search.TvShowSearchActivity" />
 
-        <provider
-            android:name=".data.VideoItemProvider"
-            android:authorities="com.pavelclaudiustefan.shadowapps.showstracker"
-            android:exported="false" />
-
     </application>
 
 </manifest>

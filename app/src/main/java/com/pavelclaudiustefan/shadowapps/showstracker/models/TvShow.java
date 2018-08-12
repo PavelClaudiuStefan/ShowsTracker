@@ -7,6 +7,9 @@ import io.objectbox.annotation.Entity;
 @Entity
 public class TvShow extends Show implements Serializable{
 
+    // TODO
+    private String status;  // For example - Returning Series
+
     public TvShow() {
         super();
     }
@@ -14,6 +17,14 @@ public class TvShow extends Show implements Serializable{
     // Constructor for the movies in lists in the Discover section
     public TvShow(int tmdbId, String title, double vote, long releaseDateInMilliseconds, String imageId) {
         super(tmdbId, title, vote, releaseDateInMilliseconds, imageId);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
