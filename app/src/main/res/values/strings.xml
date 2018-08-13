@@ -3,7 +3,7 @@
     <string name="app_name">Shows Tracker</string>
 
     <string name="no_internet_connection">No internet connection</string>
-    <string name="no_movies">No movies</string>
+    <string name="no_movies_found">No movies found</string>
 
     <string name="settings_order_by_key" translatable="false">order_by</string>
     <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_popularity_desc</string>
@@ -122,4 +122,8 @@
     <string name="sort_alphabetically">Sort alphabetically</string>
     <string name="released">Released</string>
     <string name="aired">Aired</string>
+    <string name="no_movies_added">No movies added</string>
+    <string name="no_tv_shows_found">No TV shows found</string>
+    <string name="no_tv_shows_added">No TV shows added</string>
+    <string name="no_tv_show_found">No TV show found</string>
 </resources>

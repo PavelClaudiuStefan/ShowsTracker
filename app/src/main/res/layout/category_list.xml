@@ -27,6 +27,15 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <!-- Loading indicator is only shown before the first load -->
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:indeterminate="true" />
 
     <!-- Empty view is only visible when the list has no items. -->
     <TextView
@@ -36,16 +45,6 @@
         android:layout_gravity="center"
         android:textAppearance="?android:textAppearanceMedium"
         android:visibility="gone"/>
-
-    <!-- Loading indicator is only shown before the first load -->
-    <ProgressBar
-        android:id="@+id/loading_indicator"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-
-        android:layout_centerInParent="true"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/search_fab"

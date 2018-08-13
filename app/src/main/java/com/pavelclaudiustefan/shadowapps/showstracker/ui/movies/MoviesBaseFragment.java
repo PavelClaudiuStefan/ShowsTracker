@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
@@ -27,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
 
+// Base for fragments that display movies from the database
 public abstract class MoviesBaseFragment extends Fragment{
 
     @BindView(R.id.list)
@@ -34,7 +36,7 @@ public abstract class MoviesBaseFragment extends Fragment{
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
     @BindView(R.id.loading_indicator)
-    View loadingIndicator;
+    ProgressBar loadingIndicator;
     @BindView(R.id.search_fab)
     FloatingActionButton searchFab;
     @BindView(R.id.swiperefresh)
@@ -77,6 +79,7 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     private void setUpListView() {
         //Only visible if no movies are found
+        emptyStateTextView.setText(R.string.no_movies_added);
         movieListView.setEmptyView(emptyStateTextView);
 
         movieListView.setAdapter(movieItemListAdapter);

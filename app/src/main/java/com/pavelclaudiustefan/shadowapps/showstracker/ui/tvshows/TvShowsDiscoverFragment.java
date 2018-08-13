@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androidnetworking.AndroidNetworking;
@@ -71,7 +72,7 @@ public class TvShowsDiscoverFragment extends Fragment {
     private View rootView;
 
     @BindView(R.id.loading_indicator)
-    View loadingIndicator;
+    ProgressBar loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
     @BindView(R.id.list)
@@ -110,7 +111,10 @@ public class TvShowsDiscoverFragment extends Fragment {
         loadingIndicator.setVisibility(View.VISIBLE);
 
         if (isRecommended) {
-            RecommendedTvShowsList recommendedTvShowsList = new RecommendedTvShowsList(this, getTmdbIds(), new TvShowComparator(TvShowComparator.BY_RATING, TvShowComparator.DESCENDING));
+            long[] tmdbIds = getTmdbIds();
+            loadingIndicator.setIndeterminate(false);
+            loadingIndicator.setMax(tmdbIds.length);
+            RecommendedTvShowsList recommendedTvShowsList = new RecommendedTvShowsList(this, tmdbIds, new TvShowComparator(TvShowComparator.BY_RATING, TvShowComparator.DESCENDING));
             recommendedTvShowsList.addRecommendedToAdapter(tvShowItemListAdapter);
         } else {
             setTmdbUrl();
@@ -192,7 +196,7 @@ public class TvShowsDiscoverFragment extends Fragment {
         AndroidNetworking.get(uriBuilder.toString())
                 .setTag(this)
                 .setPriority(Priority.HIGH)
-                .setMaxAgeCacheControl(0, TimeUnit.SECONDS)
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                 .build()
                 .setAnalyticsListener(new AnalyticsListener() {
                     @Override
@@ -211,20 +215,22 @@ public class TvShowsDiscoverFragment extends Fragment {
                             totalPages = QueryUtils.getTotalPagesFromJson(response);
                         }
 
-                        if (tvShows != null) {
+                        if (tvShows != null && !tvShows.isEmpty()) {
                             // TODO - hide tv shows already in collectin
                             if (!showItemsInCollection) {
                                 removeCollectionTvShows(tvShows);
                             }
                             tvShowItemListAdapter.addAll(tvShows);
                         } else {
+                            displayPossibleError();
                             Log.e("ShadowDebug", "TvShowsDiscoverFragment - No tvShows extracted from Json response");
                         }
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e("ShadowDebug", anError.getErrorBody());
+                        displayPossibleError();
+                        Log.e("ShadowDebug", "TvShowsDiscoverFragment - onError() " + anError.getErrorBody());
                     }
                 });
     }
@@ -321,7 +327,6 @@ public class TvShowsDiscoverFragment extends Fragment {
     // Loads the next page of tvShows
     private boolean loadMore() {
         // TvShow loading indicator when searching for new temporarMovies
-        View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.VISIBLE);
 
         ConnectivityManager connMgr = null;
@@ -385,8 +390,32 @@ public class TvShowsDiscoverFragment extends Fragment {
         }
     }
 
-    public void onShowsListLoaded() {
+    private void displayPossibleError() {
+        // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
+        emptyStateTextView.setText(R.string.no_tv_shows_found);
+
+        // Check if there is a more specific error
+        if (getActivity() != null) {
+            // Used to test internet connection
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connMgr != null) {
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+                if (networkInfo == null || !networkInfo.isConnected()) {
+                    // First, hide loading indicator so error message will be visible
+                    loadingIndicator.setVisibility(View.GONE);
+                    emptyStateTextView.setText(R.string.no_internet_connection);
+                }
+            }
+        }
+    }
+
+    public void onTvShowsIncremented() {
+        loadingIndicator.incrementProgressBy(1);
+    }
+
+    public void onTvShowsListLoaded() {
         loadingIndicator.setVisibility(View.GONE);
+        displayPossibleError();
     }
 
 }

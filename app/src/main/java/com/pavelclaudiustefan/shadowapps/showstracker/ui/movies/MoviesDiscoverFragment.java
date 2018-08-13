@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.androidnetworking.AndroidNetworking;
@@ -69,7 +70,7 @@ public class MoviesDiscoverFragment extends Fragment {
     private static ArrayList<Movie> movies = new ArrayList<>();
 
     @BindView(R.id.loading_indicator)
-    View loadingIndicator;
+    ProgressBar loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
     @BindView(R.id.list)
@@ -105,10 +106,14 @@ public class MoviesDiscoverFragment extends Fragment {
         init();
 
         movieItemListAdapter = new ShowItemListAdapter<>(getActivity(), movies);
+        //Log.i("ShadowDebug", "1 - I am visible");
         loadingIndicator.setVisibility(View.VISIBLE);
         if (isRecommended) {
             // Recommended movies section
-            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, getTmdbIds(), new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING));
+            long[] tmdbIds = getTmdbIds();
+            loadingIndicator.setIndeterminate(false);
+            loadingIndicator.setMax(tmdbIds.length);
+            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING));
             //movies = recommendedMoviesList.getList();
             //movieItemListAdapter.addAll(movies);
             //movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
@@ -121,6 +126,7 @@ public class MoviesDiscoverFragment extends Fragment {
                 movies = (ArrayList<Movie>) savedInstanceState.getSerializable("movies");
                 currentPage = (int) savedInstanceState.getSerializable("currentPage");
                 totalPages = (int) savedInstanceState.getSerializable("totalPages");
+                //Log.i("ShadowDebug", "2 - I am gone");
                 loadingIndicator.setVisibility(View.GONE);
             }
 
@@ -136,17 +142,17 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     private void setUpListView() {
+        listView.setAdapter(movieItemListAdapter);
+
         //Only visible if no movies are found
         listView.setEmptyView(emptyStateTextView);
-
-        listView.setAdapter(movieItemListAdapter);
 
         // Setup the item click listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
-                Show item = movies.get(position);
+                Movie item = movies.get(position);
                 intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
                 startActivity(intent);
             }
@@ -156,6 +162,7 @@ public class MoviesDiscoverFragment extends Fragment {
             listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
                 @Override
                 public boolean onLoadMore(int page, int totalItemsCount) {
+                    //Log.i("ShadowDebug", "Why are you calling rn???");
                     return currentPage <= totalPages && loadMore();
                 }
             });
@@ -195,7 +202,7 @@ public class MoviesDiscoverFragment extends Fragment {
         uriBuilder.appendQueryParameter("page", page);
         AndroidNetworking.get(uriBuilder.toString())
                 .setTag(this)
-                .setPriority(Priority.LOW)
+                .setPriority(Priority.HIGH)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                 .build()
                 .setAnalyticsListener(new AnalyticsListener() {
@@ -207,6 +214,14 @@ public class MoviesDiscoverFragment extends Fragment {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
+
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Log.i("ShadowDebug", "3 - I am gone");
                         loadingIndicator.setVisibility(View.GONE);
 
                         List<Movie> movies = QueryUtils.extractMoviesFromJson(response);
@@ -215,21 +230,22 @@ public class MoviesDiscoverFragment extends Fragment {
                             totalPages = QueryUtils.getTotalPagesFromJson(response);
                         }
 
-                        if (movies != null) {
+                        if (movies != null && !movies.isEmpty()) {
                             if (!showItemsInCollection) {
                                 removeCollectionMovies(movies);
                             }
 
                             movieItemListAdapter.addAll(movies);
                         } else {
+                            displayPossibleError();
                             Log.e("ShadowDebug", "MoviesDiscoverFragment - No tvShows extracted from Json response");
                         }
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        displayError();
-                        Log.e("ShadowDebug", "MoviesDiscoverFragment - " + anError.getErrorBody());
+                        displayPossibleError();
+                        Log.e("ShadowDebug", "MoviesDiscoverFragment onError() - " + anError.getErrorBody());
                     }
                 });
     }
@@ -326,6 +342,7 @@ public class MoviesDiscoverFragment extends Fragment {
 
     private boolean loadMore() {
         // TvShow loading indicator when searching for new temporarMovies
+        //Log.i("ShadowDebug", "4 - I am visible");
         loadingIndicator.setVisibility(View.VISIBLE);
 
         ConnectivityManager connMgr = null;
@@ -387,9 +404,9 @@ public class MoviesDiscoverFragment extends Fragment {
         }
     }
 
-    private void displayError() {
+    private void displayPossibleError() {
         // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
-        showEmptyStateTextView(R.string.no_movies);
+        showEmptyStateTextView(R.string.no_movies_found);
 
         // Check if there is a more specific error
         if (getActivity() != null) {
@@ -399,6 +416,7 @@ public class MoviesDiscoverFragment extends Fragment {
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo == null || !networkInfo.isConnected()) {
                     // First, hide loading indicator so error message will be visible
+                    //Log.i("ShadowDebug", "5 - I am gone");
                     loadingIndicator.setVisibility(View.GONE);
                     showEmptyStateTextView(R.string.no_internet_connection);
                 }
@@ -407,11 +425,17 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     private void showEmptyStateTextView(int resid) {
-        emptyStateTextView.setVisibility(View.VISIBLE);
         emptyStateTextView.setText(resid);
     }
 
+    // Called when list of recommended movies is received for one movie from collection
+    public void onMoviesListIncremented() {
+        loadingIndicator.incrementProgressBy(1);
+    }
+
     public void onMoviesListLoaded() {
+        //Log.i("ShadowDebug", "6 - I am gone");
         loadingIndicator.setVisibility(View.GONE);
+        displayPossibleError();
     }
 }

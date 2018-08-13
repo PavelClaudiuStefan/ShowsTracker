@@ -1,7 +1,5 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations;
 
-import android.util.Log;
-
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
@@ -9,7 +7,6 @@ import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesDiscoverFragment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +30,11 @@ public class RecommendedMoviesList extends RecommendedShowsList<Movie> {
     @Override
     public List<Movie> extractShowsFromJsonResponse(String jsonResponse) {
         return QueryUtils.extractMoviesFromJson(jsonResponse);
+    }
+
+    @Override
+    public void onDataIncremented() {
+        mds.onMoviesListIncremented();
     }
 
     @Override

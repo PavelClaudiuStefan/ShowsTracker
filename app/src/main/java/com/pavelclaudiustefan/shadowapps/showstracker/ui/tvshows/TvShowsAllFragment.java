@@ -100,6 +100,7 @@ public class TvShowsAllFragment extends Fragment{
 
     private void setUpListView() {
         //Only visible if no movies are found
+        emptyStateTextView.setText(R.string.no_tv_shows_added);
         showListView.setEmptyView(emptyStateTextView);
 
         tvShowItemListAdapter = new ShowItemListAdapter<>(getContext(), tvShows);

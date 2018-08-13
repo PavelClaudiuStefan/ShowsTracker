@@ -33,8 +33,13 @@ public class RecommendedTvShowsList extends RecommendedShowsList<TvShow> {
     }
 
     @Override
+    public void onDataIncremented() {
+        tsds.onTvShowsIncremented();
+    }
+
+    @Override
     public void onDataLoaded() {
-        tsds.onShowsListLoaded();
+        tsds.onTvShowsListLoaded();
     }
 
 

@@ -62,8 +62,6 @@ public abstract class RecommendedShowsList<T extends Show> {
                             List<T> items = extractShowsFromJsonResponse(response);
                             addOnlyUniqueItems(items, totalShows);
                             totalShows.addAll(items);
-                            Log.i("ShadowDebug", "items: " + items.size());
-                            Log.i("ShadowDebug", "totalShows: " + totalShows.size());
                         }
 
                         @Override
@@ -82,12 +80,6 @@ public abstract class RecommendedShowsList<T extends Show> {
                 .addQueryParameter("api_key", TmdbConstants.API_KEY)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                 .build()
-                .setAnalyticsListener(new AnalyticsListener() {
-                    @Override
-                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                        Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache);
-                    }
-                })
                 .getStringFlowable();
     }
 
@@ -122,17 +114,16 @@ public abstract class RecommendedShowsList<T extends Show> {
                         List<T>items = extractShowsFromJsonResponse(pair.first);
                         addOnlyUniqueItems(items, allItems);
                         //showItemListAdapter.addAll(items);
-                        // Used to remove duplicates
+                        onDataIncremented();
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("ShadowDebug", "Is this it?");//e.getMessage());
+                        Log.e("ShadowDebug", "Recommended shows list onError");//e.getMessage());
                     }
 
                     @Override
                     public void onComplete() {
-                        //Log.i("ShadowDebug", "RecommendedShowsList - onComplete()" + (showItemListAdapter == null) + allItems.size());
                         showItemListAdapter.addAll(sortItems(allItems));
                         onDataLoaded();
                     }
@@ -166,6 +157,8 @@ public abstract class RecommendedShowsList<T extends Show> {
     public abstract ArrayList<T> sortItems(ArrayList<T> items);
 
     public abstract List<T> extractShowsFromJsonResponse(String jsonResponse);
+
+    public abstract void onDataIncremented();
 
     public abstract void onDataLoaded();
 }

@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -39,6 +41,12 @@ public class MovieActivityHTTP extends AppCompatActivity{
 
     @BindView(R.id.thumbnail)
     ImageView imageView;
+    @BindView(R.id.buttons_layout)
+    LinearLayout buttonsLayout;
+    @BindView(R.id.generic_info_layout)
+    RelativeLayout genericInfoLayout;
+    @BindView(R.id.overview_layout)
+    RelativeLayout overviewLayout;
     @BindView(R.id.title)
     TextView titleTextView;
     @BindView(R.id.add_remove_movie)
@@ -76,6 +84,10 @@ public class MovieActivityHTTP extends AppCompatActivity{
 
         ButterKnife.bind(this);
 
+        // Hide views until movie data is loaded
+        loadingIndicator.setVisibility(View.VISIBLE);
+        setMovieViewsVisibility(View.GONE);
+
         Intent intent = getIntent();
         String tmdbIdString = intent.getStringExtra("tmdb_id");
         if (tmdbIdString != null && !tmdbIdString.isEmpty()) {
@@ -108,7 +120,11 @@ public class MovieActivityHTTP extends AppCompatActivity{
                     @Override
                     public void onResponse(String response) {
                         Movie movie = QueryUtils.extractMovieDataFromJson(response);
-                        displayMovie(movie);
+                        if (movie != null) {
+                            displayMovie(movie);
+                        } else {
+                            displayError();
+                        }
                     }
 
                     @Override
@@ -122,99 +138,96 @@ public class MovieActivityHTTP extends AppCompatActivity{
     private void displayMovie(final Movie movie) {
         // Hide loading indicator because the data has been loaded
         loadingIndicator.setVisibility(View.GONE);
-        if (movie != null) {
-            emptyStateTextView.setVisibility(View.GONE);
 
-            String imageUrl = movie.getImageUrl();
-            String title = movie.getTitle();
-            String averageVote = String.valueOf(movie.getVote());
-            int voteCount = movie.getVoteCount();
-            String cinemaReleaseDate = "Cinema release: " + movie.getReleaseDate();
-            String digitalReleaseDate = "Digital release: " + movie.getDigitalReleaseDate();
-            String physicalReleaseDate = "Physical release: " + movie.getPhysicalReleaseDate();
-            String overview = movie.getOverview();
-            final String imdbUrl = movie.getImdbUrl();
+        emptyStateTextView.setVisibility(View.GONE);
 
-            setTitle(title);
-            Picasso.get()
-                    .load(imageUrl)
-                    .into(imageView);
-            titleTextView.setText(title);
-            averageVoteTextView.setText(averageVote);
-            String voteCountStr = voteCount + " votes";
-            voteCountTextView.setText(voteCountStr);
-            cinemaReleaseDateTextView.setText(cinemaReleaseDate);
-            digitalReleaseDateTextView.setText(digitalReleaseDate);
-            physicalReleaseDateTextView.setText(physicalReleaseDate);
-            overviewTextView.setText(overview);
+        String imageUrl = movie.getImageUrl();
+        String title = movie.getTitle();
+        String averageVote = String.valueOf(movie.getVote());
+        int voteCount = movie.getVoteCount();
+        String cinemaReleaseDate = "Cinema release: " + movie.getReleaseDate();
+        String digitalReleaseDate = "Digital release: " + movie.getDigitalReleaseDate();
+        String physicalReleaseDate = "Physical release: " + movie.getPhysicalReleaseDate();
+        String overview = movie.getOverview();
+        final String imdbUrl = movie.getImdbUrl();
 
-            imdbButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(imdbUrl));
-                    startActivity(intent);
-                }
-            });
+        setTitle(title);
+        Picasso.get()
+                .load(imageUrl)
+                .into(imageView);
+        titleTextView.setText(title);
+        averageVoteTextView.setText(averageVote);
+        String voteCountStr = voteCount + " votes";
+        voteCountTextView.setText(voteCountStr);
+        cinemaReleaseDateTextView.setText(cinemaReleaseDate);
+        digitalReleaseDateTextView.setText(digitalReleaseDate);
+        physicalReleaseDateTextView.setText(physicalReleaseDate);
+        overviewTextView.setText(overview);
 
-            Movie dbMovie = requestMovieFromDb();
-            boolean isWatched;
-            if (dbMovie != null) { // if movie is in collection
-                inUserCollection = true;
-                isWatched = dbMovie.isWatched();
-                // Using a different movie object(from http) other than the one from the database
-                // because this way it adds the newest movie data in the database
-                movie.setWatched(isWatched);
-            } else {
-                inUserCollection = false;
-                isWatched = false;
+        imdbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(imdbUrl));
+                startActivity(intent);
             }
+        });
 
-            addRemoveMovieButton.setChecked(inUserCollection);
-            addRemoveMovieButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        Movie dbMovie = requestMovieFromDb();
+        boolean isWatched;
+        if (dbMovie != null) { // if movie is in collection
+            inUserCollection = true;
+            isWatched = dbMovie.isWatched();
+            // Using a different movie object(from http) other than the one from the database
+            // because this way it adds the newest movie data in the database
+            movie.setWatched(isWatched);
+        } else {
+            inUserCollection = false;
+            isWatched = false;
+        }
+
+        addRemoveMovieButton.setChecked(inUserCollection);
+        addRemoveMovieButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    insertMovie(movie);
+                    inUserCollection = true;
+                } else {
+                    removeMovie(tmdbId);
+                    inUserCollection = false;
+                    if (movie.isWatched()) {
+                        watchedNotWatchedButton.toggle();
+                    }
+                    //movie.setWatched(false);
+                }
+            }
+        });
+
+
+        watchedNotWatchedButton.setChecked(isWatched);
+        long todayInMilliseconds = System.currentTimeMillis();
+        if (movie.getReleaseDateInMilliseconds() > todayInMilliseconds) {
+            watchedNotWatchedButton.setEnabled(false);
+        } else {
+            watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                     if (isChecked) {
-                        insertMovie(movie);
-                        inUserCollection = true;
-                    } else {
-                        removeMovie(tmdbId);
-                        inUserCollection = false;
-                        if (movie.isWatched()) {
-                            watchedNotWatchedButton.toggle();
+                        if (inUserCollection) {
+                            setMovieWatched(movie, true);
+                        } else {
+                            movie.setWatched(true);
+                            addRemoveMovieButton.toggle();
                         }
-                        //movie.setWatched(false);
+                    } else {
+                        setMovieWatched(movie, false);
                     }
                 }
             });
-
-
-            watchedNotWatchedButton.setChecked(isWatched);
-            long todayInMilliseconds = System.currentTimeMillis();
-            if (movie.getReleaseDateInMilliseconds() > todayInMilliseconds) {
-                watchedNotWatchedButton.setEnabled(false);
-            } else {
-                watchedNotWatchedButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked) {
-                            if (inUserCollection) {
-                                setMovieWatched(movie, true);
-                            } else {
-                                movie.setWatched(true);
-                                addRemoveMovieButton.toggle();
-                            }
-                        } else {
-                            setMovieWatched(movie, false);
-                        }
-                    }
-                });
-            }
-        } else {
-            // Set empty state text to display "No movies found." It's not visible if any movie is added to the adapter
-            emptyStateTextView.setText(R.string.no_movie_data);
-            hideMovieViews();
         }
+
+        setMovieViewsVisibility(View.VISIBLE);
     }
 
     private Movie requestMovieFromDb() {
@@ -236,33 +249,30 @@ public class MovieActivityHTTP extends AppCompatActivity{
     }
 
     private void displayError() {
+        loadingIndicator.setVisibility(View.GONE);
+        emptyStateTextView.setText(R.string.no_tv_show_found);
+        setMovieViewsVisibility(View.GONE);
+
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
         if (connMgr != null) {
             networkInfo = connMgr.getActiveNetworkInfo();
         }
         if (networkInfo == null || !networkInfo.isConnected()) {
-            // First, hide loading indicator so error message will be visible
-            loadingIndicator.setVisibility(View.GONE);
-            hideMovieViews();
             emptyStateTextView.setText(R.string.no_internet_connection);
         }
     }
 
     // Used when no movie data exists in the activity
     // Either because of no internet connection or other errors
-    private void hideMovieViews() {
-        imageView.setVisibility(View.GONE);
-        titleTextView.setVisibility(View.GONE);
-        addRemoveMovieButton.setVisibility(View.GONE);
-        watchedNotWatchedButton.setVisibility(View.GONE);
-        cinemaReleaseDateTextView.setVisibility(View.GONE);
-        digitalReleaseDateTextView.setVisibility(View.GONE);
-        physicalReleaseDateTextView.setVisibility(View.GONE);
-        averageVoteTextView.setVisibility(View.GONE);
-        voteCountTextView.setVisibility(View.GONE);
-        overviewTextView.setVisibility(View.GONE);
-        imdbButton.setVisibility(View.GONE);
+    private void setMovieViewsVisibility(int resid) {
+        imageView.setVisibility(resid);
+
+        buttonsLayout.setVisibility(resid);
+        genericInfoLayout.setVisibility(resid);
+        overviewLayout.setVisibility(resid);
+
+        imdbButton.setVisibility(resid);
     }
 
 }

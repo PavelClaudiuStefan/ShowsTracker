@@ -27,19 +27,23 @@
         <!-- Empty view is only visible when the list has no items. -->
         <TextView
             android:id="@+id/empty_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:gravity="center_horizontal"
             android:textAppearance="?android:textAppearanceMedium"/>
 
         <!-- Loading indicator is only shown before the first load -->
         <ProgressBar
             android:id="@+id/loading_indicator"
             style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/white"
             android:visibility="gone" />
 
         <LinearLayout
+            android:id="@+id/buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/bottom_margin"
@@ -72,6 +76,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/generic_info_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/text_padding"
@@ -147,6 +152,7 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/overview_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/bottom_margin"
