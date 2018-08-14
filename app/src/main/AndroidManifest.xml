@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pavelclaudiustefan.shadowapps.showstracker">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,44 +13,38 @@
         android:roundIcon="@mipmap/ic_launcher_sloth_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".ui.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.LoginActivity"
             android:theme="@style/AppTheme.AuthTheme" />
-
         <activity
             android:name=".ui.SignupActivity"
             android:theme="@style/AppTheme.AuthTheme" />
-
         <activity
             android:name=".ui.movies.MoviesActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop" />
-
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.tvshows.TvShowsActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.movies.MovieActivityDb" />
-
         <activity android:name=".ui.movies.MovieActivityHTTP" />
-
         <activity android:name=".ui.tvshows.TvShowActivityHTTP" />
-
-        <activity
-            android:name=".ui.search.MovieSearchActivity"/>
-
+        <activity android:name=".ui.search.MovieSearchActivity" />
         <activity android:name=".ui.search.TvShowSearchActivity" />
-
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".ui.about.AboutActivity" />
+        <activity android:name=".ui.about.LicensesActivity"></activity>
     </application>
 
 </manifest>

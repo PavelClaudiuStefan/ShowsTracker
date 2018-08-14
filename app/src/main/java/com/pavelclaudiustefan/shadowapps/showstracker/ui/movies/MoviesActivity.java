@@ -2,6 +2,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.MenuItem;
 
@@ -9,12 +10,18 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.MoviesCategoryAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.base.ShowsSectionsContainerActivity;
 
+import butterknife.BindView;
+
 public class MoviesActivity extends ShowsSectionsContainerActivity {
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Movies");
+        navigationView.getMenu().findItem(R.id.nav_movies).setChecked(true);
     }
 
     @Override

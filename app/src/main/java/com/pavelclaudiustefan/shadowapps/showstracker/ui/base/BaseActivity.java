@@ -1,7 +1,9 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.base;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +19,11 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.LoginActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.settings.SettingsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsActivity;
 
@@ -28,9 +34,12 @@ public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth firebaseAuth;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
+
+    private TextView userDisplayTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,25 +62,53 @@ public abstract class BaseActivity extends AppCompatActivity
 
         // Set logged user display name (Username or email)
         View headerView = navigationView.getHeaderView(0);
-        TextView userDisplayTextView = headerView.findViewById(R.id.display_name);
+        userDisplayTextView = headerView.findViewById(R.id.display_name);
 
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
-            String displayName = currentUser.getDisplayName();
-            if (displayName != null && !displayName.isEmpty()) {
-                userDisplayTextView.setText(displayName);
-            } else {
+            updateDrawerUserDisplayName(currentUser.getDisplayName());
+        }
+
+        initSharedPreferencesListener();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    private void updateDrawerUserDisplayName(String displayName) {
+        if (displayName != null && !displayName.isEmpty()) {
+            userDisplayTextView.setText(displayName);
+        } else {
+            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+            if (currentUser != null) {
                 String email = currentUser.getEmail();
                 userDisplayTextView.setText(email);
+            } else {
+                userDisplayTextView.setText(R.string.not_logged_in);
             }
-        } else {
-            userDisplayTextView.setText(R.string.not_logged_in);
         }
+    }
+
+    private void initSharedPreferencesListener() {
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                Log.i("ShadowDebug", "BaseActivity - onSharedPreferenceChanged");
+                if (key.equals("display_name")) {
+                    Log.i("ShadowDebug", "Updating user: ");
+                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                    if (currentUser != null) {
+                        String newDisplayName = prefs.getString(key, currentUser.getDisplayName());
+                        currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(newDisplayName).build());
+                        updateDrawerUserDisplayName(newDisplayName);
+                        Log.i("ShadowDebug", "BaseActivity - Updated");
+                    }
+                }
+            }
+        };
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -108,20 +145,24 @@ public abstract class BaseActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_main) {
-
+            //startActivity(new Intent(this, MainActivity.class));
+            finish();
         } else if (id == R.id.nav_movies) {
             startActivity(new Intent(this, MoviesActivity.class));
             finish();
-        } else if (id == R.id.nav_shows) {
+        } else if (id == R.id.nav_tv_shows) {
             startActivity(new Intent(this, TvShowsActivity.class));
             finish();
         } else if (id == R.id.nav_groups) {
-
+            //startActivity(new Intent(this, GroupsActivity.class));
         } else if (id == R.id.nav_settings) {
-
+            item.setCheckable(false);
+            startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.nav_about) {
-
+            item.setCheckable(false);
+            startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.logout) {
+            item.setCheckable(false);
             firebaseAuth.signOut();
             startActivity(new Intent(this, LoginActivity.class));
             finish();

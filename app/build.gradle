@@ -6,8 +6,8 @@ android {
         applicationId "com.pavelclaudiustefan.shadowapps.showstracker"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 47
+        versionName "4.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -38,13 +38,15 @@ dependencies {
     implementation 'com.amitshekhar.android:rx2-android-networking:1.0.1'
     // FireBase
     implementation 'com.google.firebase:firebase-core:16.0.1'
-    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    implementation 'com.google.firebase:firebase-auth:16.0.3'
     // ObjectBox
     debugImplementation 'io.objectbox:objectbox-android-objectbrowser:2.0.0'
     releaseImplementation 'io.objectbox:objectbox-android:2.0.0'
     // ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    // Android About Page
+    implementation 'com.github.medyo:android-about-page:1.2.4'
 }
 
 apply plugin: 'com.google.gms.google-services'
