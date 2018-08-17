@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,7 +61,7 @@ public abstract class MoviesBaseFragment extends Fragment{
         }
 
         initFilteringAndSortingOptionsValues();
-        requestAndAddToAdapterMovies();
+        requestMoviesAndAddToAdapter();
         setUpListView();
         setUpSearchFab();
 
@@ -71,7 +70,7 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     public abstract void initFilteringAndSortingOptionsValues();
 
-    private void requestAndAddToAdapterMovies() {
+    private void requestMoviesAndAddToAdapter() {
         movies = (ArrayList<Movie>) requestMoviesFromDb();
         movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
         loadingIndicator.setVisibility(View.GONE);
@@ -85,22 +84,16 @@ public abstract class MoviesBaseFragment extends Fragment{
         movieListView.setAdapter(movieItemListAdapter);
 
         // Setup the item click listener
-        movieListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), MovieActivityDb.class);
-                Movie movie = movies.get(position);
-                intent.putExtra("tmdb_id", movie.getTmdbId());
-                startActivity(intent);
-            }
+        movieListView.setOnItemClickListener((adapterView, view, position, id) -> {
+            Intent intent = new Intent(getActivity(), MovieActivityDb.class);
+            Movie movie = movies.get(position);
+            intent.putExtra("tmdb_id", movie.getTmdbId());
+            startActivity(intent);
         });
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshMovieList();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshMovieList();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
@@ -110,12 +103,9 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     private void setUpSearchFab() {
         if (isFabVisible) {
-            searchFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(getActivity(), MovieSearchActivity.class);
-                    startActivity(intent);
-                }
+            searchFab.setOnClickListener(view -> {
+                Intent intent = new Intent(getActivity(), MovieSearchActivity.class);
+                startActivity(intent);
             });
         } else {
             searchFab.setVisibility(View.GONE);

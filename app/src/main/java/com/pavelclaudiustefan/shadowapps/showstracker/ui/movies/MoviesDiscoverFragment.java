@@ -20,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,18 +27,16 @@ import android.widget.TextView;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedMoviesList;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +111,6 @@ public class MoviesDiscoverFragment extends Fragment {
             loadingIndicator.setIndeterminate(false);
             loadingIndicator.setMax(tmdbIds.length);
             RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING));
-            //movies = recommendedMoviesList.getList();
-            //movieItemListAdapter.addAll(movies);
-            //movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
             recommendedMoviesList.addRecommendedToAdapter(movieItemListAdapter);
         } else {
             // Popular movies / Top rated movies section
@@ -148,14 +142,11 @@ public class MoviesDiscoverFragment extends Fragment {
         listView.setEmptyView(emptyStateTextView);
 
         // Setup the item click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
-                Movie item = movies.get(position);
-                intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
-                startActivity(intent);
-            }
+        listView.setOnItemClickListener((adapterView, view, position, id) -> {
+            Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
+            Movie item = movies.get(position);
+            intent.putExtra("tmdb_id", item.getTmdbId());
+            startActivity(intent);
         });
 
         if (!isRecommended) {
@@ -168,12 +159,9 @@ public class MoviesDiscoverFragment extends Fragment {
             });
         }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshList();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshList();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
@@ -205,12 +193,7 @@ public class MoviesDiscoverFragment extends Fragment {
                 .setPriority(Priority.HIGH)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                 .build()
-                .setAnalyticsListener(new AnalyticsListener() {
-                    @Override
-                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                        Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage);
-                    }
-                })
+                .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
@@ -220,10 +203,6 @@ public class MoviesDiscoverFragment extends Fragment {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-
-                        //Log.i("ShadowDebug", "3 - I am gone");
-                        loadingIndicator.setVisibility(View.GONE);
-
                         List<Movie> movies = QueryUtils.extractMoviesFromJson(response);
 
                         if (currentPage == 1) {
@@ -234,12 +213,12 @@ public class MoviesDiscoverFragment extends Fragment {
                             if (!showItemsInCollection) {
                                 removeCollectionMovies(movies);
                             }
-
                             movieItemListAdapter.addAll(movies);
                         } else {
                             displayPossibleError();
                             Log.e("ShadowDebug", "MoviesDiscoverFragment - No tvShows extracted from Json response");
                         }
+                        onMoviesListLoaded();
                     }
 
                     @Override
@@ -405,6 +384,9 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     private void displayPossibleError() {
+        // First, hide loading indicator so error message will be visible
+        loadingIndicator.setVisibility(View.GONE);
+
         // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
         showEmptyStateTextView(R.string.no_movies_found);
 
@@ -415,9 +397,7 @@ public class MoviesDiscoverFragment extends Fragment {
             if (connMgr != null) {
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo == null || !networkInfo.isConnected()) {
-                    // First, hide loading indicator so error message will be visible
-                    //Log.i("ShadowDebug", "5 - I am gone");
-                    loadingIndicator.setVisibility(View.GONE);
+
                     showEmptyStateTextView(R.string.no_internet_connection);
                 }
             }
@@ -434,8 +414,6 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     public void onMoviesListLoaded() {
-        //Log.i("ShadowDebug", "6 - I am gone");
-        loadingIndicator.setVisibility(View.GONE);
         displayPossibleError();
     }
 }

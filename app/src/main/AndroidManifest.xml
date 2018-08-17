@@ -22,29 +22,50 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.LoginActivity"
             android:theme="@style/AppTheme.AuthTheme" />
+
         <activity
             android:name=".ui.SignupActivity"
             android:theme="@style/AppTheme.AuthTheme" />
+
         <activity
             android:name=".ui.movies.MoviesActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name=".ui.tvshows.TvShowsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".ui.movies.MovieActivityDb" />
         <activity android:name=".ui.movies.MovieActivityHTTP" />
         <activity android:name=".ui.tvshows.TvShowActivityHTTP" />
         <activity android:name=".ui.search.MovieSearchActivity" />
         <activity android:name=".ui.search.TvShowSearchActivity" />
+
+        <activity
+            android:name=".ui.groups.GroupsActivity"
+            android:label="@string/title_group_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ui.groups.GroupActivity"
+            android:label="@string/title_activity_group">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity" />
+        </activity>
+
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
+
         <activity android:name=".ui.about.AboutActivity" />
-        <activity android:name=".ui.about.LicensesActivity"></activity>
+        <activity android:name=".ui.about.LicensesActivity" />
+
     </application>
 
 </manifest>

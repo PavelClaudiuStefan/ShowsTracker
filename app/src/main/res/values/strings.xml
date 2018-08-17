@@ -109,7 +109,7 @@
     <string name="sloth_icon">Sloth icon</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
-    <string name="feed">Feed</string>
+    <string name="feed">Feed TODO</string>
     <string name="movies">Movies</string>
     <string name="groups">Groups</string>
     <string name="log_out">Log out</string>
@@ -185,4 +185,18 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_group_list">Groups</string>
+    <string name="title_group_detail">Group Detail</string>
+    <string name="group_image">Group image</string>
+    <string name="title_activity_group">Group</string>
+
+    <string name="default_number_of_users">10</string>
+    <string name="group_title">Title</string>
+    <string name="add_new_group_dialog">Add new group dialog</string>
+    <string name="no_groups_added">Create or join a group</string>
+    <string name="create_group">Create group</string>
+    <string name="join_group">Join group</string>
+    <string name="action_delete_group">Delete group</string>
+    <string name="action_exit_group">Exit group</string>
+    <string name="connection_issues">Connection issues</string>
 </resources>

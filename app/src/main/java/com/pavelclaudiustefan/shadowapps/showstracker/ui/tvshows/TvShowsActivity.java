@@ -17,6 +17,10 @@ public class TvShowsActivity extends ShowsSectionsContainerActivity {
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    public TvShowsActivity() {
+        setLayout(R.layout.activity_shows);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

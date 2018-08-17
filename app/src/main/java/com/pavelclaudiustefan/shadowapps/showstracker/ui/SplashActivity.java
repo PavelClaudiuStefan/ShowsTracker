@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 
 public class SplashActivity extends AppCompatActivity {
@@ -20,10 +21,14 @@ public class SplashActivity extends AppCompatActivity {
         if (firebaseAuth.getCurrentUser() != null) {
             // User is logged in
             activityIntent = new Intent(this, MoviesActivity.class);
+            //activityIntent = new Intent(this, GroupsActivity.class);
         } else {
             // User is not logged in
             activityIntent = new Intent(this, LoginActivity.class);
         }
+
+        // TODO - Check first if the movies stored in the objectbox db belong to the logged in firebase user
+        // TODO - If not, delete the objectbox db, and remake it using data from firestore
 
         startActivity(activityIntent);
         finish();

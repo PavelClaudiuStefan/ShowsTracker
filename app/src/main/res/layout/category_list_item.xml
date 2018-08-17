@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/rounded_layout_bg"
     android:orientation="horizontal"
     android:paddingEnd="8dp"
     android:paddingStart="8dp">
@@ -36,7 +37,7 @@
             android:maxLines="2"
             android:textColor="@color/colorTitle"
             android:textSize="16sp"
-            tools:text="Movie name" />
+            tools:text="Show name" />
 
         <TextView
             android:id="@+id/average_vote"
