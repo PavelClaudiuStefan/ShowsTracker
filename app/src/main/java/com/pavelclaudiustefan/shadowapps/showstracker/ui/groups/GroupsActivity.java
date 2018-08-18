@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -47,6 +48,8 @@ public class GroupsActivity extends BaseActivity {
     ProgressBar loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
+    @BindView(R.id.fab_menu)
+    FloatingActionsMenu floatingActionsMenu;
     @BindView(R.id.create_group)
     FloatingActionButton fabCreateGroup;
     @BindView(R.id.join_group)
@@ -166,8 +169,14 @@ public class GroupsActivity extends BaseActivity {
     }
 
     private void setUpFab() {
-        fabCreateGroup.setOnClickListener(view -> showCreateGroupDialog());
-        fabJoinGroup.setOnClickListener(view -> showJoinGroupDialog());
+        fabCreateGroup.setOnClickListener(view -> {
+            showCreateGroupDialog();
+            floatingActionsMenu.collapse();
+        });
+        fabJoinGroup.setOnClickListener(view -> {
+            showJoinGroupDialog();
+            floatingActionsMenu.collapse();
+        });
     }
 
     private void showCreateGroupDialog() {
@@ -298,8 +307,6 @@ public class GroupsActivity extends BaseActivity {
                                         .addOnSuccessListener(queryDocumentSnapshots -> {
                                             if (queryDocumentSnapshots.isEmpty()) {
                                                 // User is not a member of the group already -> Join group
-                                                // TODO - remove toast
-                                                Toast.makeText(GroupsActivity.this, "Haha bitch", Toast.LENGTH_LONG).show();
                                                 joinGroup(title);
                                             } else {
                                                 // Already joined -> Show info toast

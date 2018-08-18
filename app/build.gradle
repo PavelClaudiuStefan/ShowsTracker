@@ -6,9 +6,10 @@ android {
         applicationId "com.pavelclaudiustefan.shadowapps.showstracker"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 48
-        versionName "5.0"
+        versionCode 4
+        versionName "5.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = false
     }
     buildTypes {
         release {
@@ -48,6 +49,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-firestore:17.1.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.4'
 
     // ObjectBox
     debugImplementation 'io.objectbox:objectbox-android-objectbrowser:2.0.0'
@@ -69,4 +71,5 @@ dependencies {
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'io.objectbox'
