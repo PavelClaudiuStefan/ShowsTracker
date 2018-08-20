@@ -22,7 +22,7 @@ public class GroupListAdapter extends ArrayAdapter<String> {
 
     @BindView(R.id.group_title)
     TextView titleView;
-    @BindView(R.id.thumbnail)
+    @BindView(R.id.image)
     ImageView imageView;
 
     public GroupListAdapter(Context context, ArrayList<String> items) {

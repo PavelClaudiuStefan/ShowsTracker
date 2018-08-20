@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -146,14 +147,17 @@ public class MoviesDiscoverFragment extends Fragment {
             Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
             Movie item = movies.get(position);
             intent.putExtra("tmdb_id", item.getTmdbId());
-            startActivity(intent);
+            if (getActivity() != null) {
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this.getActivity(), listView.findViewById(R.id.image), String.valueOf(item.getTmdbId()));
+                startActivity(intent, options.toBundle());
+            }
         });
 
         if (!isRecommended) {
             listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
                 @Override
                 public boolean onLoadMore(int page, int totalItemsCount) {
-                    //Log.i("ShadowDebug", "Why are you calling rn???");
                     return currentPage <= totalPages && loadMore();
                 }
             });

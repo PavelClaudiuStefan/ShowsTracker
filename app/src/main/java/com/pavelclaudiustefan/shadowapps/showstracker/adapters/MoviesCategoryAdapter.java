@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesAllFragment;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesCollectionFragment;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesDiscoverFragment;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesToWatchFragment;
 
@@ -24,7 +24,7 @@ public class MoviesCategoryAdapter extends FragmentStatePagerAdapter {
         if (position == 0) {
             return new MoviesToWatchFragment();
         } else if (position == 1) {
-            return new MoviesAllFragment();
+            return new MoviesCollectionFragment();
         } else {
             return new MoviesDiscoverFragment();
         }

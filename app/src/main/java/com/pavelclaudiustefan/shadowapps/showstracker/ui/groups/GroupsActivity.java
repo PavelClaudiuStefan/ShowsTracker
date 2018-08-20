@@ -3,9 +3,11 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.groups;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -86,7 +88,7 @@ public class GroupsActivity extends BaseActivity {
 
         requestGroupsAndAddToAdapter();
         setUpListView();
-        setUpFab();
+        setUpFabMenu();
     }
 
     private void requestGroupsAndAddToAdapter() {
@@ -168,7 +170,7 @@ public class GroupsActivity extends BaseActivity {
         }
     }
 
-    private void setUpFab() {
+    private void setUpFabMenu() {
         fabCreateGroup.setOnClickListener(view -> {
             showCreateGroupDialog();
             floatingActionsMenu.collapse();
@@ -400,6 +402,16 @@ public class GroupsActivity extends BaseActivity {
                         }
                     })
                     .addOnFailureListener(e -> Log.e(TAG, "Updating movies in groups/{title}/movies failure: ", e));
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.nav_groups) {
+            closeDrawer();
+            return true;
+        } else {
+            return super.onNavigationItemSelected(item);
         }
     }
 

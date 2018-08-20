@@ -1,71 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:background="#E0E0E0"
-    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityDb">
-
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.tvshows.TvShowActivityDb"
+    tools:showIn="@layout/activity_tv_show_db">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
-
-        <ImageView
-            android:id="@+id/image"
-            android:contentDescription="@string/show_image_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@drawable/image_temp"/>
-
-        <!-- Empty view is only visible when the list has no items. -->
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:gravity="center_horizontal"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:visibility="gone" />
-
-        <!-- Loading indicator is only shown before the first load -->
-        <ProgressBar
-            android:id="@+id/loading_indicator"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/buttons_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@android:color/white"
-            android:padding="4dp"
-            android:orientation="horizontal">
-
-            <ToggleButton
-                android:id="@+id/add_remove_show"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="2dp"
-                android:backgroundTint="@color/add_remove_button_color"
-                android:textOff="@string/add_show"
-                android:textOn="@string/remove_show"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-
 
         <RelativeLayout
             android:id="@+id/generic_info_layout"
@@ -153,4 +101,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

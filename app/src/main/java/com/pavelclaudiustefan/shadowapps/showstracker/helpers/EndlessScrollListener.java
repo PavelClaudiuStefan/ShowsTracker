@@ -35,7 +35,6 @@ public abstract class EndlessScrollListener implements AbsListView.OnScrollListe
         }
 
         if (!loading && (firstVisibleItem + visibleItemCount + visibleThreshold) >= totalItemCount ) {
-            Log.i("ShadowDebug", loading + " " + firstVisibleItem + " " + visibleItemCount + " " + visibleThreshold + " " + totalItemCount);
             loading = onLoadMore(currentPage + 1, totalItemCount);
         }
     }

@@ -14,13 +14,13 @@ import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie_;
 
 import java.util.List;
 
-public class MoviesAllFragment extends MoviesBaseFragment {
+public class MoviesCollectionFragment extends MoviesBaseFragment {
 
     private String currentFilterOption;
     private int currentSortByOption;
     private int currentSortDirectionOption;
 
-    public MoviesAllFragment() {
+    public MoviesCollectionFragment() {
         enableSearchFab(true);
     }
 
@@ -56,7 +56,7 @@ public class MoviesAllFragment extends MoviesBaseFragment {
             case "not_released":
                 return requestMoviesNotReleased();
             default:
-                Log.e("MoviesAllFragment", "Filtering - displaying movies error");
+                Log.e("MoviesCollectionFragment", "Filtering - displaying movies error");
                 return null;
         }
     }
@@ -139,7 +139,7 @@ public class MoviesAllFragment extends MoviesBaseFragment {
                 notReleasedItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesAllFragment", "Filtering - setting menu error");
+                Log.e("MoviesCollectionFragment", "Filtering - setting menu error");
                 break;
         }
 
@@ -157,7 +157,7 @@ public class MoviesAllFragment extends MoviesBaseFragment {
                 MenuItem alphabeticallyItem = menu.findItem(R.id.menu_sort_alphabetically);
                 alphabeticallyItem.setEnabled(false);
             default:
-                Log.e("MoviesAllFragment", "Sorting error");
+                Log.e("MoviesCollectionFragment", "Sorting error");
                 break;
         }
 
@@ -172,7 +172,7 @@ public class MoviesAllFragment extends MoviesBaseFragment {
                 descItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesAllFragment", "Sorting direction error");
+                Log.e("MoviesCollectionFragment", "Sorting direction error");
                 break;
         }
     }

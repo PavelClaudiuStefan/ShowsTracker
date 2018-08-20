@@ -1,5 +1,6 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -8,9 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,7 +42,9 @@ public abstract class MovieActivity extends AppCompatActivity{
 
     public static final String TAG = "MovieActivity";
 
-    @BindView(R.id.thumbnail)
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.image)
     ImageView imageView;
     @BindView(R.id.buttons_layout)
     LinearLayout buttonsLayout;
@@ -81,6 +86,7 @@ public abstract class MovieActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie);
+        setUpToolbar();
         setupActionBar();
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -92,6 +98,10 @@ public abstract class MovieActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         long tmdbId = intent.getLongExtra("tmdb_id", -1);
+        imageView.setTransitionName(String.valueOf(tmdbId));
+
+        // For transitions
+        imageView.setTransitionName(String.valueOf(tmdbId));
 
         if (tmdbId != -1) {
             requestAndDisplayMovie(tmdbId);
@@ -126,10 +136,26 @@ public abstract class MovieActivity extends AppCompatActivity{
         String overview = movie.getOverview();
         final String imdbUrl = movie.getImdbUrl();
 
+        //imageView.setTransitionName(String.valueOf(movie.getTmdbId()));
+
         setTitle(title);
+        imageView.setTransitionName(String.valueOf(movie.getTmdbId()));
         Picasso.get()
                 .load(imageUrl)
                 .into(imageView);
+
+        supportPostponeEnterTransition();
+        imageView.getViewTreeObserver().addOnPreDrawListener(
+                new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        imageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                        supportStartPostponedEnterTransition();
+                        return true;
+                    }
+                }
+        );
+
         titleTextView.setText(title);
         averageVoteTextView.setText(averageVote);
         String voteCountStr = voteCount + " votes";
@@ -285,7 +311,7 @@ public abstract class MovieActivity extends AppCompatActivity{
 
     void displayError() {
         loadingIndicator.setVisibility(View.GONE);
-        emptyStateTextView.setText(R.string.no_tv_show_found);
+        emptyStateTextView.setText(R.string.no_movie_data);
         setMovieViewsVisibility(View.GONE);
 
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -318,12 +344,20 @@ public abstract class MovieActivity extends AppCompatActivity{
         }
     }
 
+    @SuppressLint("PrivateResource")
+    private void setUpToolbar() {
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbar.setNavigationOnClickListener(view -> onBackPressed());
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         // Finishes the activity if the Up button is pressed
         if (id == android.R.id.home) {
-            finish();
+            supportFinishAfterTransition();
             return true;
         }
         return super.onOptionsItemSelected(item);

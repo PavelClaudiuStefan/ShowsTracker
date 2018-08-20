@@ -27,7 +27,7 @@ public class ShowItemListAdapter<T extends Show> extends ArrayAdapter<T> {
     TextView averageVoteView;
     @BindView(R.id.date)
     TextView dateView;
-    @BindView(R.id.thumbnail)
+    @BindView(R.id.image)
     ImageView imageView;
 
     public ShowItemListAdapter(Context context, ArrayList<T> items) {
@@ -52,11 +52,7 @@ public class ShowItemListAdapter<T extends Show> extends ArrayAdapter<T> {
         averageVoteView.setText(formatVote(currentItem.getVote()));
         dateView.setText(currentItem.getReleaseDate());
 
-
-        Picasso picasso = Picasso.get();
-        picasso.setIndicatorsEnabled(true);
-        picasso.load(currentItem.getThumbnailUrl())
-                .into(imageView);
+        imageView.setTransitionName(String.valueOf(currentItem.getTmdbId()));
 
         Picasso.get()
                 .load(currentItem.getThumbnailUrl())

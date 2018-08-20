@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -16,7 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,7 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
 
-public class TvShowsAllFragment extends Fragment{
+public class TvShowsCollectionFragment extends Fragment{
 
     @BindView(R.id.list)
     ListView showListView;
@@ -57,7 +57,7 @@ public class TvShowsAllFragment extends Fragment{
     private int currentSortByOption;
     private int currentSortDirectionOption;
 
-    public TvShowsAllFragment() {
+    public TvShowsCollectionFragment() {
         setHasOptionsMenu(true);
     }
 
@@ -70,7 +70,7 @@ public class TvShowsAllFragment extends Fragment{
         if (getActivity() != null) {
             showsBox = ((MyApp) getActivity().getApplication()).getBoxStore().boxFor(TvShow.class);
         } else {
-            Log.e("ShadowDebug", "TvShowsAllFragment - getApplication() error");
+            Log.e("ShadowDebug", "TvShowsCollectionFragment - getApplication() error");
         }
 
         initFilteringAndSortingOptionsValues();
@@ -109,14 +109,14 @@ public class TvShowsAllFragment extends Fragment{
         requestAndAddShowsToAdapter();
 
         // Setup the item click listener
-        showListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // TODO - TvShowActivityDb
-                Intent intent = new Intent(getActivity(), TvShowActivityHTTP.class);
-                TvShow tvShow = tvShows.get(position);
-                intent.putExtra("tmdb_id", String.valueOf(tvShow.getTmdbId()));
-                startActivity(intent);
+        showListView.setOnItemClickListener((adapterView, view, position, id) -> {
+            Intent intent = new Intent(getActivity(), TvShowActivityDb.class);
+            TvShow tvShow = tvShows.get(position);
+            intent.putExtra("tmdb_id", tvShow.getTmdbId());
+            if (getActivity() != null) {
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this.getActivity(), showListView.findViewById(R.id.image), "show_image");
+                startActivity(intent, options.toBundle());
             }
         });
     }
@@ -137,7 +137,7 @@ public class TvShowsAllFragment extends Fragment{
             case "not_released":
                 return requestMoviesNotReleased();
             default:
-                Log.e("TvShowsAllFragment", "TvShowsAllFragment - Filtering - displaying shows error");
+                Log.e("TvShowsCollection", "TvShowsCollectionFragment - Filtering - displaying shows error");
                 return null;
         }
     }
@@ -170,20 +170,14 @@ public class TvShowsAllFragment extends Fragment{
     }
 
     private void setUpListeners() {
-        searchFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), TvShowSearchActivity.class);
-                startActivity(intent);
-            }
+        searchFab.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), TvShowSearchActivity.class);
+            startActivity(intent);
         });
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshShowsList();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshShowsList();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
@@ -216,7 +210,7 @@ public class TvShowsAllFragment extends Fragment{
                 notReleasedItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesAllFragment", "Filtering - setting menu error");
+                Log.e("MoviesCollection", "Filtering - setting menu error");
                 break;
         }
 
@@ -235,7 +229,7 @@ public class TvShowsAllFragment extends Fragment{
                 alphabeticallyItem.setEnabled(false);
                 break;
             default:
-                Log.e("TvShowsAllFragment", "Sorting error: currentSortOption" + currentSortByOption);
+                Log.e("TvShowsCollection", "Sorting error: currentSortOption" + currentSortByOption);
                 break;
         }
 
@@ -250,7 +244,7 @@ public class TvShowsAllFragment extends Fragment{
                 descItem.setEnabled(false);
                 break;
             default:
-                Log.e("TvShowsAllFragment", "Sorting direction error");
+                Log.e("TvShowsCollection", "Sorting direction error");
                 break;
         }
     }

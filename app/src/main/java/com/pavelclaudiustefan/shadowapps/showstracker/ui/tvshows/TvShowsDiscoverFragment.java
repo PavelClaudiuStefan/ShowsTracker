@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -141,13 +142,14 @@ public class TvShowsDiscoverFragment extends Fragment {
         listView.setAdapter(tvShowItemListAdapter);
 
         // Setup the item click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), TvShowActivityHTTP.class);
-                TvShow item = tvShows.get(position);
-                intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
-                startActivity(intent);
+        listView.setOnItemClickListener((adapterView, view, position, id) -> {
+            Intent intent = new Intent(getActivity(), TvShowActivityHTTP.class);
+            TvShow item = tvShows.get(position);
+            intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
+            if (getActivity() != null) {
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this.getActivity(), listView.findViewById(R.id.image), "show_image");
+                startActivity(intent, options.toBundle());
             }
         });
 

@@ -5,11 +5,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -88,7 +92,11 @@ public abstract class MoviesBaseFragment extends Fragment{
             Intent intent = new Intent(getActivity(), MovieActivityDb.class);
             Movie movie = movies.get(position);
             intent.putExtra("tmdb_id", movie.getTmdbId());
-            startActivity(intent);
+            if (getActivity() != null) {
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this.getActivity(), movieListView.findViewById(R.id.image), String.valueOf(movie.getTmdbId()));
+                startActivity(intent, options.toBundle());
+            }
         });
 
         swipeRefreshLayout.setOnRefreshListener(() -> {

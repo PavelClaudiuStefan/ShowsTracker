@@ -1,47 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_movie"
     android:background="#E0E0E0"
-    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityDb">
-
+    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
-
-        <ImageView
-            android:id="@+id/image"
-            android:contentDescription="@string/show_image_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@drawable/image_temp"/>
-
-        <!-- Empty view is only visible when the list has no items. -->
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:gravity="center_horizontal"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:visibility="gone" />
-
-        <!-- Loading indicator is only shown before the first load -->
-        <ProgressBar
-            android:id="@+id/loading_indicator"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/buttons_layout"
@@ -53,19 +26,28 @@
             android:orientation="horizontal">
 
             <ToggleButton
-                android:id="@+id/add_remove_show"
+                android:id="@+id/add_remove_movie"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="2dp"
                 android:backgroundTint="@color/add_remove_button_color"
-                android:textOff="@string/add_show"
-                android:textOn="@string/remove_show"
+                android:textOff="@string/add_movie"
+                android:textOn="@string/remove_movie"
+                android:textSize="14sp" />
+
+            <ToggleButton
+                android:id="@+id/watched_not_watched_movie"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="2dp"
+                android:backgroundTint="@color/watched_not_watched_movie_button_color"
+                android:textOff="@string/set_watched_movie"
+                android:textOn="@string/set_not_watched_movie"
                 android:textSize="14sp" />
 
         </LinearLayout>
-
-
 
         <RelativeLayout
             android:id="@+id/generic_info_layout"
@@ -96,10 +78,32 @@
                 tools:text="Cinema release: 04 Apr 1996" />
 
             <TextView
+                android:id="@+id/digital_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/release_date"
+                android:layout_alignStart="@id/title"
+                android:textSize="16sp"
+                android:textColor="@color/colorItemDetails"
+                tools:text="Digital release: 04 Apr 1996" />
+
+            <TextView
+                android:id="@+id/physical_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/digital_release_date"
+                android:layout_alignStart="@id/title"
+                android:textSize="16sp"
+                android:textColor="@color/colorItemDetails"
+                tools:text="Physical release: 04 Apr 1996" />
+
+            <TextView
                 android:id="@+id/average_vote"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/release_date"
+                android:layout_below="@id/physical_release_date"
                 android:layout_alignStart="@id/title"
                 android:padding="2dp"
                 android:textSize="16sp"
@@ -111,7 +115,7 @@
                 android:id="@+id/vote_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/release_date"
+                android:layout_below="@id/physical_release_date"
                 android:layout_toEndOf="@id/average_vote"
                 android:layout_marginStart="16dp"
                 android:padding="2dp"
@@ -151,6 +155,18 @@
 
         </RelativeLayout>
 
+        <Button
+            android:id="@+id/imdb_url_button"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:backgroundTint="@color/colorIMDbButton"
+            android:textSize="18sp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="2dp"
+            android:text="@string/imdb"/>
+
     </LinearLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

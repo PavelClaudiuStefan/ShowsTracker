@@ -7,10 +7,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -18,13 +18,12 @@ import android.widget.TextView;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 
 import java.util.ArrayList;
@@ -117,14 +116,13 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
         listView.setAdapter(showItemListAdapter);
 
         // Setup the item click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = getIntentForShowActivityHTTP();
-                T item = items.get(position);
-                intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
-                startActivity(intent);
-            }
+        listView.setOnItemClickListener((adapterView, view, position, id) -> {
+            Intent intent = getIntentForShowActivityHTTP();
+            T item = items.get(position);
+            intent.putExtra("tmdb_id", item.getTmdbId());
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(this, listView.findViewById(R.id.image), "show_image");
+            startActivity(intent, options.toBundle());
         });
 
         listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
@@ -149,12 +147,7 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
                 .setPriority(Priority.LOW)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                 .build()
-                .setAnalyticsListener(new AnalyticsListener() {
-                    @Override
-                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                        Log.d("BaseSearchActivity", "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage);
-                    }
-                })
+                .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d("BaseSearchActivity", "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
