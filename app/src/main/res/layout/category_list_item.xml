@@ -1,65 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rounded_layout_bg"
-    android:orientation="horizontal"
-    android:paddingEnd="8dp"
-    android:paddingStart="8dp">
-
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/thumbnail_temp"
-        android:contentDescription="@string/thumbnail"
-        android:scaleType="centerInside" />
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="6dp"
+    android:focusable="true">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="@drawable/rounded_layout_bg"
+        android:orientation="horizontal"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp">
 
-        <TextView
-            android:id="@+id/title"
+        <ImageView
+            android:id="@+id/image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/colorTitle"
-            android:textSize="16sp"
-            tools:text="Show name" />
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:adjustViewBounds="true"
+            android:transitionName="image"
+            android:background="@drawable/thumbnail_temp"
+            android:contentDescription="@string/thumbnail"
+            android:scaleType="centerInside" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/colorTitle"
+                android:textSize="16sp"
+                tools:text="Show name" />
+
+            <TextView
+                android:id="@+id/average_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="@color/colorItemDetails"
+                android:textSize="12sp"
+                android:text="@string/default_average_vote" />
+
+        </LinearLayout>
+
 
         <TextView
-            android:id="@+id/average_vote"
+            android:id="@+id/date"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
             android:textColor="@color/colorItemDetails"
             android:textSize="12sp"
-            android:text="@string/default_average_vote" />
+            tools:text="2017-09-05" />
+
+        <ImageView
+            android:id="@+id/overflow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_overflow"
+            android:paddingStart="4dp"
+            android:paddingEnd="0dp"
+            android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/date"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorItemDetails"
-        android:textSize="12sp"
-        tools:text="2017-09-05" />
-</LinearLayout>
+</android.support.v7.widget.CardView>

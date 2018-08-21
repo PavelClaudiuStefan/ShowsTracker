@@ -10,6 +10,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,12 +21,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow_;
@@ -37,8 +41,8 @@ import io.objectbox.Box;
 
 public class TvShowsCollectionFragment extends Fragment{
 
-    @BindView(R.id.list)
-    ListView showListView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
     @BindView(R.id.loading_indicator)
     View loadingIndicator;
     @BindView(R.id.empty_view)
@@ -49,7 +53,7 @@ public class TvShowsCollectionFragment extends Fragment{
     SwipeRefreshLayout swipeRefreshLayout;
 
     private ArrayList<TvShow> tvShows = new ArrayList<>();
-    private ShowItemListAdapter<TvShow> tvShowItemListAdapter;
+    private ShowsCardsAdapter<TvShow> tvShowItemListAdapter;
 
     private Box<TvShow> showsBox;
 
@@ -75,7 +79,7 @@ public class TvShowsCollectionFragment extends Fragment{
 
         initFilteringAndSortingOptionsValues();
 
-        setUpListView();
+        setUpRecyclerView();
         setUpListeners();
 
         return rootView;
@@ -98,34 +102,52 @@ public class TvShowsCollectionFragment extends Fragment{
         );
     }
 
-    private void setUpListView() {
-        //Only visible if no movies are found
-        emptyStateTextView.setText(R.string.no_tv_shows_added);
-        showListView.setEmptyView(emptyStateTextView);
+    private void setUpRecyclerView() {
+        tvShowItemListAdapter = new ShowsCardsAdapter<>(getContext(), tvShows, R.menu.menu_tv_shows_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+            @Override
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(TvShowsCollectionFragment.this.getContext(), "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
 
-        tvShowItemListAdapter = new ShowItemListAdapter<>(getContext(), tvShows);
-        showListView.setAdapter(tvShowItemListAdapter);
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(TvShowsCollectionFragment.this.getContext(), "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
 
-        requestAndAddShowsToAdapter();
-
-        // Setup the item click listener
-        showListView.setOnItemClickListener((adapterView, view, position, id) -> {
-            Intent intent = new Intent(getActivity(), TvShowActivityDb.class);
-            TvShow tvShow = tvShows.get(position);
-            intent.putExtra("tmdb_id", tvShow.getTmdbId());
-            if (getActivity() != null) {
-                ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(this.getActivity(), showListView.findViewById(R.id.image), "show_image");
-                startActivity(intent, options.toBundle());
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                Intent intent = new Intent(getActivity(), TvShowActivityDb.class);
+                TvShow tvShow = tvShows.get(position);
+                intent.putExtra("tmdb_id", tvShow.getTmdbId());
+                if (TvShowsCollectionFragment.this.getActivity() != null) {
+                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation(TvShowsCollectionFragment.this.getActivity(), cardView.findViewById(R.id.image), "image");
+                    startActivity(intent, options.toBundle());
+                }
             }
         });
+
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(tvShowItemListAdapter);
+
+        requestAndAddShowsToList();
     }
 
-    private void requestAndAddShowsToAdapter() {
-        List<TvShow> tvShows = requestShowsFromDb();
-        assert tvShows != null;
-        tvShowItemListAdapter.addAll(tvShows);
+    private void requestAndAddShowsToList() {
+        List<TvShow> requestedTvShows = requestShowsFromDb();
+        tvShows.addAll(requestedTvShows);
+        tvShowItemListAdapter.notifyDataSetChanged();
         loadingIndicator.setVisibility(View.GONE);
+
+        //Only visible if no movies are found
+        emptyStateTextView.setText(R.string.no_tv_shows_added);
+        if (tvShows == null || tvShows.isEmpty()) {
+            emptyStateTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private List<TvShow> requestShowsFromDb() {
@@ -287,7 +309,7 @@ public class TvShowsCollectionFragment extends Fragment{
 
     public void refreshMovieList() {
         if (getActivity() != null) {
-            tvShowItemListAdapter.clear();
+            //tvShows.clear();
             ((TvShowsActivity)getActivity()).dataChanged();
         }
     }

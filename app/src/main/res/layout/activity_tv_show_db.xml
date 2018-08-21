@@ -22,7 +22,7 @@
             app:expandedTitleMarginStart="16dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            <ImageView
+            <com.pavelclaudiustefan.shadowapps.showstracker.customviews.FixedRatioImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -32,7 +32,7 @@
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
-                android:transitionName="show_image"/>
+                android:transitionName="image"/>
 
             <View
                 android:layout_width="match_parent"
@@ -52,7 +52,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_tv_show_activity_db" />
+    <include layout="@layout/content_tv_show_info" />
+
+    <!-- TODO - Recycler view for seasons (optional - trailers)-->
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"/>-->
 
     <ProgressBar
         android:id="@+id/loading_indicator"
@@ -72,14 +77,5 @@
         android:gravity="center_horizontal"
         android:textAppearance="?android:textAppearanceMedium"
         android:visibility="gone" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/ic_eye" />
 
 </android.support.design.widget.CoordinatorLayout>

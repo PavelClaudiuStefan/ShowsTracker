@@ -7,13 +7,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,11 +42,13 @@ public abstract class MovieActivity extends AppCompatActivity{
 
     public static final String TAG = "MovieActivity";
 
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.image)
     ImageView imageView;
-    @BindView(R.id.buttons_layout)
+    @BindView(R.id.button_container)
     LinearLayout buttonsLayout;
     @BindView(R.id.generic_info_layout)
     RelativeLayout genericInfoLayout;
@@ -98,10 +100,6 @@ public abstract class MovieActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
         long tmdbId = intent.getLongExtra("tmdb_id", -1);
-        imageView.setTransitionName(String.valueOf(tmdbId));
-
-        // For transitions
-        imageView.setTransitionName(String.valueOf(tmdbId));
 
         if (tmdbId != -1) {
             requestAndDisplayMovie(tmdbId);
@@ -119,8 +117,6 @@ public abstract class MovieActivity extends AppCompatActivity{
     abstract void requestAndDisplayMovie(long tmdbId);
 
     void displayMovie(final Movie movie) {
-        setTitle(movie.getTitle());
-
         // Hide loading indicator because the data has been loaded
         loadingIndicator.setVisibility(View.GONE);
 
@@ -136,25 +132,10 @@ public abstract class MovieActivity extends AppCompatActivity{
         String overview = movie.getOverview();
         final String imdbUrl = movie.getImdbUrl();
 
-        //imageView.setTransitionName(String.valueOf(movie.getTmdbId()));
-
-        setTitle(title);
-        imageView.setTransitionName(String.valueOf(movie.getTmdbId()));
+        collapsingToolbar.setTitle(title);
         Picasso.get()
                 .load(imageUrl)
                 .into(imageView);
-
-        supportPostponeEnterTransition();
-        imageView.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        imageView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        supportStartPostponedEnterTransition();
-                        return true;
-                    }
-                }
-        );
 
         titleTextView.setText(title);
         averageVoteTextView.setText(averageVote);
@@ -348,6 +329,7 @@ public abstract class MovieActivity extends AppCompatActivity{
     private void setUpToolbar() {
         setSupportActionBar(toolbar);
 
+        toolbar.setTitle("");
         toolbar.setNavigationIcon(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
     }

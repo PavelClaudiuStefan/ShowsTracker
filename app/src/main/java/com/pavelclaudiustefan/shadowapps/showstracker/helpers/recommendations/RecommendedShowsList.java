@@ -6,9 +6,7 @@ import android.util.Pair;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
@@ -21,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
@@ -50,12 +47,7 @@ public abstract class RecommendedShowsList<T extends Show> {
                     .setPriority(Priority.LOW)
                     .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                     .build()
-                    .setAnalyticsListener(new AnalyticsListener() {
-                        @Override
-                        public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                            Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache);
-                        }
-                    })
+                    .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache))
                     .getAsString(new StringRequestListener() {
                         @Override
                         public void onResponse(String response) {
@@ -84,7 +76,7 @@ public abstract class RecommendedShowsList<T extends Show> {
     }
 
     // For every tmdbId it requests maximum 20 recommended items and adds them to the adapter for displaying
-    public void addRecommendedToAdapter(final ShowItemListAdapter<T> showItemListAdapter) {
+    public void addRecommendedToList(ArrayList<T> shows) {
         final ArrayList<Long> tmdbIdsLong = new ArrayList<>();
         for (long tmdbId : tmdbIds) {
             tmdbIdsLong.add(tmdbId);
@@ -93,19 +85,9 @@ public abstract class RecommendedShowsList<T extends Show> {
         final ArrayList<T> allItems = new ArrayList<>();
 
         Flowable.fromIterable(tmdbIdsLong)
-                .flatMap(new Function<Long, Publisher<Pair<String, Long>>>() {
-                    @Override
-                    public Publisher<Pair<String, Long>> apply(Long id) {
-                        return Flowable.zip(getTitleFlowable(id),
-                                Flowable.just(id),
-                                new BiFunction<String, Long, Pair<String, Long>>() {
-                                    @Override
-                                    public Pair<String, Long> apply(String jsonResponse, Long id) {
-                                        return new Pair<>(jsonResponse, id);
-                                    }
-                                });
-                    }
-                })
+                .flatMap((Function<Long, Publisher<Pair<String, Long>>>) id -> Flowable.zip(getTitleFlowable(id),
+                        Flowable.just(id),
+                        Pair::new))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableSubscriber<Pair<String, Long>>() {
@@ -113,7 +95,6 @@ public abstract class RecommendedShowsList<T extends Show> {
                     public void onNext(Pair<String, Long> pair) {
                         List<T>items = extractShowsFromJsonResponse(pair.first);
                         addOnlyUniqueItems(items, allItems);
-                        //showItemListAdapter.addAll(items);
                         onDataIncremented();
                     }
 
@@ -124,7 +105,7 @@ public abstract class RecommendedShowsList<T extends Show> {
 
                     @Override
                     public void onComplete() {
-                        showItemListAdapter.addAll(sortItems(allItems));
+                        shows.addAll(sortItems(allItems));
                         onDataLoaded();
                     }
                 });

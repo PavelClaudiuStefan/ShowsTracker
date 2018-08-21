@@ -20,7 +20,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -52,6 +51,12 @@
 
         <activity
             android:name=".ui.tvshows.TvShowActivityHTTP"
+            android:label="@string/title_activity_tv_show"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".ui.tvshows.TvShowActivityDb"
+            android:label="@string/title_activity_tv_show"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity
@@ -68,7 +73,9 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".ui.groups.GroupActivity">
+            android:name=".ui.groups.GroupActivity"
+            android:theme="@style/AppTheme">
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity" />
@@ -85,11 +92,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity" />
         </activity>
-
-        <activity
-            android:name=".ui.tvshows.TvShowActivityDb"
-            android:label="@string/title_activity_tv_show_db"
-            android:theme="@style/AppTheme.NoActionBar"/>
 
     </application>
 

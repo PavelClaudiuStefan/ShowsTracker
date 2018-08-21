@@ -9,19 +9,23 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
@@ -35,8 +39,8 @@ import butterknife.ButterKnife;
 
 public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivity {
 
-    @BindView(R.id.list)
-    ListView listView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
     @BindView(R.id.search_view)
     SearchView searchView;
     @BindView(R.id.empty_view)
@@ -50,8 +54,8 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
     private int totalPages;         // Number of pages with shows
     private ArrayList<T> items = new ArrayList<>();
     private String query;
-
-    private ShowItemListAdapter<T> showItemListAdapter;
+    private int menuResId;
+    private boolean isLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +70,11 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
             searchView.setIconifiedByDefault(false);
         }
 
+        setUpSearchView();
+        setUpRecyclerView();
+    }
+
+    private void setUpSearchView() {
         searchView.setSubmitButtonEnabled(true);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -73,14 +82,13 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
                 // OnQueryTextChange does this already
                 query = searchViewQuery;
                 if (!items.isEmpty()) {
-                    showItemListAdapter.clear();
+                    items.clear();
                 }
                 currentPage = 1;
                 loadSearchResults();
                 searchView.clearFocus();
                 return true;
             }
-
             @Override
             public boolean onQueryTextChange(String searchViewQuery) {
                 query = searchViewQuery;
@@ -96,8 +104,6 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
                 return false;
             }
         });
-
-        setUpListView();
     }
 
     @SuppressWarnings("unchecked")
@@ -106,29 +112,59 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
         currentPage = (int) savedInstanceState.getSerializable("currentPage");
         totalPages = (int) savedInstanceState.getSerializable("totalPages");
         loadingIndicator.setVisibility(View.GONE);
+        isLoading = false;
     }
 
-    private void setUpListView() {
-        //Only visible if no movies are found
-        listView.setEmptyView(emptyStateTextView);
+    private void setUpRecyclerView() {
+        //Only visible if no items are found
+        if (items == null || items.isEmpty()) {
+            emptyStateTextView.setVisibility(View.VISIBLE);
+        }
 
-        showItemListAdapter = new ShowItemListAdapter<>(this, items);
-        listView.setAdapter(showItemListAdapter);
-
-        // Setup the item click listener
-        listView.setOnItemClickListener((adapterView, view, position, id) -> {
-            Intent intent = getIntentForShowActivityHTTP();
-            T item = items.get(position);
-            intent.putExtra("tmdb_id", item.getTmdbId());
-            ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation(this, listView.findViewById(R.id.image), "show_image");
-            startActivity(intent, options.toBundle());
-        });
-
-        listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
+        ShowsCardsAdapter<T> showItemListAdapter = new ShowsCardsAdapter<>(this, items, menuResId, new ShowsCardsAdapter.ShowsAdapterListener() {
             @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                return currentPage <= totalPages && loadMore();
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(BaseSearchActivity.this, "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(BaseSearchActivity.this, "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                Intent intent = getIntentForShowActivityHTTP();
+                T item = items.get(position);
+                intent.putExtra("tmdb_id", item.getTmdbId());
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(BaseSearchActivity.this, cardView.findViewById(R.id.image), "image");
+                startActivity(intent, options.toBundle());
+            }
+        });
+        recyclerView.setAdapter(showItemListAdapter);
+
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(showItemListAdapter);
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (isLoading) {
+                    return;
+                }
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int pastVisibleItems = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition();
+                if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                    loadMore();
+                    Log.i("ShadowDebug", "\nEND OF LIST BITCH" + "\nvisibleItemCount: " + visibleItemCount + "\ntotalItemCount: "+ totalItemCount + "\npastVisibleItems: " + pastVisibleItems);
+                }
             }
         });
     }
@@ -151,19 +187,19 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        loadingIndicator.setVisibility(View.GONE);
-
-                        List<T> shows = getShowsFromJsonResponse(response);
+                        List<T> requestedItems = getShowsFromJsonResponse(response);
 
                         if (currentPage == 1) {
                             totalPages = QueryUtils.getTotalPagesFromJson(response);
                         }
 
-                        if (shows != null) {
-                            showItemListAdapter.addAll(shows);
+                        if (requestedItems != null) {
+                            items.addAll(requestedItems);
                         } else {
                             Log.e("ShadowDebug", "SearchActivity - No Shows extracted from Json response");
                         }
+                        loadingIndicator.setVisibility(View.GONE);
+                        isLoading = false;
                     }
 
                     @Override
@@ -186,14 +222,16 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
             if (networkInfo == null || !networkInfo.isConnected()) {
                 // First, hide loading indicator so error message will be visible
                 loadingIndicator.setVisibility(View.GONE);
+                isLoading = false;
                 showEmptyStateTextView(R.string.no_internet_connection);
             }
         }
     }
 
-    private boolean loadMore() {
+    private void loadMore() {
         // TvShow loading indicator when searching for new temporarMovies
         loadingIndicator.setVisibility(View.VISIBLE);
+        isLoading = true;
 
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
@@ -204,9 +242,6 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
         if (networkInfo != null && networkInfo.isConnected()) {
             currentPage++;
             loadSearchResults();
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -241,4 +276,8 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
 
     // returns intent for show activity (MovieActivityHTTP or TvShowActivity)
     public abstract Intent getIntentForShowActivityHTTP();
+
+    public void setMenuResId(int menuResId) {
+        this.menuResId = menuResId;
+    }
 }

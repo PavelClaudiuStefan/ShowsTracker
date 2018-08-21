@@ -1,13 +1,11 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
@@ -31,6 +30,8 @@ public class TvShowActivityDb extends AppCompatActivity {
 
     @BindView(R.id.image)
     ImageView imageView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
     @BindView(R.id.generic_info_layout)
     RelativeLayout genericInfoLayout;
     @BindView(R.id.title)
@@ -47,8 +48,8 @@ public class TvShowActivityDb extends AppCompatActivity {
     TextView overviewTextView;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+    @BindView(R.id.add_remove_tv_show)
+    ToggleButton addRemoveMovieButton;
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
 
@@ -60,10 +61,9 @@ public class TvShowActivityDb extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tv_show_db);
+        ButterKnife.bind(this);
         setupActionBar();
         setUpToolbar();
-
-        ButterKnife.bind(this);
 
         // Hide views until movie data is loaded
         loadingIndicator.setVisibility(View.VISIBLE);
@@ -110,27 +110,25 @@ public class TvShowActivityDb extends AppCompatActivity {
         releaseDateTextView.setText(releaseDate);
         overviewTextView.setText(overview);
 
-        setUpFab(tvShow);
+        setUpAddButton(tvShow);
 
         setTvShowViewsVisibility(View.VISIBLE);
     }
 
-    private void setUpFab(TvShow tvShow) {
-        fab.setOnClickListener(view -> {
-            if (inCollection) {
-                Snackbar.make(view, "Removed", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_green_dark)));
-                removeShow(tvShow);
-                inCollection = false;
-                // TODO - make a decision - Keep API 21 and find another solution or use min API 23
-                //fab.setImageIcon(Icon.createWithResource(this, R.drawable.ic_add));
-            } else {
-                Snackbar.make(view, "Added", Snackbar.LENGTH_SHORT)
-                        .setAction("Action", null).show();
-                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_red_dark)));
+    // Set the toggle button state (Add to collection button)
+    private void setUpAddButton(final TvShow tvShow) {
+        if (tvShowsBox.get(tvShow.getTmdbId()) != null) {
+            inCollection = true;
+        }
+
+        addRemoveMovieButton.setChecked(inCollection);
+        addRemoveMovieButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if (isChecked) {
                 insertShow(tvShow);
                 inCollection = true;
+            } else {
+                removeShow(tvShow);
+                inCollection = false;
             }
         });
     }
@@ -175,10 +173,11 @@ public class TvShowActivityDb extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("PrivateResource")
     private void setUpToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setTitle("");
         toolbar.setNavigationIcon(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
     }

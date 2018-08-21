@@ -1,19 +1,21 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,15 +42,15 @@ public class TvShowActivityHTTP extends AppCompatActivity{
 
     public static final String TAG = "TvShowActivityHTTP";
 
-    private String tmdbId;
-
+    @BindView(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbar;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.image)
     ImageView imageView;
-    @BindView(R.id.buttons_layout)
-    LinearLayout buttonsLayout;
-    @BindView(R.id.add_remove_show)
+    @BindView(R.id.button_container)
+    FrameLayout buttonLayout;
+    @BindView(R.id.add_remove_tv_show)
     ToggleButton addRemoveMovieButton;
     @BindView(R.id.generic_info_layout)
     RelativeLayout genericInfoLayout;
@@ -69,18 +71,17 @@ public class TvShowActivityHTTP extends AppCompatActivity{
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
 
+    private long tmdbId;
     private boolean inUserCollection;
     private Box<TvShow> showsBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tv_show);
-        setUpToolbar();
-        setupActionBar();
-        setTitle("TV show");
-
+        setContentView(R.layout.activity_tv_show_http);
         ButterKnife.bind(this);
+        setupActionBar();
+        setUpToolbar();
 
         // Hide views until movie data is loaded
         loadingIndicator.setVisibility(View.VISIBLE);
@@ -89,18 +90,14 @@ public class TvShowActivityHTTP extends AppCompatActivity{
         showsBox = ((MyApp)getApplication()).getBoxStore().boxFor(TvShow.class);
 
         Intent intent = getIntent();
-        tmdbId = intent.getStringExtra("tmdb_id");
+        tmdbId = intent.getLongExtra("tmdb_id", -1);
 
         requestAndDisplayShow();
     }
 
     private void requestAndDisplayShow() {
-        String tmdbUrl = TmdbConstants.TV_SHOWS_URL + tmdbId;
-        Uri baseUri = Uri.parse(tmdbUrl);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
-
-        AndroidNetworking.get(uriBuilder.toString())
+        AndroidNetworking.get(TmdbConstants.TV_SHOWS_URL + tmdbId)
+                .addQueryParameter("api_key", TmdbConstants.API_KEY)
                 .setTag(this)
                 .setPriority(Priority.HIGH)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
@@ -135,10 +132,12 @@ public class TvShowActivityHTTP extends AppCompatActivity{
         String releaseDate = "Air date: " + tvShow.getReleaseDate();
         String overview = tvShow.getOverview();
 
-        setTitle(title);
+        //setTitle(title);
+        collapsingToolbar.setTitle(title);
         Picasso.get()
                 .load(imageUrl)
                 .into(imageView);
+
         titleTextView.setText(title);
         averageVoteTextView.setText(averageVote);
         String voteCountStr = voteCount + " votes";
@@ -197,15 +196,17 @@ public class TvShowActivityHTTP extends AppCompatActivity{
     // Used to display current error
     private void setTvShowViewsVisibility(int resid) {
         imageView.setVisibility(resid);
-        buttonsLayout.setVisibility(resid);
+        buttonLayout.setVisibility(resid);
 
         genericInfoLayout.setVisibility(resid);
         overviewLayout.setVisibility(resid);
     }
 
+    @SuppressLint("PrivateResource")
     private void setUpToolbar() {
         setSupportActionBar(toolbar);
 
+        //toolbar.setTitle("");
         toolbar.setNavigationIcon(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
     }

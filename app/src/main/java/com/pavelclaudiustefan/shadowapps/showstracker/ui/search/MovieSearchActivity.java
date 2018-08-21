@@ -2,7 +2,6 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.search;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
@@ -12,6 +11,10 @@ import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityHTT
 import java.util.List;
 
 public class MovieSearchActivity extends BaseSearchActivity<Movie> {
+
+    public MovieSearchActivity() {
+        setMenuResId(R.menu.menu_movies_list);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

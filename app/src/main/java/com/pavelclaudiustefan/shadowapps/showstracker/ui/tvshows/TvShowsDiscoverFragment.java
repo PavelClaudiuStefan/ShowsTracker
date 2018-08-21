@@ -14,6 +14,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,20 +25,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TvShowComparator;
@@ -70,24 +71,21 @@ public class TvShowsDiscoverFragment extends Fragment {
     private int totalPages;         // Number of pages with tvShows
     private static ArrayList<TvShow> tvShows = new ArrayList<>();
 
-    private View rootView;
-
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-    @BindView(R.id.list)
-    ListView listView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
     @BindView(R.id.search_fab)
     FloatingActionButton fab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private ShowItemListAdapter<TvShow> tvShowItemListAdapter;
-
+    private ShowsCardsAdapter<TvShow> tvShowItemListAdapter;
     private Box<TvShow> tvShowsBox;
-
     private boolean showItemsInCollection;
+    private boolean isLoading;
 
     public TvShowsDiscoverFragment() {
         setHasOptionsMenu(true);
@@ -97,7 +95,7 @@ public class TvShowsDiscoverFragment extends Fragment {
     @Override
     @SuppressWarnings("unchecked")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.category_list, container, false);
+        View rootView = inflater.inflate(R.layout.category_list, container, false);
 
         ButterKnife.bind(this, rootView);
         fab.setVisibility(View.GONE);
@@ -108,15 +106,17 @@ public class TvShowsDiscoverFragment extends Fragment {
 
         init();
 
-        tvShowItemListAdapter = new ShowItemListAdapter<>(getActivity(), tvShows);
         loadingIndicator.setVisibility(View.VISIBLE);
+        isLoading = true;
+
+        setUpRecyclerView();
 
         if (isRecommended) {
             long[] tmdbIds = getTmdbIds();
             loadingIndicator.setIndeterminate(false);
             loadingIndicator.setMax(tmdbIds.length);
             RecommendedTvShowsList recommendedTvShowsList = new RecommendedTvShowsList(this, tmdbIds, new TvShowComparator(TvShowComparator.BY_RATING, TvShowComparator.DESCENDING));
-            recommendedTvShowsList.addRecommendedToAdapter(tvShowItemListAdapter);
+            recommendedTvShowsList.addRecommendedToList(tvShows);
         } else {
             setTmdbUrl();
             if (savedInstanceState != null) {
@@ -130,44 +130,63 @@ public class TvShowsDiscoverFragment extends Fragment {
             }
         }
 
-        setUpListView();
-
         return rootView;
     }
 
-    private void setUpListView() {
-        //Only visible if no tv shows are found
-        listView.setEmptyView(emptyStateTextView);
+    private void setUpRecyclerView() {
+        tvShowItemListAdapter = new ShowsCardsAdapter<>(getContext(), tvShows, R.menu.menu_tv_shows_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+            @Override
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(TvShowsDiscoverFragment.this.getContext(), "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
 
-        listView.setAdapter(tvShowItemListAdapter);
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(TvShowsDiscoverFragment.this.getContext(), "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
 
-        // Setup the item click listener
-        listView.setOnItemClickListener((adapterView, view, position, id) -> {
-            Intent intent = new Intent(getActivity(), TvShowActivityHTTP.class);
-            TvShow item = tvShows.get(position);
-            intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
-            if (getActivity() != null) {
-                ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(this.getActivity(), listView.findViewById(R.id.image), "show_image");
-                startActivity(intent, options.toBundle());
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                Intent intent = new Intent(getActivity(), TvShowActivityHTTP.class);
+                TvShow tvShow = tvShows.get(position);
+                intent.putExtra("tmdb_id", tvShow.getTmdbId());
+                if (TvShowsDiscoverFragment.this.getActivity() != null) {
+                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation(TvShowsDiscoverFragment.this.getActivity(), cardView.findViewById(R.id.image), "image");
+                    startActivity(intent, options.toBundle());
+                }
             }
         });
 
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(tvShowItemListAdapter);
+
         if (!isRecommended) {
-            listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public boolean onLoadMore(int page, int totalItemsCount) {
-                    return currentPage <= totalPages && loadMore();
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (isLoading) {
+                        return;
+                    }
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int pastVisibleItems = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition();
+                    if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                        loadMore();
+                        Log.i("ShadowDebug", "\nEND OF LIST BITCH" + "\nvisibleItemCount: " + visibleItemCount + "\ntotalItemCount: "+ totalItemCount + "\npastVisibleItems: " + pastVisibleItems);
+                    }
                 }
             });
         }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshList();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshList();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
@@ -200,33 +219,29 @@ public class TvShowsDiscoverFragment extends Fragment {
                 .setPriority(Priority.HIGH)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
                 .build()
-                .setAnalyticsListener(new AnalyticsListener() {
-                    @Override
-                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                        Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage);
-                    }
-                })
+                .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        loadingIndicator.setVisibility(View.GONE);
-
-                        List<TvShow> tvShows = QueryUtils.extractTvShowsFromJson(response);
+                        List<TvShow> requestedTvShows = QueryUtils.extractTvShowsFromJson(response);
 
                         if (currentPage == 1) {
                             totalPages = QueryUtils.getTotalPagesFromJson(response);
                         }
 
-                        if (tvShows != null && !tvShows.isEmpty()) {
+                        if (requestedTvShows != null && !requestedTvShows.isEmpty()) {
                             // TODO - hide tv shows already in collectin
                             if (!showItemsInCollection) {
-                                removeCollectionTvShows(tvShows);
+                                removeCollectionTvShows(requestedTvShows);
                             }
-                            tvShowItemListAdapter.addAll(tvShows);
+                            tvShows.addAll(requestedTvShows);
+                            tvShowItemListAdapter.notifyDataSetChanged();
                         } else {
                             displayPossibleError();
                             Log.e("ShadowDebug", "TvShowsDiscoverFragment - No tvShows extracted from Json response");
                         }
+                        loadingIndicator.setVisibility(View.GONE);
+                        isLoading = false;
                     }
 
                     @Override
@@ -327,9 +342,10 @@ public class TvShowsDiscoverFragment extends Fragment {
     }
 
     // Loads the next page of tvShows
-    private boolean loadMore() {
+    private void loadMore() {
         // TvShow loading indicator when searching for new temporarMovies
         loadingIndicator.setVisibility(View.VISIBLE);
+        isLoading = true;
 
         ConnectivityManager connMgr = null;
         if (getActivity() != null) {
@@ -344,11 +360,10 @@ public class TvShowsDiscoverFragment extends Fragment {
         if (networkInfo != null && networkInfo.isConnected()) {
             currentPage++;
             requestAndAddTvShows();
-            return true;
         } else {
             loadingIndicator.setVisibility(View.GONE);
-            emptyStateTextView.setText(R.string.no_internet_connection);
-            return false;
+            isLoading = false;
+            displayPossibleError();
         }
     }
 
@@ -386,7 +401,7 @@ public class TvShowsDiscoverFragment extends Fragment {
 
     public void refreshList() {
         if (getActivity() != null) {
-            tvShowItemListAdapter.clear();
+            tvShows.clear();
             currentPage = 1;
             ((TvShowsActivity)getActivity()).dataChanged();
         }
@@ -394,7 +409,11 @@ public class TvShowsDiscoverFragment extends Fragment {
 
     private void displayPossibleError() {
         // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
+        emptyStateTextView.setVisibility(View.VISIBLE);
         emptyStateTextView.setText(R.string.no_tv_shows_found);
+
+        loadingIndicator.setVisibility(View.GONE);
+        isLoading = false;
 
         // Check if there is a more specific error
         if (getActivity() != null) {
@@ -405,6 +424,7 @@ public class TvShowsDiscoverFragment extends Fragment {
                 if (networkInfo == null || !networkInfo.isConnected()) {
                     // First, hide loading indicator so error message will be visible
                     loadingIndicator.setVisibility(View.GONE);
+                    isLoading = false;
                     emptyStateTextView.setText(R.string.no_internet_connection);
                 }
             }
@@ -417,6 +437,7 @@ public class TvShowsDiscoverFragment extends Fragment {
 
     public void onTvShowsListLoaded() {
         loadingIndicator.setVisibility(View.GONE);
+        isLoading = false;
         displayPossibleError();
     }
 

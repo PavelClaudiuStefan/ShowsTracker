@@ -31,5 +31,5 @@
         android:paddingEnd="8dp"
         android:gravity="center"
         android:textSize="24sp"
-        tools:text="Shadow movies" />
+        tools:text="Shadow shows" />
 </LinearLayout>

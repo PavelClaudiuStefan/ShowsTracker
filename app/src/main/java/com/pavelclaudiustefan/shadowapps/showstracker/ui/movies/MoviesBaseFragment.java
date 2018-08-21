@@ -7,20 +7,23 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
 
@@ -34,8 +37,8 @@ import io.objectbox.Box;
 // Base for fragments that display movies from the database
 public abstract class MoviesBaseFragment extends Fragment{
 
-    @BindView(R.id.list)
-    ListView movieListView;
+    @BindView(R.id.recycler_view)
+    RecyclerView moviesRecyclerView;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
     @BindView(R.id.loading_indicator)
@@ -46,7 +49,7 @@ public abstract class MoviesBaseFragment extends Fragment{
     SwipeRefreshLayout swipeRefreshLayout;
 
     private boolean isFabVisible = false;
-    private ShowItemListAdapter<Movie> movieItemListAdapter;
+    private ShowsCardsAdapter<Movie> movieItemListAdapter;
 
     private Box<Movie> moviesBox;
     private ArrayList<Movie> movies;
@@ -66,7 +69,7 @@ public abstract class MoviesBaseFragment extends Fragment{
 
         initFilteringAndSortingOptionsValues();
         requestMoviesAndAddToAdapter();
-        setUpListView();
+        setUpRecyclerView();
         setUpSearchFab();
 
         return rootView;
@@ -76,28 +79,49 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     private void requestMoviesAndAddToAdapter() {
         movies = (ArrayList<Movie>) requestMoviesFromDb();
-        movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
+        movieItemListAdapter = new ShowsCardsAdapter<>(getContext(), movies, R.menu.menu_movies_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+            @Override
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(MoviesBaseFragment.this.getContext(), "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(MoviesBaseFragment.this.getContext(), "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                if (MoviesBaseFragment.this.getActivity() != null) {
+                    Intent intent = new Intent(getActivity(), MovieActivityDb.class);
+                    Movie movie = movies.get(position);
+                    intent.putExtra("tmdb_id", movie.getTmdbId());
+                    if (getActivity() != null) {
+                        ActivityOptionsCompat options = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation(MoviesBaseFragment.this.getActivity(), cardView.findViewById(R.id.image), "image");
+                        startActivity(intent, options.toBundle());
+                    }
+                } else {
+                    Log.e("MoviesBaseFragment", "Parent activity is null");
+                }
+            }
+        });
         loadingIndicator.setVisibility(View.GONE);
     }
 
-    private void setUpListView() {
+    private void setUpRecyclerView() {
         //Only visible if no movies are found
         emptyStateTextView.setText(R.string.no_movies_added);
-        movieListView.setEmptyView(emptyStateTextView);
+        if (movies == null || movies.isEmpty()) {
+            emptyStateTextView.setVisibility(View.VISIBLE);
+        }
 
-        movieListView.setAdapter(movieItemListAdapter);
-
-        // Setup the item click listener
-        movieListView.setOnItemClickListener((adapterView, view, position, id) -> {
-            Intent intent = new Intent(getActivity(), MovieActivityDb.class);
-            Movie movie = movies.get(position);
-            intent.putExtra("tmdb_id", movie.getTmdbId());
-            if (getActivity() != null) {
-                ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(this.getActivity(), movieListView.findViewById(R.id.image), String.valueOf(movie.getTmdbId()));
-                startActivity(intent, options.toBundle());
-            }
-        });
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        moviesRecyclerView.setLayoutManager(layoutManager);
+        moviesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        moviesRecyclerView.setAdapter(movieItemListAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             refreshMovieList();
@@ -122,7 +146,7 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     public void refreshMovieList() {
         if (getActivity() != null) {
-            movieItemListAdapter.clear();
+            //movieItemListAdapter.clear();
             ((MoviesActivity)getActivity()).dataChanged();
         }
     }

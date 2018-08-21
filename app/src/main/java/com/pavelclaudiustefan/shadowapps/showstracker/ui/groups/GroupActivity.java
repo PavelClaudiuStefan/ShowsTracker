@@ -2,16 +2,21 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.groups;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -20,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityDb;
@@ -39,8 +44,8 @@ public class GroupActivity extends AppCompatActivity {
 
     public static final String TAG = "GroupActivity";
 
-    @BindView(R.id.list)
-    ListView groupListView;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
     @BindView(R.id.empty_view)
@@ -51,7 +56,7 @@ public class GroupActivity extends AppCompatActivity {
     private String groupTitle;
 
     private ArrayList<Movie> movies;
-    private ShowItemListAdapter<Movie> moviesListAdapter;
+    private ShowsCardsAdapter<Movie> moviesListAdapter;
 
     private FirebaseFirestore firestore;
     private FirebaseAuth firebaseAuth;
@@ -77,13 +82,36 @@ public class GroupActivity extends AppCompatActivity {
 
         //initFilteringAndSortingOptionsValues();
         requestGroupsAndAddToAdapter();
-        setUpListView();
+        setUpRecyclerView();
     }
 
     private void requestGroupsAndAddToAdapter() {
         movies = new ArrayList<>();
         requestMoviesAndAddSnapshotListener();
-        moviesListAdapter = new ShowItemListAdapter<>(this, movies);
+        moviesListAdapter = new ShowsCardsAdapter<>(this, movies, R.menu.menu_movies_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+            @Override
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(GroupActivity.this, "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(GroupActivity.this, "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                Intent intent = new Intent(GroupActivity.this, MovieActivityDb.class);
+                Movie movie = movies.get(position);
+                intent.putExtra("tmdb_id", movie.getTmdbId());
+                Log.i("ShadowDebug", "recyclerVier image: " + recyclerView.findViewById(R.id.image).getTransitionName());
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(GroupActivity.this, recyclerView.findViewById(R.id.image), "image");
+                startActivity(intent, options.toBundle());
+            }
+        });
     }
 
     // Realtime updates
@@ -114,7 +142,6 @@ public class GroupActivity extends AppCompatActivity {
                                             moviesListAdapter.notifyDataSetChanged();
                                         }
                                         loadingIndicator.setVisibility(View.GONE);
-                                        Log.i("ShadowDebug", "Someone called me? count " + moviesListAdapter.getCount());
                                     } else {
                                         setUpEmptyView(R.string.no_groups_added);
                                         Log.i(TAG, "requestMoviesAndAddSnapshotListener - Current data null or empty");
@@ -138,23 +165,21 @@ public class GroupActivity extends AppCompatActivity {
     private void setUpEmptyView(int resid) {
         //Only visible if no movies are found
         //emptyStateTextView.setText(R.string.no_movies_added);
-        groupListView.setEmptyView(emptyStateTextView);
-        emptyStateTextView.setVisibility(View.VISIBLE);
-        emptyStateTextView.setText(resid);
+        if (movies == null || movies.isEmpty()) {
+            emptyStateTextView.setVisibility(View.VISIBLE);
+            emptyStateTextView.setText(resid);
+        }
 
         loadingIndicator.setVisibility(View.GONE);
     }
 
-    private void setUpListView() {
-        groupListView.setAdapter(moviesListAdapter);
+    private void setUpRecyclerView() {
+        recyclerView.setAdapter(moviesListAdapter);
 
-        // Setup the item click listener
-        groupListView.setOnItemClickListener((adapterView, view, position, id) -> {
-            Intent intent = new Intent(GroupActivity.this, MovieActivityDb.class);
-            Movie movie = movies.get(position);
-            intent.putExtra("tmdb_id", movie.getTmdbId());
-            startActivity(intent);
-        });
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(moviesListAdapter);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             recreate();
