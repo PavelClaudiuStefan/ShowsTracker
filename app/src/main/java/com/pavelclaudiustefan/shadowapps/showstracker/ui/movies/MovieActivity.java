@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -101,6 +102,8 @@ public abstract class MovieActivity extends AppCompatActivity{
         Intent intent = getIntent();
         long tmdbId = intent.getLongExtra("tmdb_id", -1);
 
+        supportPostponeEnterTransition();
+
         if (tmdbId != -1) {
             requestAndDisplayMovie(tmdbId);
         } else {
@@ -133,9 +136,23 @@ public abstract class MovieActivity extends AppCompatActivity{
         final String imdbUrl = movie.getImdbUrl();
 
         collapsingToolbar.setTitle(title);
+
         Picasso.get()
                 .load(imageUrl)
-                .into(imageView);
+                .fit()
+                .noFade()
+                .centerCrop()
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        supportStartPostponedEnterTransition();
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        supportStartPostponedEnterTransition();
+                    }
+                });
 
         titleTextView.setText(title);
         averageVoteTextView.setText(averageVote);

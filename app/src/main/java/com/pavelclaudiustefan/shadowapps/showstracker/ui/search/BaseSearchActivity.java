@@ -52,6 +52,7 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
     // and restored in onCreate
     private int currentPage = 1;    // The current page last loaded
     private int totalPages;         // Number of pages with shows
+    private ShowsCardsAdapter<T> showItemListAdapter;
     private ArrayList<T> items = new ArrayList<>();
     private String query;
     private int menuResId;
@@ -121,7 +122,7 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
             emptyStateTextView.setVisibility(View.VISIBLE);
         }
 
-        ShowsCardsAdapter<T> showItemListAdapter = new ShowsCardsAdapter<>(this, items, menuResId, new ShowsCardsAdapter.ShowsAdapterListener() {
+        showItemListAdapter = new ShowsCardsAdapter<>(this, items, menuResId, new ShowsCardsAdapter.ShowsAdapterListener() {
             @Override
             public void onAddRemoveSelected(int position, MenuItem menuItem) {
                 // TODO
@@ -195,6 +196,8 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
 
                         if (requestedItems != null) {
                             items.addAll(requestedItems);
+                            showItemListAdapter.notifyDataSetChanged();
+
                         } else {
                             Log.e("ShadowDebug", "SearchActivity - No Shows extracted from Json response");
                         }

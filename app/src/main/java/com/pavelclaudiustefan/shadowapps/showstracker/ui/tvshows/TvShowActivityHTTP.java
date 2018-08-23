@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -30,6 +29,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.concurrent.TimeUnit;
@@ -92,6 +92,8 @@ public class TvShowActivityHTTP extends AppCompatActivity{
         Intent intent = getIntent();
         tmdbId = intent.getLongExtra("tmdb_id", -1);
 
+        supportPostponeEnterTransition();
+
         requestAndDisplayShow();
     }
 
@@ -134,9 +136,22 @@ public class TvShowActivityHTTP extends AppCompatActivity{
 
         //setTitle(title);
         collapsingToolbar.setTitle(title);
+
         Picasso.get()
                 .load(imageUrl)
-                .into(imageView);
+                .fit()
+                .noFade()
+                .centerCrop()
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        supportStartPostponedEnterTransition();
+                    }
+                    @Override
+                    public void onError(Exception e) {
+                        supportStartPostponedEnterTransition();
+                    }
+                });
 
         titleTextView.setText(title);
         averageVoteTextView.setText(averageVote);

@@ -56,7 +56,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
             case "not_released":
                 return requestMoviesNotReleased();
             default:
-                Log.e("MoviesCollectionFragment", "Filtering - displaying movies error");
+                Log.e("MoviesCollection", "MoviesCollectionFragment - Filtering - displaying movies error");
                 return null;
         }
     }
@@ -139,7 +139,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
                 notReleasedItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesCollectionFragment", "Filtering - setting menu error");
+                Log.e("MoviesCollection", "MoviesCollectionFragment - Filtering - setting menu error");
                 break;
         }
 
@@ -157,7 +157,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
                 MenuItem alphabeticallyItem = menu.findItem(R.id.menu_sort_alphabetically);
                 alphabeticallyItem.setEnabled(false);
             default:
-                Log.e("MoviesCollectionFragment", "Sorting error");
+                Log.e("MoviesCollection", "MoviesCollectionFragment - Sorting error");
                 break;
         }
 
@@ -172,7 +172,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
                 descItem.setEnabled(false);
                 break;
             default:
-                Log.e("MoviesCollectionFragment", "Sorting direction error");
+                Log.e("MoviesCollection", "MoviesCollectionFragment - Sorting direction error");
                 break;
         }
     }

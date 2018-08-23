@@ -106,9 +106,8 @@ public class GroupActivity extends AppCompatActivity {
                 Intent intent = new Intent(GroupActivity.this, MovieActivityDb.class);
                 Movie movie = movies.get(position);
                 intent.putExtra("tmdb_id", movie.getTmdbId());
-                Log.i("ShadowDebug", "recyclerVier image: " + recyclerView.findViewById(R.id.image).getTransitionName());
                 ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(GroupActivity.this, recyclerView.findViewById(R.id.image), "image");
+                        makeSceneTransitionAnimation(GroupActivity.this, cardView.findViewById(R.id.image), "image");
                 startActivity(intent, options.toBundle());
             }
         });
@@ -143,13 +142,12 @@ public class GroupActivity extends AppCompatActivity {
                                         }
                                         loadingIndicator.setVisibility(View.GONE);
                                     } else {
-                                        setUpEmptyView(R.string.no_groups_added);
+                                        setUpEmptyView(R.string.no_movies_added);
                                         Log.i(TAG, "requestMoviesAndAddSnapshotListener - Current data null or empty");
                                     }
                                 });
                     })
                     .addOnFailureListener(e -> {
-                        emptyStateTextView.setText(R.string.connection_issues);
                         setUpEmptyView(R.string.connection_issues);
                         Log.e(TAG, "Get users array size failure: ", e);
                     });
