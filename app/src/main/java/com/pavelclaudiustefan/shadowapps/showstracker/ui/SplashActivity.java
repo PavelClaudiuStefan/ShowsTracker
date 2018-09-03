@@ -1,15 +1,23 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsActivity;
 
 public class SplashActivity extends AppCompatActivity {
+
+    public static final String MOVIES_SECTION = "movies";
+    public static final String TV_SHOWS_SECTION = "tv_shows";
+    public static final String GROUPS_SECTION = "groups";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -20,8 +28,23 @@ public class SplashActivity extends AppCompatActivity {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null) {
             // User is logged in
-            activityIntent = new Intent(SplashActivity.this, MoviesActivity.class);
-            //activityIntent = new Intent(SplashActivity.this, TvShowsActivity.class);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            String startingSectionValue = prefs.getString("starting_section", "movies");
+
+            switch (startingSectionValue) {
+                case MOVIES_SECTION:
+                    activityIntent = new Intent(SplashActivity.this, MoviesActivity.class);
+                    break;
+                case TV_SHOWS_SECTION:
+                    activityIntent = new Intent(SplashActivity.this, TvShowsActivity.class);
+                    break;
+                case GROUPS_SECTION:
+                    activityIntent = new Intent(SplashActivity.this, GroupsActivity.class);
+                    break;
+                default:
+                    activityIntent = new Intent(SplashActivity.this, MoviesActivity.class);
+                    break;
+            }
         } else {
             // User is not logged in
             activityIntent = new Intent(this, LoginActivity.class);

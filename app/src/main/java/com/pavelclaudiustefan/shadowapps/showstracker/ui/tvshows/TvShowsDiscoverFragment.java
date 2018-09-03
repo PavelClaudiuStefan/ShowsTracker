@@ -38,7 +38,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TvShowComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedTvShowsList;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 

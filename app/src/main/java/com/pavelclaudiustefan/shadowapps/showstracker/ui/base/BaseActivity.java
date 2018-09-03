@@ -172,10 +172,11 @@ public abstract class BaseActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_main) {
+        //if (id == R.id.nav_main) {
             //startActivity(new Intent(this, MainActivity.class));
             //finish();
-        } else if (id == R.id.nav_movies) {
+        //} else
+        if (id == R.id.nav_movies) {
             startActivity(new Intent(this, MoviesActivity.class));
             finish();
         } else if (id == R.id.nav_tv_shows) {

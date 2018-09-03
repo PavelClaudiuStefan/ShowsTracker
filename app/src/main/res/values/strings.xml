@@ -59,7 +59,7 @@
     <string name="movie_image_description">Movie image</string>
     <string name="show_image_description">TV tvShow image</string>
     <string name="overview_title">Overview:</string>
-    <string name="add_movie">Add movie</string>
+    <string name="add_movie">Add to collection</string>
     <string name="remove_movie">Remove movie</string>
     <string name="set_watched_movie">Set watched</string>
     <string name="set_not_watched_movie">Set not watched</string>
@@ -95,7 +95,7 @@
     <string name="category_shows_upcoming">Upcoming</string>
     <string name="category_shows_all">Collection</string>
     <string name="category_shows_discover">Discover</string>
-    <string name="add_tv_show">Add TV show</string>
+    <string name="add_tv_show">Add to collection</string>
     <string name="remove_tv_show">Remove TV show</string>
     <string name="logo">Logo</string>
     <string name="email">Email</string>
@@ -131,29 +131,24 @@
 
     <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
+    <!-- General settings -->
     <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
 
     <string name="pref_title_display_name">Display name</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
+    <string name="pref_title_starting_section">Starting section</string>
+    <string-array name="pref_section_titles">
+        <item>Movies</item>
+        <item>TV Shows</item>
+        <item>Groups</item>
     </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
+    <string-array name="pref_section_values">
+        <item>movies</item>
+        <item>tv_shows</item>
+        <item>groups</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
+    <!-- settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
@@ -176,7 +171,7 @@
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
-    <!-- Example settings for Notifications -->
+    <!-- settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_notifications">Notifications</string>
@@ -291,4 +286,5 @@
     </string>
     <string name="tv_show_image">tv_show_image</string>
     <string name="movie_image">Movie image</string>
+    <string name="quick_menu_button">Quick menu button</string>
 </resources>

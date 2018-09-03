@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TvShowComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow_;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;

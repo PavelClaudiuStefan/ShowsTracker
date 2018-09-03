@@ -2,7 +2,6 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -12,9 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Utils;
@@ -44,21 +40,13 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login();
-            }
-        });
+        loginButton.setOnClickListener(view -> login());
 
-        signupLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-                finish();
-                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-            }
+        signupLink.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+            startActivityForResult(intent, REQUEST_SIGNUP);
+            finish();
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
         });
     }
 
@@ -80,16 +68,13 @@ public class LoginActivity extends AppCompatActivity {
 
         // Authentication logic
         firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            onLoginSucces();
-                        } else {
-                            onLoginFailed();
-                        }
-                        progressBar.setVisibility(View.GONE);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        onLoginSucces();
+                    } else {
+                        onLoginFailed();
                     }
+                    progressBar.setVisibility(View.GONE);
                 });
     }
 
@@ -97,7 +82,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
-                // TODO - Implement successful signup logic here
                 this.finish();
             }
         }

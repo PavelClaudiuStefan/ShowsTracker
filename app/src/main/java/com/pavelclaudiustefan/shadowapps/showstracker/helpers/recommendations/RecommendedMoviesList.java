@@ -1,6 +1,6 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;

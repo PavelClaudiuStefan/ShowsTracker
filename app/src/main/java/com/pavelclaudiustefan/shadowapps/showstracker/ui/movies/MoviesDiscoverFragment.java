@@ -36,7 +36,7 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedMoviesList;

@@ -2,7 +2,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TvShowComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsDiscoverFragment;
 

@@ -167,6 +167,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
 
             bindPreferenceSummaryToValue(editTextPreference);
+            bindPreferenceSummaryToValue(findPreference("starting_section"));
         }
 
         @Override
