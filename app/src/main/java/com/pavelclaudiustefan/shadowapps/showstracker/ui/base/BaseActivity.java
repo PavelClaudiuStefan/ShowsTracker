@@ -48,6 +48,8 @@ public abstract class BaseActivity extends AppCompatActivity
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     private TextView userDisplayTextView;
 
@@ -67,7 +69,6 @@ public abstract class BaseActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Set logged user display name (Username or email)
@@ -149,21 +150,6 @@ public abstract class BaseActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.shows, menu);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.searchable_movies.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

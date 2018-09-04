@@ -77,10 +77,10 @@ public class GroupsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Groups");
-
         navigationView.getMenu().findItem(R.id.nav_groups).setChecked(true);
 
         ButterKnife.bind(this);
+
         moviesBox = ((MyApp) getApplication()).getBoxStore().boxFor(Movie.class);
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -132,7 +132,7 @@ public class GroupsActivity extends BaseActivity {
     }
 
     private void setUpEmptyView(int resid) {
-        //Only visible if no movies are found
+        //Only visible if no groups are found
         emptyStateTextView.setVisibility(View.VISIBLE);
         emptyStateTextView.setText(resid);
         groupListView.setEmptyView(emptyStateTextView);

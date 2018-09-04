@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
+package com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 

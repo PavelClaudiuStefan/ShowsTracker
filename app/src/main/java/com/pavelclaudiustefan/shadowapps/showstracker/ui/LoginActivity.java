@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Utils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.Utils;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 
 import butterknife.BindView;
@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
             startActivityForResult(intent, REQUEST_SIGNUP);
             finish();
-            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+            overridePendingTransition(R.animator.push_left_in, R.animator.push_left_out);
         });
     }
 
@@ -95,7 +95,6 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSucces() {
         loginButton.setEnabled(true);
         finish();
-        // TODO - Save in Shared preferences the main activity
         startActivity(new Intent(this, MoviesActivity.class));
     }
 
@@ -117,8 +116,8 @@ public class LoginActivity extends AppCompatActivity {
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 25) {
-            passwordText.setError("Between 4 and 25 alphanumeric characters");
+        if (password.isEmpty() || password.length() <= 5 || password.length() >= 50) {
+            passwordText.setError("Password must have between 5 and 50 alphanumeric characters");
             valid = false;
         } else {
             passwordText.setError(null);

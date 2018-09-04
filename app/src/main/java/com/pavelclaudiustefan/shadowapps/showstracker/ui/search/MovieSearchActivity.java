@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityHTTP;
 

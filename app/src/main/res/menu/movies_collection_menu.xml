@@ -45,8 +45,8 @@
                 android:id="@+id/menu_show_physical"
                 android:title="@string/physical_released" />
             <item
-                android:id="@+id/menu_show_not_released"
-                android:title="@string/not_released" />
+                android:id="@+id/menu_show_upcoming"
+                android:title="@string/upcoming" />
         </menu>
     </item>
 

@@ -29,7 +29,7 @@ public class TvShowsActivity extends ShowsSectionsContainerActivity {
     }
 
     @Override
-    public FragmentStatePagerAdapter getFragmentPagerAdapter() {
+    public FragmentStatePagerAdapter getFragmentStatePagerAdapter() {
         return new TvShowsCategoryAdapter(this, getSupportFragmentManager());
     }
 

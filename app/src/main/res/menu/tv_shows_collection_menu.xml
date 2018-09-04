@@ -39,7 +39,7 @@
                 android:id="@+id/menu_show_released"
                 android:title="@string/released" />
             <item
-                android:id="@+id/menu_show_not_released"
+                android:id="@+id/menu_show_upcoming"
                 android:title="@string/not_released" />
         </menu>
     </item>

@@ -30,16 +30,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.TvShowComparator;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedTvShowsList;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.TvShowComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations.RecommendedTvShowsList;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 
 import java.util.ArrayList;
@@ -86,6 +87,7 @@ public class TvShowsDiscoverFragment extends Fragment {
     private Box<TvShow> tvShowsBox;
     private boolean showItemsInCollection;
     private boolean isLoading;
+    private boolean isManualRefresh = false;
 
     public TvShowsDiscoverFragment() {
         setHasOptionsMenu(true);
@@ -214,11 +216,17 @@ public class TvShowsDiscoverFragment extends Fragment {
         uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
         uriBuilder.appendQueryParameter("page", page);
 
-        AndroidNetworking.get(uriBuilder.toString())
+        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking
+                .get(uriBuilder.toString())
                 .setTag(this)
                 .setPriority(Priority.HIGH)
-                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
-                .build()
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES);
+
+        if (isManualRefresh) {
+            requestBuilder.getResponseOnlyFromNetwork();
+        }
+
+        requestBuilder.build()
                 .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
@@ -296,11 +304,12 @@ public class TvShowsDiscoverFragment extends Fragment {
                 Log.e("DiscoverListFragment", "Filtering error");
                 break;
         }
-        if (showItemsInCollection) {
-            MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
-            showWatchedItem.setTitle(R.string.hide_collection_shows);
+        MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
+        if (isRecommended) {
+            showWatchedItem.setVisible(false);
+        } else if (showItemsInCollection) {
+            showWatchedItem.setTitle(R.string.hide_collection_tv_shows);
         }
-
     }
 
     @Override
@@ -403,6 +412,7 @@ public class TvShowsDiscoverFragment extends Fragment {
         if (getActivity() != null) {
             tvShows.clear();
             currentPage = 1;
+            isManualRefresh = true;
             ((TvShowsActivity)getActivity()).dataChanged();
         }
     }
@@ -436,8 +446,7 @@ public class TvShowsDiscoverFragment extends Fragment {
     }
 
     public void onTvShowsListLoaded() {
-        loadingIndicator.setVisibility(View.GONE);
-        isLoading = false;
+        tvShowItemListAdapter.notifyDataSetChanged();
         displayPossibleError();
     }
 

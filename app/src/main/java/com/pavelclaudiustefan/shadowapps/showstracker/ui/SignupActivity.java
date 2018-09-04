@@ -16,7 +16,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.Utils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.Utils;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class SignupActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(intent);
             finish();
-            overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+            overridePendingTransition(R.animator.push_right_in, R.animator.push_right_out);
         });
     }
 
@@ -106,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setEnabled(true);
         setResult(RESULT_OK, null);
         finish();
-        startActivity(new Intent(this, LoginActivity.class));
+        startActivity(new Intent(this, MoviesActivity.class));
     }
 
     public void onSignupFailed() {

@@ -15,6 +15,27 @@
         android:orientation="vertical"
         android:gravity="center">
 
+        <FrameLayout
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="4dp"
+            android:background="@android:color/white">
+
+            <ToggleButton
+                android:id="@+id/add_remove_tv_show"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/add_remove_button_color"
+                android:textOff="@string/add_tv_show"
+                android:textOn="@string/remove_tv_show"
+                android:textSize="14sp" />
+        </FrameLayout>
+
         <RelativeLayout
             android:id="@+id/generic_info_layout"
             android:layout_width="match_parent"
@@ -98,27 +119,6 @@
                 tools:text="I need a lot of text here because this is gonna be the overview of this movie, or tvShow, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
 
         </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/button_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:padding="8dp"
-            android:background="@android:color/white">
-
-            <ToggleButton
-                android:id="@+id/add_remove_tv_show"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/add_remove_button_color"
-                android:textOff="@string/add_tv_show"
-                android:textOn="@string/remove_tv_show"
-                android:textSize="14sp" />
-        </FrameLayout>
 
     </LinearLayout>
 

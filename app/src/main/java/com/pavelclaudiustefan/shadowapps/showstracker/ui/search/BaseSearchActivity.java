@@ -26,8 +26,8 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
 
 import java.util.ArrayList;

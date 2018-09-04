@@ -7,8 +7,8 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 
 public class MovieActivityHTTP extends MovieActivity {

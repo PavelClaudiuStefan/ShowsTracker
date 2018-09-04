@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.TvShowComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow_;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;
@@ -228,7 +228,7 @@ public class TvShowsCollectionFragment extends Fragment{
                 cinemaItem.setEnabled(false);
                 break;
             case "not_released":
-                MenuItem notReleasedItem = menu.findItem(R.id.menu_show_not_released);
+                MenuItem notReleasedItem = menu.findItem(R.id.menu_show_upcoming);
                 notReleasedItem.setEnabled(false);
                 break;
             default:
@@ -281,7 +281,7 @@ public class TvShowsCollectionFragment extends Fragment{
             case R.id.menu_show_released:
                 saveFilterOption("released");
                 break;
-            case R.id.menu_show_not_released:
+            case R.id.menu_show_upcoming:
                 saveFilterOption("not_released");
                 break;
             case R.id.menu_sort_by_date:

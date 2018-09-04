@@ -24,10 +24,10 @@ public class TvShowsCategoryAdapter extends FragmentStatePagerAdapter {
             return new TvShowsCollectionFragment();
         } else if (position == 1) {
             return new TvShowsCollectionFragment();
-        } else if (position == 2) {
+        } else {
             return new TvShowsDiscoverFragment();
         }
-        return null;
+
     }
 
     @Override

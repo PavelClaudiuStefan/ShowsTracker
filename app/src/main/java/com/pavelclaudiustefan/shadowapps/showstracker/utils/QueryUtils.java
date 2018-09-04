@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils;
 
 import android.text.TextUtils;
 import android.util.Log;

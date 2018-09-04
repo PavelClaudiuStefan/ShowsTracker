@@ -8,7 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie_;
 
@@ -135,7 +135,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
                 physicalItem.setEnabled(false);
                 break;
             case "not_released":
-                MenuItem notReleasedItem = menu.findItem(R.id.menu_show_not_released);
+                MenuItem notReleasedItem = menu.findItem(R.id.menu_show_upcoming);
                 notReleasedItem.setEnabled(false);
                 break;
             default:
@@ -193,7 +193,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
             case R.id.menu_show_physical:
                 saveFilterOption("released_physical");
                 break;
-            case R.id.menu_show_not_released:
+            case R.id.menu_show_upcoming:
                 saveFilterOption("not_released");
                 break;
             case R.id.menu_sort_by_date:

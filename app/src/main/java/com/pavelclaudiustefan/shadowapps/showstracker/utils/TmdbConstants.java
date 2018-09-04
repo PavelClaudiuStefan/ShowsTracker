@@ -1,6 +1,8 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils;
 
 public class TmdbConstants {
+
+    private TmdbConstants() {}
 
     private static final String BASE_URL = "https://api.themoviedb.org/";
 

@@ -40,8 +40,8 @@ public class ShowsCardsAdapter<T extends Show> extends RecyclerView.Adapter<Show
         TextView releaseDateView;
         @BindView(R.id.image)
         ImageView imageView;
-        @BindView(R.id.overflow)
-        ImageView overflow;
+//        @BindView(R.id.overflow)
+//        ImageView overflow;
         @BindView(R.id.card_view)
         CardView cardView;
 
@@ -78,7 +78,7 @@ public class ShowsCardsAdapter<T extends Show> extends RecyclerView.Adapter<Show
         holder.averageVoteView.setText(formatVote(show.getVote()));
         holder.releaseDateView.setText(show.getReleaseDate());
 
-        holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
+        //holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
         holder.cardView.setOnClickListener(view -> listener.onCardSelected(position, holder.cardView));
     }
 

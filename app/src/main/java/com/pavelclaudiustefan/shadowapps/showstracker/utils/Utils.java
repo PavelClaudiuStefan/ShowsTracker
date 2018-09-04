@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

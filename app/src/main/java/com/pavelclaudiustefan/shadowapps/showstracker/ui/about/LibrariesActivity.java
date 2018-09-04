@@ -7,7 +7,7 @@ import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 
-public class LicensesActivity extends AppCompatActivity {
+public class LibrariesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

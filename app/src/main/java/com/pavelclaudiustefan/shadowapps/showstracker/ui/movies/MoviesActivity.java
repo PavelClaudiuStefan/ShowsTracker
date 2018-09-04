@@ -29,7 +29,7 @@ public class MoviesActivity extends ShowsSectionsContainerActivity {
     }
 
     @Override
-    public FragmentStatePagerAdapter getFragmentPagerAdapter() {
+    public FragmentStatePagerAdapter getFragmentStatePagerAdapter() {
         return new MoviesCategoryAdapter(this, getSupportFragmentManager());
     }
 

@@ -30,16 +30,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.MovieComparator;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedMoviesList;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations.RecommendedMoviesList;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class MoviesDiscoverFragment extends Fragment {
 
     private boolean isRecommended = false;
     private boolean isLoading = false;
+    private boolean isManualRefresh = false;
 
     // These fields are saved in the bundle in onSaveInstanceState(Bundle outState)
     // and restored in onCreateView
@@ -144,7 +146,9 @@ public class MoviesDiscoverFragment extends Fragment {
             long[] tmdbIds = getTmdbIds();
             loadingIndicator.setIndeterminate(false);
             loadingIndicator.setMax(tmdbIds.length);
-            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING));
+            // TODO - implement menu sorting options
+            MovieComparator movieComparator = new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING);
+            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, movieComparator);
             recommendedMoviesList.addRecommendedToList(movies);
         } else {
             // Popular movies / Top rated movies section
@@ -224,11 +228,18 @@ public class MoviesDiscoverFragment extends Fragment {
 
         uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
         uriBuilder.appendQueryParameter("page", page);
-        AndroidNetworking.get(uriBuilder.toString())
+
+        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking
+                .get(uriBuilder.toString())
                 .setTag(this)
                 .setPriority(Priority.HIGH)
-                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
-                .build()
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES);
+
+        if (isManualRefresh) {
+            requestBuilder.getResponseOnlyFromNetwork();
+        }
+
+        requestBuilder.build()
                 .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
@@ -309,8 +320,10 @@ public class MoviesDiscoverFragment extends Fragment {
                 Log.e("MoviesDiscoverFragment", "Filtering error");
                 break;
         }
-        if (showItemsInCollection) {
-            MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
+        MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
+        if (isRecommended) {
+            showWatchedItem.setVisible(false);
+        } else if (showItemsInCollection) {
             showWatchedItem.setTitle(R.string.hide_collection_movies);
         }
 
@@ -412,6 +425,7 @@ public class MoviesDiscoverFragment extends Fragment {
         if (getActivity() != null) {
             movies.clear();
             currentPage = 1;
+            isManualRefresh = true;
             ((MoviesActivity)getActivity()).dataChanged();
         }
     }

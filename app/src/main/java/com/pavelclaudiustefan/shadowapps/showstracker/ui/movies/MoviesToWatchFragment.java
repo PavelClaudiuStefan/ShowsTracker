@@ -8,7 +8,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie_;
 

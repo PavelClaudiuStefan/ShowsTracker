@@ -87,7 +87,7 @@
 
         <activity android:name=".ui.about.AboutActivity" />
 
-        <activity android:name=".ui.about.LicensesActivity">
+        <activity android:name=".ui.about.LibrariesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity" />
