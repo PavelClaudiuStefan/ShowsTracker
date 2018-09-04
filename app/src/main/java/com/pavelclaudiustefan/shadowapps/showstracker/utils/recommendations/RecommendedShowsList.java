@@ -1,14 +1,10 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations;
 
 import android.util.Log;
 import android.util.Pair;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.StringRequestListener;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 
 import org.reactivestreams.Publisher;
@@ -26,43 +22,12 @@ import io.reactivex.subscribers.DisposableSubscriber;
 // Class used to contain the recommended shows list and the methods used to create it
 public abstract class RecommendedShowsList<T extends Show> {
 
-    private String TAG = "RecommendedShowsList";
-
     private String baseTmdbUrl;         // Base tmdbUrl used to get recommandations
-    private long[] tmdbIds;    // List of ids of TMDb shows that are in the user's collection
+    private long[] tmdbIds;             // List of ids of TMDb shows that are in the user's collection
 
     RecommendedShowsList(String baseTmdbUrl, long[] tmdbIds) {
         this.baseTmdbUrl = baseTmdbUrl;
         this.tmdbIds = tmdbIds;
-    }
-
-    public ArrayList<T> getList() {
-        final ArrayList<T> totalShows = new ArrayList<>();
-
-        for (long tmdbId : tmdbIds) {
-            AndroidNetworking.get(baseTmdbUrl + "{tmdbId}/recommendations")
-                    .addPathParameter("api_key", TmdbConstants.API_KEY)
-                    .addQueryParameter("tmdbId", String.valueOf(tmdbId))
-                    .setTag(this)
-                    .setPriority(Priority.LOW)
-                    .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
-                    .build()
-                    .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache))
-                    .getAsString(new StringRequestListener() {
-                        @Override
-                        public void onResponse(String response) {
-                            List<T> items = extractShowsFromJsonResponse(response);
-                            addOnlyUniqueItems(items, totalShows);
-                            totalShows.addAll(items);
-                        }
-
-                        @Override
-                        public void onError(ANError anError) {
-                            Log.e("ShadowDebug", anError.getErrorBody());
-                        }
-                    });
-        }
-        return sortItems(totalShows);
     }
 
     private Flowable<String> getTitleFlowable(Long id) {
@@ -93,7 +58,7 @@ public abstract class RecommendedShowsList<T extends Show> {
                 .subscribe(new DisposableSubscriber<Pair<String, Long>>() {
                     @Override
                     public void onNext(Pair<String, Long> pair) {
-                        List<T>items = extractShowsFromJsonResponse(pair.first);
+                        List<T> items = extractShowsFromJsonResponse(pair.first);
                         addOnlyUniqueItems(items, allItems);
                         onDataIncremented();
                     }
@@ -129,6 +94,7 @@ public abstract class RecommendedShowsList<T extends Show> {
                 }
             }
 
+            // TODO - Optimize
             if (isUnique) {
                 allItems.add(item);
             }

@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators;
 
 import android.util.Log;
 

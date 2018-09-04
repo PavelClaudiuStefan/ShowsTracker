@@ -1,4 +1,4 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 

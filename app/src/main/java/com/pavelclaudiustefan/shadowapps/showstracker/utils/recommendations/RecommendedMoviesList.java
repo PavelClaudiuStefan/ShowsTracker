@@ -1,8 +1,8 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations;
+package com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.comparators.MovieComparator;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesDiscoverFragment;
 
