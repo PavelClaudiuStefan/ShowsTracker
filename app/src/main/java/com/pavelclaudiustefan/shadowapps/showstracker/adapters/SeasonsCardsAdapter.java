@@ -37,6 +37,8 @@ public class SeasonsCardsAdapter extends RecyclerView.Adapter<SeasonsCardsAdapte
         TextView seasonInfo;
         @BindView(R.id.season_image)
         ImageView imageView;
+        @BindView(R.id.season_overview)
+        TextView overviewTextView;
         //@BindView(R.id.overflow)
         //ImageView overflow;
         @BindView(R.id.card_view)
@@ -73,6 +75,7 @@ public class SeasonsCardsAdapter extends RecyclerView.Adapter<SeasonsCardsAdapte
 
         holder.titleView.setText(season.getTitle());
         holder.seasonInfo.setText("Season " + season.getSeasonNumber());
+        holder.overviewTextView.setText(season.getOverview());
 
         //holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
         holder.cardView.setOnClickListener(view -> listener.onCardSelected(position, holder.cardView));

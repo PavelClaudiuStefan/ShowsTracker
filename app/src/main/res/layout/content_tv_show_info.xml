@@ -124,7 +124,6 @@
         <!-- TODO - Recycler view for seasons (optional - trailers)-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/seasons_recycler_view"
-            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

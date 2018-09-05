@@ -108,12 +108,12 @@ public class TvShowsDiscoverFragment extends Fragment {
 
         init();
 
-        loadingIndicator.setVisibility(View.VISIBLE);
-        isLoading = true;
-
         setUpRecyclerView();
 
         if (isRecommended) {
+            loadingIndicator.setVisibility(View.VISIBLE);
+            isLoading = true;
+
             long[] tmdbIds = getTmdbIds();
             loadingIndicator.setIndeterminate(false);
             loadingIndicator.setMax(tmdbIds.length);
@@ -208,6 +208,9 @@ public class TvShowsDiscoverFragment extends Fragment {
 
     // Requests tvShows and adds them to the showItemsListAdapter
     public void requestAndAddTvShows() {
+        loadingIndicator.setVisibility(View.VISIBLE);
+        isLoading = true;
+
         String page = String.valueOf(currentPage);
 
         Uri baseUri = Uri.parse(tmdbUrl);

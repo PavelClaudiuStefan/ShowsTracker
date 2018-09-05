@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -267,9 +268,10 @@ public class TvShowActivityDb extends AppCompatActivity {
             }
         });
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TvShowActivityDb.this, LinearLayoutManager.HORIZONTAL, false);
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TvShowActivityDb.this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setAdapter(seasonsCardsAdapter);
 
     }
