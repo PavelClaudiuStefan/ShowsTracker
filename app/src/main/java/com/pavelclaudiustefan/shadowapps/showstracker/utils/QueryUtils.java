@@ -3,7 +3,9 @@ package com.pavelclaudiustefan.shadowapps.showstracker.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Season;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 
 import org.json.JSONArray;
@@ -215,6 +217,95 @@ public final class QueryUtils {
         }
 
         return tvShow;
+    }
+
+    public static List<Season> extractSeasonsFromJson(String seasonsJSON) {
+        if (TextUtils.isEmpty(seasonsJSON)) {
+            return null;
+        }
+
+        List<Season> seasons = new ArrayList<>();
+
+        try {
+            JSONObject baseJsonResponse = new JSONObject(seasonsJSON);
+            JSONArray seasonsArray = baseJsonResponse.getJSONArray("seasons");
+            int numberOfSeasons = seasonsArray.length();
+
+            for (int i = 0; i < numberOfSeasons; i++) {
+                JSONObject currentSeason = seasonsArray.getJSONObject(i);
+
+                long tmdbId = currentSeason.getLong("id");
+                int seasonNumber = currentSeason.getInt("season_number");
+                int episodeCount = currentSeason.getInt("episode_count");
+                String title = currentSeason.getString("name");
+                String overview = currentSeason.getString("overview");
+                String releaseDate = currentSeason.getString("air_date");
+                String imageUrl = currentSeason.getString("poster_path");
+
+                long dateInMillseconds;
+                if (releaseDate != null && !releaseDate.isEmpty() && !releaseDate.equals("null")) {
+                    Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
+                    dateInMillseconds = date.getTime();
+                } else {
+                    dateInMillseconds = Long.MAX_VALUE;
+                }
+
+                Season season = new Season(tmdbId, seasonNumber, episodeCount, title, overview, dateInMillseconds, imageUrl);
+                seasons.add(season);
+            }
+
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "extractSeasonsFromJson - Problem parsing json results", e);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return seasons;
+    }
+
+    public static List<Episode> extractEpisodesFromJson(String episodesJSON,  int episodeCount) {
+        if (TextUtils.isEmpty(episodesJSON)) {
+            return null;
+        }
+
+        List<Episode> episodes = new ArrayList<>();
+
+        try {
+            JSONObject baseJsonResponse = new JSONObject(episodesJSON);
+            int seasonNumber = baseJsonResponse.getInt("season_number");
+            JSONArray episodesArray = baseJsonResponse.getJSONArray("episodes");
+
+            for (int i = 0; i < episodeCount; i++) {
+                JSONObject currentEpisode = episodesArray.getJSONObject(i);
+
+                long tmdbId = currentEpisode.getLong("id");
+                int episodeNumber = currentEpisode.getInt("episode_number");
+                String title = currentEpisode.getString("name");
+                String overview = currentEpisode.getString("overview");
+                String releaseDate = currentEpisode.getString("air_date");
+                double voteAverage = currentEpisode.getDouble("vote_average");
+                int voteCount = currentEpisode.getInt("vote_count");
+                String imageUrl = currentEpisode.getString("still_path");
+
+                long dateInMillseconds;
+                if (releaseDate != null && !releaseDate.isEmpty() && !releaseDate.equals("null")) {
+                    Date date = new SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(releaseDate);
+                    dateInMillseconds = date.getTime();
+                } else {
+                    dateInMillseconds = Long.MAX_VALUE;
+                }
+
+                Episode episode = new Episode(tmdbId, episodeNumber, seasonNumber, title, overview, dateInMillseconds, voteAverage, voteCount, imageUrl);
+                episodes.add(episode);
+            }
+
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "extractTvShowsFromJson - Problem parsing json results", e);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return episodes;
     }
 
     public static int getTotalPagesFromJson(String showsJSON) {

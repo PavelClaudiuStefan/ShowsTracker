@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +27,15 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Season;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -74,6 +78,11 @@ public class TvShowActivityHTTP extends AppCompatActivity{
     private long tmdbId;
     private boolean inUserCollection;
     private Box<TvShow> showsBox;
+    private Box<Season> seasonsBox;
+    private Box<Episode> episodesBox;
+
+    private List<Season> seasons;
+    private List<List<Episode>> episodes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +97,8 @@ public class TvShowActivityHTTP extends AppCompatActivity{
         setTvShowViewsVisibility(View.GONE);
 
         showsBox = ((MyApp)getApplication()).getBoxStore().boxFor(TvShow.class);
+        seasonsBox = ((MyApp)getApplication()).getBoxStore().boxFor(Season.class);
+        episodesBox = ((MyApp)getApplication()).getBoxStore().boxFor(Episode.class);
 
         Intent intent = getIntent();
         tmdbId = intent.getLongExtra("tmdb_id", -1);
@@ -174,21 +185,81 @@ public class TvShowActivityHTTP extends AppCompatActivity{
         addRemoveMovieButton.setChecked(inUserCollection);
         addRemoveMovieButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             if (isChecked) {
-                insertShow(tvShow);
+                addSeasonsAndEpisodesToTvShowAndInsert(tvShow);
                 inUserCollection = true;
             } else {
-                removeShow(tvShow.getTmdbId());
+                removeShow(tvShow);
                 inUserCollection = false;
             }
         });
     }
 
-    private void insertShow(TvShow tvShow) {
-        showsBox.put(tvShow);
+    private void addSeasonsAndEpisodesToTvShowAndInsert(TvShow tvShow) {
+        addRemoveMovieButton.setEnabled(false);
+        new Handler().postDelayed(() -> addRemoveMovieButton.setEnabled(true), 2000);
+        // get seasons
+        AndroidNetworking.get(TmdbConstants.TV_SHOWS_URL + tmdbId)
+                .addQueryParameter("api_key", TmdbConstants.API_KEY)
+                .setTag(this)
+                .setPriority(Priority.HIGH)
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
+                .build()
+                .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache))
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        List<Season> seasons = QueryUtils.extractSeasonsFromJson(response);
+                        if (seasons != null && !seasons.isEmpty()) {
+                            addEpisodesToTvShowAndInsert(tvShow, seasons);
+                        }
+                    }
+                    @Override
+                    public void onError(ANError anError) {
+                        displayError();
+                        Log.e("ShadowDebug", anError.getErrorBody());
+                    }
+                });
     }
 
-    private void removeShow(long showTmdbId) {
-        showsBox.remove(showTmdbId);
+    private void addEpisodesToTvShowAndInsert(TvShow tvShow, List<Season> seasons) {
+        for (Season season : seasons) {
+            // get episodes
+            AndroidNetworking.get(TmdbConstants.TV_SHOWS_URL + tmdbId + "/season/" + season.getSeasonNumber())
+                    .addQueryParameter("api_key", TmdbConstants.API_KEY)
+                    .setTag(this)
+                    .setPriority(Priority.HIGH)
+                    .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
+                    .build()
+                    .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache))
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            List<Episode> episodes = QueryUtils.extractEpisodesFromJson(response, season.getNumberOfEpisodes());
+                            if (episodes != null && !episodes.isEmpty()) {
+                                season.addEpisodes(episodes);
+                                showsBox.attach(tvShow);
+                                tvShow.addSeason(season);
+                                showsBox.put(tvShow);
+                            }
+                        }
+                        @Override
+                        public void onError(ANError anError) {
+                            displayError();
+                            Log.e("ShadowDebug", anError.getErrorBody());
+                        }
+                    });
+        }
+    }
+
+    private void removeShow(TvShow tvShow) {
+        addRemoveMovieButton.setEnabled(false);
+        new Handler().postDelayed(() -> addRemoveMovieButton.setEnabled(true), 2000);
+        for (Season season : tvShow.getSeasons()) {
+            episodesBox.remove(season.getEpisodes());
+            showsBox.attach(tvShow);
+            seasonsBox.remove(season);
+        }
+        showsBox.remove(tvShow);
     }
 
     private void displayError() {

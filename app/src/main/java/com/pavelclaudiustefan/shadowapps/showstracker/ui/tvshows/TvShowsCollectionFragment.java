@@ -303,15 +303,8 @@ public class TvShowsCollectionFragment extends Fragment{
                 return super.onOptionsItemSelected(item);
         }
 
-        refreshMovieList();
+        refreshShowsList();
         return true;
-    }
-
-    public void refreshMovieList() {
-        if (getActivity() != null) {
-            //tvShows.clear();
-            ((TvShowsActivity)getActivity()).dataChanged();
-        }
     }
 
     private void saveFilterOption(String filterOption) {

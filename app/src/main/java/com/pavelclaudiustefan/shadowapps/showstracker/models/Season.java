@@ -3,6 +3,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.models;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import io.objectbox.annotation.Backlink;
@@ -15,6 +16,7 @@ import io.objectbox.relation.ToOne;
 public class Season {
 
     @Id private long id;
+    private long tmdbId;
     private ToOne<TvShow> tvShow;
     @Backlink private ToMany<Episode> episodes;
     private int numberOfEpisodes;
@@ -25,22 +27,19 @@ public class Season {
 
     private long releaseDateInMilliseconds;   // if equals Long.MAX_VALUE -> Unknown release date
 
-    private double vote;
-    private int voteCount;
-
     private String imagePath;
     private String thumbnailSize = "w342";
     private String imageSize = "w780";
 
     public Season() {}
 
-    public Season(int seasonNumber, String title, String overview, long releaseDateInMilliseconds, double vote, int voteCount, String imagePath) {
+    public Season(long tmdbId, int seasonNumber, int numberOfEpisodes, String title, String overview, long releaseDateInMilliseconds, String imagePath) {
+        this.tmdbId = tmdbId;
         this.seasonNumber = seasonNumber;
+        this.numberOfEpisodes = numberOfEpisodes;
         this.title = title;
         this.overview = overview;
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
-        this.vote = vote;
-        this.voteCount = voteCount;
         this.imagePath = imagePath;
     }
 
@@ -71,6 +70,14 @@ public class Season {
         this.id = id;
     }
 
+    public long getTmdbId() {
+        return tmdbId;
+    }
+
+    public void setTmdbId(long tmdbId) {
+        this.tmdbId = tmdbId;
+    }
+
     public ToOne<TvShow> getTvShow() {
         return tvShow;
     }
@@ -83,8 +90,8 @@ public class Season {
         return episodes;
     }
 
-    public void setEpisodes(ToMany<Episode> episodes) {
-        this.episodes = episodes;
+    public void addEpisodes(List<Episode> episodes) {
+        this.episodes.addAll(episodes);
     }
 
     public int getNumberOfEpisodes() {
@@ -127,22 +134,6 @@ public class Season {
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
     }
 
-    public double getVote() {
-        return vote;
-    }
-
-    public void setVote(double vote) {
-        this.vote = vote;
-    }
-
-    public int getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(int voteCount) {
-        this.voteCount = voteCount;
-    }
-
     public String getImagePath() {
         return imagePath;
     }
@@ -177,8 +168,6 @@ public class Season {
                 ", title='" + title + '\'' +
                 ", overview='" + overview + '\'' +
                 ", releaseDateInMilliseconds=" + releaseDateInMilliseconds +
-                ", vote=" + vote +
-                ", voteCount=" + voteCount +
                 ", imagePath='" + imagePath + '\'' +
                 ", thumbnailSize='" + thumbnailSize + '\'' +
                 ", imageSize='" + imageSize + '\'' +

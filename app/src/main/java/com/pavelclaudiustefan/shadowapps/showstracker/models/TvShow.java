@@ -1,18 +1,19 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.models;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import io.objectbox.annotation.Backlink;
 import io.objectbox.annotation.Entity;
 import io.objectbox.relation.ToMany;
-import io.objectbox.relation.ToOne;
 
 @Entity
 public class TvShow extends Show implements Serializable{
 
     @Backlink
     private ToMany<Season> seasons;
-    private int numberOfSeasons;
 
     // TODO
     private String status;  // For example - Returning Series
@@ -39,15 +40,20 @@ public class TvShow extends Show implements Serializable{
         return "TvShow" + super.toString();
     }
 
+    public void addSeason(Season season) {
+        seasons.add(season);
+    }
+
+    public void addSeasons(List<Season> seasons) {
+        this.seasons.addAll(seasons);
+    }
+
     public ToMany<Season> getSeasons() {
+        Collections.sort(seasons, (season1, season2) -> Integer.compare(season1.getSeasonNumber(), season2.getSeasonNumber()));
         return seasons;
     }
 
     public int getNumberOfSeasons() {
-        return numberOfSeasons;
-    }
-
-    public void setNumberOfSeasons(int numberOfSeasons) {
-        this.numberOfSeasons = numberOfSeasons;
+        return seasons.size();
     }
 }

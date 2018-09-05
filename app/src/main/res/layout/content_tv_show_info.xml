@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -119,6 +120,13 @@
                 tools:text="I need a lot of text here because this is gonna be the overview of this movie, or tvShow, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
 
         </RelativeLayout>
+
+        <!-- TODO - Recycler view for seasons (optional - trailers)-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/seasons_recycler_view"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

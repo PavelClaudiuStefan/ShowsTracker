@@ -13,8 +13,10 @@ import io.objectbox.relation.ToOne;
 public class Episode {
 
     @Id private long id;
+    private long tmdbId;
     private ToOne<Season> season;
     private int episodeNumber;
+    private int seasonNumber;
 
     private String title;
     private String overview;
@@ -28,16 +30,21 @@ public class Episode {
     private String thumbnailSize = "w300";
     private String imageSize = "original";
 
+    private boolean isWatched;
+
     public Episode() {}
 
-    public Episode(int episodeNumber, String title, String overview, long releaseDateInMilliseconds, double vote, int voteCount, String imagePath) {
+    public Episode(long tmdbId, int episodeNumber, int seasonNumber, String title, String overview, long releaseDateInMilliseconds, double vote, int voteCount, String imagePath) {
+        this.tmdbId = tmdbId;
         this.episodeNumber = episodeNumber;
+        this.seasonNumber = seasonNumber;
         this.title = title;
         this.overview = overview;
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
         this.vote = vote;
         this.voteCount = voteCount;
         this.imagePath = imagePath;
+        isWatched = false;
     }
 
     public String getReleaseDate() {
@@ -67,6 +74,14 @@ public class Episode {
         this.id = id;
     }
 
+    public long getTmdbId() {
+        return tmdbId;
+    }
+
+    public void setTmdbId(long tmdbId) {
+        this.tmdbId = tmdbId;
+    }
+
     public ToOne<Season> getSeason() {
         return season;
     }
@@ -81,6 +96,14 @@ public class Episode {
 
     public void setEpisodeNumber(int episodeNumber) {
         this.episodeNumber = episodeNumber;
+    }
+
+    public int getSeasonNumber() {
+        return seasonNumber;
+    }
+
+    public void setSeasonNumber(int seasonNumber) {
+        this.seasonNumber = seasonNumber;
     }
 
     public String getTitle() {
@@ -145,6 +168,14 @@ public class Episode {
 
     public void setImageSize(String imageSize) {
         this.imageSize = imageSize;
+    }
+
+    public boolean isWatched() {
+        return isWatched;
+    }
+
+    public void setWatched(boolean watched) {
+        isWatched = watched;
     }
 
     @Override

@@ -6,21 +6,36 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.SeasonsCardsAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Season;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,6 +43,8 @@ import io.objectbox.Box;
 
 public class TvShowActivityDb extends AppCompatActivity {
 
+    @BindView(R.id.scroll_view)
+    NestedScrollView scrollView;
     @BindView(R.id.image)
     ImageView imageView;
     @BindView(R.id.toolbar)
@@ -46,6 +63,8 @@ public class TvShowActivityDb extends AppCompatActivity {
     RelativeLayout overviewLayout;
     @BindView(R.id.overview)
     TextView overviewTextView;
+    @BindView(R.id.seasons_recycler_view)
+    RecyclerView recyclerView;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
     @BindView(R.id.add_remove_tv_show)
@@ -54,6 +73,12 @@ public class TvShowActivityDb extends AppCompatActivity {
     ProgressBar loadingIndicator;
 
     private Box<TvShow> tvShowsBox;
+    private Box<Season> seasonsBox;
+    private Box<Episode> episodesBox;
+
+    private List<Season> seasons;
+    private List<List<Episode>> episodes;
+
     private long tmdbId;
     private boolean inCollection = true;
 
@@ -70,17 +95,22 @@ public class TvShowActivityDb extends AppCompatActivity {
         setTvShowViewsVisibility(View.GONE);
 
         tvShowsBox = ((MyApp)getApplication()).getBoxStore().boxFor(TvShow.class);
+        seasonsBox = ((MyApp)getApplication()).getBoxStore().boxFor(Season.class);
+        episodesBox = ((MyApp)getApplication()).getBoxStore().boxFor(Episode.class);
+
 
         Intent intent = getIntent();
         tmdbId = intent.getLongExtra("tmdb_id", -1);
 
         setUpTvShowData();
+        setUpRecyclerView();
     }
 
     // Get data from object box
     private void setUpTvShowData() {
         TvShow tvShow = tvShowsBox.get(tmdbId);
         if (tvShow != null) {
+            seasons = tvShow.getSeasons();
             inCollection = true;
             setTitle(tvShow.getTitle());
             displayTvShow(tvShow);
@@ -90,6 +120,10 @@ public class TvShowActivityDb extends AppCompatActivity {
     }
 
     private void displayTvShow(TvShow tvShow) {
+        // Stops the activity being started scrolled down
+        scrollView.setFocusableInTouchMode(true);
+        scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+
         loadingIndicator.setVisibility(View.GONE);
 
         String imageUrl = tvShow.getImageUrl();
@@ -134,10 +168,29 @@ public class TvShowActivityDb extends AppCompatActivity {
     }
 
     private void insertShow(TvShow tvShow) {
+        addRemoveMovieButton.setEnabled(false);
+        new Handler().postDelayed(() -> addRemoveMovieButton.setEnabled(true), 2000);
+        for (int i = 0; i < seasons.size(); i++) {
+            seasons.get(i).addEpisodes(episodes.get(i));
+        }
+        tvShowsBox.attach(tvShow);
+        tvShow.addSeasons(seasons);
         tvShowsBox.put(tvShow);
     }
 
     private void removeShow(TvShow tvShow) {
+        addRemoveMovieButton.setEnabled(false);
+        new Handler().postDelayed(() -> addRemoveMovieButton.setEnabled(true), 2000);
+        if (seasons == null) {
+            seasons = tvShow.getSeasons();
+        }
+        episodes = new ArrayList<>();
+        for (Season season : seasons) {
+            episodes.add(season.getEpisodes());
+            episodesBox.remove(season.getEpisodes());
+            tvShowsBox.attach(tvShow);
+            seasonsBox.remove(season);
+        }
         tvShowsBox.remove(tvShow);
     }
 
@@ -192,4 +245,33 @@ public class TvShowActivityDb extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void setUpRecyclerView() {
+        SeasonsCardsAdapter seasonsCardsAdapter = new SeasonsCardsAdapter(this, seasons, R.menu.menu_tv_shows_list, new SeasonsCardsAdapter.SeasonsAdapterListener() {
+            @Override
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(TvShowActivityDb.this, "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(TvShowActivityDb.this, "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                // TODO
+                Log.i("ShadowDebug", "Card selected");
+            }
+        });
+
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TvShowActivityDb.this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(seasonsCardsAdapter);
+
+    }
+
 }

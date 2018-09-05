@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.EpisodesToWatchFragment;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsCollectionFragment;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsDiscoverFragment;
 
@@ -21,7 +22,7 @@ public class TvShowsCategoryAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 0) {
-            return new TvShowsCollectionFragment();
+            return new EpisodesToWatchFragment();
         } else if (position == 1) {
             return new TvShowsCollectionFragment();
         } else {

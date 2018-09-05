@@ -61,7 +61,7 @@
     <string name="overview_title">Overview:</string>
     <string name="add_movie">Add to collection</string>
     <string name="remove_movie">Remove movie</string>
-    <string name="set_watched_movie">Set watched</string>
+    <string name="set_watched">Set watched</string>
     <string name="set_not_watched_movie">Set not watched</string>
     <string name="search_movie">Search new movie…</string>
     <string name="search_tv_show">Search new TV show…</string>
@@ -212,5 +212,7 @@
         \n\tAndroid Floating Action Button
         \n\tTextDrawable
     </string>
+    <string name="default_episode_info">Season 1, Episode 1</string>
+    <string name="default_season_info">Season 1</string>
 
 </resources>

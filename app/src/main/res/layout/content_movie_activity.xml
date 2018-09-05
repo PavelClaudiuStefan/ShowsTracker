@@ -43,7 +43,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="2dp"
                 android:backgroundTint="@color/watched_not_watched_movie_button_color"
-                android:textOff="@string/set_watched_movie"
+                android:textOff="@string/set_watched"
                 android:textOn="@string/set_not_watched_movie"
                 android:textSize="14sp" />
 
