@@ -18,7 +18,6 @@ public class SplashActivity extends AppCompatActivity {
     public static final String TV_SHOWS_SECTION = "tv_shows";
     public static final String GROUPS_SECTION = "groups";
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
