@@ -193,7 +193,6 @@ public class MoviesDiscoverFragment extends Fragment {
                     int pastVisibleItems = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition();
                     if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                         loadMore();
-                        Log.i("ShadowDebug", "\nEND OF LIST BITCH" + "\nvisibleItemCount: " + visibleItemCount + "\ntotalItemCount: "+ totalItemCount + "\npastVisibleItems: " + pastVisibleItems);
                     }
                 }
             });

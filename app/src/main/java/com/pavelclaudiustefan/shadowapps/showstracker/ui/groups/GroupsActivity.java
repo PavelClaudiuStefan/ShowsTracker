@@ -93,23 +93,20 @@ public class GroupsActivity extends BaseActivity {
 
     private void requestGroupsAndAddToAdapter() {
         groups = new ArrayList<>();
-        requestGroupsAndAddSnapshotListener();
+        requestGroups();
         groupListAdapter = new GroupListAdapter(this, groups);
         loadingIndicator.setVisibility(View.GONE);
     }
 
     // Realtime updates
-    private void requestGroupsAndAddSnapshotListener() {
+    private void requestGroups() {
+        loadingIndicator.setVisibility(View.VISIBLE);
         if (firebaseAuth.getUid() != null) {
             CollectionReference collectionReference = firestore.collection("users").document(firebaseAuth.getUid()).collection("groups");
             collectionReference
                     .orderBy("title", Query.Direction.ASCENDING)
-                    .addSnapshotListener(this, (queryDocumentSnapshots, e) -> {
-                        if (e != null) {
-                            setUpEmptyView(R.string.connection_issues);
-                            Log.e(TAG, "snapshotListener failure", e);
-                            return;
-                        }
+                    .get()
+                    .addOnSuccessListener(this, queryDocumentSnapshots -> {
                         if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                             groups.clear();
                             for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
@@ -122,12 +119,19 @@ public class GroupsActivity extends BaseActivity {
                             }
                             groupListAdapter.notifyDataSetChanged();
                         } else {
-                            Log.i(TAG, "requestGroupsAndAddSnapshotListener - Current data null");
+                            Log.i(TAG, "requestGroups - Current data null");
                             setUpEmptyView(R.string.no_groups_added);
                         }
-            });
+                        loadingIndicator.setVisibility(View.GONE);
+                    })
+                    .addOnFailureListener(e -> {
+                        setUpEmptyView(R.string.connection_issues);
+                        loadingIndicator.setVisibility(View.GONE);
+                        Log.e(TAG, "getting groups failure", e);
+                    });
         } else {
             Log.e(TAG, "FirebaseAuth.getUid() == null");
+            loadingIndicator.setVisibility(View.GONE);
         }
     }
 
@@ -246,8 +250,12 @@ public class GroupsActivity extends BaseActivity {
                                 .addOnFailureListener(e -> Log.w(TAG, "Error adding user group", e));
 
                         // Add owner to groups/{groupTitle}/users for init
+                        String displayName = firebaseAuth.getCurrentUser().getEmail();
+                        if (firebaseAuth.getCurrentUser().getDisplayName() != null && !firebaseAuth.getCurrentUser().getDisplayName().isEmpty()) {
+                            displayName = firebaseAuth.getCurrentUser().getDisplayName();
+                        }
                         HashMap<String, Object> user = new HashMap<>();
-                        user.put("displayName", firebaseAuth.getCurrentUser().getDisplayName());
+                        user.put("displayName", displayName);
                         user.put("userId", firebaseAuth.getUid());
                         firestore.collection("groups").document(title).collection("users")
                                 .document(firebaseAuth.getUid())
@@ -271,6 +279,7 @@ public class GroupsActivity extends BaseActivity {
                                     .addOnSuccessListener(documentReference -> Log.d(TAG, "(Init) Movie successfully added!"))
                                     .addOnFailureListener(e -> Log.w(TAG, "(Init) Error adding movie", e));
                         }
+                        requestGroups();
                     })
                     .addOnFailureListener(e -> Log.w(TAG, "Error creating group", e));
         }
@@ -297,6 +306,7 @@ public class GroupsActivity extends BaseActivity {
     //                     -> add group to root/users/{userId}/groups
     private void tryJoinGroup(String title) {
         if (title != null && !title.isEmpty() && firebaseAuth.getUid() != null) {
+            loadingIndicator.setVisibility(View.VISIBLE);
             firestore.collection("groups").document(title)
                     .get()
                     .addOnCompleteListener(task -> {
@@ -312,15 +322,18 @@ public class GroupsActivity extends BaseActivity {
                                                 joinGroup(title);
                                             } else {
                                                 // Already joined -> Show info toast
+                                                loadingIndicator.setVisibility(View.GONE);
                                                 Toast.makeText(GroupsActivity.this, "Already joined", Toast.LENGTH_LONG).show();
                                             }
                                         })
                                         .addOnFailureListener(e -> Log.e(TAG, "GetUsers from group failure: ", e));
                             } else {
                                 // Group doesn't exist -> Show toast
+                                loadingIndicator.setVisibility(View.GONE);
                                 Toast.makeText(GroupsActivity.this, "Group doesn't exist", Toast.LENGTH_LONG).show();
                             }
                         } else {
+                            loadingIndicator.setVisibility(View.GONE);
                             Log.d(TAG, "tryJoinGroup() - failed with ", task.getException());
                         }
                     });
@@ -341,8 +354,12 @@ public class GroupsActivity extends BaseActivity {
                     .addOnFailureListener(e -> Log.w(TAG, "Error updating group", e));
 
             // Add user to groups/{groupTitle}/users
+            String displayName = firebaseAuth.getCurrentUser().getEmail();
+            if (firebaseAuth.getCurrentUser().getDisplayName() != null && !firebaseAuth.getCurrentUser().getDisplayName().isEmpty()) {
+                displayName = firebaseAuth.getCurrentUser().getDisplayName();
+            }
             HashMap<String, Object> user = new HashMap<>();
-            user.put("displayName", firebaseAuth.getCurrentUser().getDisplayName());
+            user.put("displayName", displayName);
             user.put("userId", firebaseAuth.getUid());
             firestore.collection("groups").document(title).collection("users")
                     .document(firebaseAuth.getUid())
@@ -356,7 +373,10 @@ public class GroupsActivity extends BaseActivity {
             firestore.collection("users").document(firebaseAuth.getUid()).collection("groups")
                     .document(title)
                     .set(essentialData)
-                    .addOnSuccessListener(documentReference -> Log.d(TAG, "User group successfully added"))
+                    .addOnSuccessListener(documentReference ->  {
+                        requestGroups();
+                        Log.d(TAG, "User group successfully added");
+                    })
                     .addOnFailureListener(e -> Log.w(TAG, "Error adding user group", e));
 
             updateGroupMovies(title);

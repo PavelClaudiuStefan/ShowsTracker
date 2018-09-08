@@ -36,6 +36,8 @@ public class EpisodesCardsAdapter extends RecyclerView.Adapter<EpisodesCardsAdap
         TextView titleView;
         @BindView(R.id.episode_info)
         TextView episodeNumberView;
+        @BindView(R.id.tv_show_title)
+        TextView tvShowTitleView;
         @BindView(R.id.date)
         TextView releaseDateView;
         @BindView(R.id.episode_image)
@@ -76,6 +78,7 @@ public class EpisodesCardsAdapter extends RecyclerView.Adapter<EpisodesCardsAdap
 
         holder.titleView.setText(episode.getTitle());
         holder.episodeNumberView.setText("Season " + episode.getSeasonNumber() + ", Episode " + episode.getEpisodeNumber());
+        holder.tvShowTitleView.setText(episode.getSeason().getTarget().getTvShow().getTarget().getTitle());
         holder.releaseDateView.setText(episode.getReleaseDate());
 
         holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));

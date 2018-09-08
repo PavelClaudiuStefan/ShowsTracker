@@ -180,7 +180,6 @@ public class TvShowsDiscoverFragment extends Fragment {
                     int pastVisibleItems = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition();
                     if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                         loadMore();
-                        Log.i("ShadowDebug", "\nEND OF LIST BITCH" + "\nvisibleItemCount: " + visibleItemCount + "\ntotalItemCount: "+ totalItemCount + "\npastVisibleItems: " + pastVisibleItems);
                     }
                 }
             });
@@ -421,9 +420,11 @@ public class TvShowsDiscoverFragment extends Fragment {
     }
 
     private void displayPossibleError() {
-        // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
-        emptyStateTextView.setVisibility(View.VISIBLE);
-        emptyStateTextView.setText(R.string.no_tv_shows_found);
+        if (tvShows == null || tvShows.isEmpty()) {
+            // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
+            emptyStateTextView.setVisibility(View.VISIBLE);
+            emptyStateTextView.setText(R.string.no_tv_shows_found);
+        }
 
         loadingIndicator.setVisibility(View.GONE);
         isLoading = false;
@@ -438,6 +439,7 @@ public class TvShowsDiscoverFragment extends Fragment {
                     // First, hide loading indicator so error message will be visible
                     loadingIndicator.setVisibility(View.GONE);
                     isLoading = false;
+                    emptyStateTextView.setVisibility(View.VISIBLE);
                     emptyStateTextView.setText(R.string.no_internet_connection);
                 }
             }

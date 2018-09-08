@@ -118,22 +118,24 @@ public class GroupActivity extends AppCompatActivity {
         if (firebaseAuth.getUid() != null) {
             DocumentReference groupReference = firestore.collection("groups").document(groupTitle);
 
-            groupReference.collection("users")
-                    .get()
-                    .addOnSuccessListener(this, usersSnapshots -> {
-                        int nrOfUsers = usersSnapshots.size();
-                        groupReference.collection("movies")
-                                .whereEqualTo("nrOfUsers", nrOfUsers)
-                                .addSnapshotListener(this, (moviesSnapshots, e) -> {
-                                    if (e != null) {
-                                        Log.e(TAG, "snapshotListener failure", e);
-                                        return;
-                                    }
-                                    if (moviesSnapshots != null && !moviesSnapshots.isEmpty()) {
+            groupReference.collection("movies")
+                    .addSnapshotListener(this, (moviesSnapshots, error) -> {
+                        if (error != null) {
+                            Log.e(TAG, "snapshotListener failure", error);
+                            return;
+                        }
+                        if (moviesSnapshots != null && !moviesSnapshots.isEmpty()) {
+
+                            groupReference.collection("users")
+                                    .get()
+                                    .addOnSuccessListener(this, usersSnapshots -> {
                                         movies.clear();
                                         ArrayList<Long> tmdbIds = new ArrayList<>();
                                         for (QueryDocumentSnapshot queryDocumentSnapshot : moviesSnapshots) {
-                                            tmdbIds.add(queryDocumentSnapshot.getLong("tmdbId"));
+                                            Long nrOfUsers = queryDocumentSnapshot.getLong("nrOfUsers");
+                                            if (nrOfUsers != null && usersSnapshots.size() == nrOfUsers) {
+                                                tmdbIds.add(queryDocumentSnapshot.getLong("tmdbId"));
+                                            }
                                         }
                                         if (!tmdbIds.isEmpty()) {
                                             movies.addAll(getMoviesFromDb(tmdbIds));
@@ -141,15 +143,17 @@ public class GroupActivity extends AppCompatActivity {
                                             moviesListAdapter.notifyDataSetChanged();
                                         }
                                         loadingIndicator.setVisibility(View.GONE);
-                                    } else {
-                                        setUpEmptyView(R.string.no_movies_added);
-                                        Log.i(TAG, "requestMoviesAndAddSnapshotListener - Current data null or empty");
-                                    }
-                                });
-                    })
-                    .addOnFailureListener(e -> {
-                        setUpEmptyView(R.string.connection_issues);
-                        Log.e(TAG, "Get users array size failure: ", e);
+
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        setUpEmptyView(R.string.connection_issues);
+                                        Log.e(TAG, "Get users array size failure: ", e);
+                                    });
+
+                        } else {
+                            setUpEmptyView(R.string.no_movies_added);
+                            Log.i(TAG, "requestMoviesAndAddSnapshotListener - Current data null or empty");
+                        }
                     });
         } else {
             Log.e(TAG, "FirebaseAuth.getUid() == null");
@@ -215,8 +219,6 @@ public class GroupActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // If user is owner
-    // For ever user movie ->
     private void exitGroup() {
         if (firebaseAuth.getUid() != null) {
             // Delete group from root/users/{userId}/groups/{someGroupId}/groupDocument

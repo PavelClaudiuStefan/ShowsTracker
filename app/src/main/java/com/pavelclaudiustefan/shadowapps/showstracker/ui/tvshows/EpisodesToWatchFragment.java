@@ -126,6 +126,7 @@ public class EpisodesToWatchFragment extends Fragment {
     }
 
     private List<Episode> requestEpisodesFromDb() {
+        // TODO implement filtering and sorting
         return requestUnwatchedEpisodes();
     }
 

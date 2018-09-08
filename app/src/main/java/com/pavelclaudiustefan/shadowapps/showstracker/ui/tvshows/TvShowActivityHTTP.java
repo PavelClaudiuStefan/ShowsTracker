@@ -81,9 +81,6 @@ public class TvShowActivityHTTP extends AppCompatActivity{
     private Box<Season> seasonsBox;
     private Box<Episode> episodesBox;
 
-    private List<Season> seasons;
-    private List<List<Episode>> episodes;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -296,7 +293,6 @@ public class TvShowActivityHTTP extends AppCompatActivity{
         toolbar.setNavigationIcon(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material);
         toolbar.setNavigationOnClickListener(view -> onBackPressed());
     }
-
 
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();

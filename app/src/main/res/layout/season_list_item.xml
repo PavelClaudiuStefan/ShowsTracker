@@ -50,18 +50,7 @@
                 android:maxLines="2"
                 android:textColor="@color/colorTitle"
                 android:textSize="16sp"
-                tools:text="Season name" />
-
-            <TextView
-                android:id="@+id/season_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif-medium"
-                android:maxLines="1"
-                android:textColor="@color/colorItemDetails"
-                android:textSize="12sp"
-                android:text="@string/default_season_info" />
+                tools:text="Season 1" />
 
             <TextView
                 android:id="@+id/season_overview"

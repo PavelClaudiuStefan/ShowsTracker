@@ -1,5 +1,7 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.adapters;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,6 +50,15 @@ public class MoviesCategoryAdapter extends FragmentStatePagerAdapter {
 
     public int getItemPosition(@NonNull Object item) {
         return POSITION_NONE;
+    }
+
+    @Override
+    public Parcelable saveState() {
+        Bundle bundle = (Bundle) super.saveState();
+        if (bundle != null) {
+            bundle.putParcelableArray("states", null);
+        }
+        return bundle;
     }
 
 }

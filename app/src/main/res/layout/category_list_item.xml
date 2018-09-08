@@ -33,7 +33,7 @@
             android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             android:transitionName="image"
-            android:background="@drawable/thumbnail_temp"
+            android:background="@drawable/placeholder"
             android:contentDescription="@string/thumbnail"
             android:scaleType="centerInside" />
 

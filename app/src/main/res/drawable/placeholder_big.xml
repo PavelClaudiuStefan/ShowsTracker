@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@color/colorPrimaryDarker" />
+
+    <item
+        android:drawable="@drawable/placeholder_big_movie"
+        android:gravity="center" />
+
+</layer-list>

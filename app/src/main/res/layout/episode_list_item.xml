@@ -32,7 +32,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
-            android:background="@drawable/thumbnail_temp"
+            android:background="@drawable/placeholder"
             android:contentDescription="@string/thumbnail"
             android:scaleType="centerInside" />
 
@@ -64,6 +64,17 @@
                 android:textColor="@color/colorItemDetails"
                 android:textSize="12sp"
                 android:text="@string/default_episode_info" />
+            <TextView
+                android:id="@+id/tv_show_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:textColor="@color/colorItemDetails"
+                android:textSize="12sp"
+                tools:text="Nume Serial" />
 
         </LinearLayout>
 
