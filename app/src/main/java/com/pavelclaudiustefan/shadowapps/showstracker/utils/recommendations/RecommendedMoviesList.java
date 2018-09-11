@@ -22,9 +22,8 @@ public class RecommendedMoviesList extends RecommendedShowsList<Movie> {
     }
 
     @Override
-    public ArrayList<Movie> sortItems(ArrayList<Movie> items) {
+    public void sortItems(ArrayList<Movie> items) {
         Collections.sort(items, movieComparator);
-        return items;
     }
 
     @Override

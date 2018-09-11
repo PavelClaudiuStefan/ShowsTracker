@@ -240,7 +240,6 @@ public class TvShowsDiscoverFragment extends Fragment {
                         }
 
                         if (requestedTvShows != null && !requestedTvShows.isEmpty()) {
-                            // TODO - hide tv shows already in collectin
                             if (!showItemsInCollection) {
                                 removeCollectionTvShows(requestedTvShows);
                             }

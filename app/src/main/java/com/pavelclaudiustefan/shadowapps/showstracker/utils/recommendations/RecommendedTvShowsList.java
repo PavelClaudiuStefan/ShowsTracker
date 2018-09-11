@@ -22,9 +22,8 @@ public class RecommendedTvShowsList extends RecommendedShowsList<TvShow> {
     }
 
     @Override
-    public ArrayList<TvShow> sortItems(ArrayList<TvShow> items) {
+    public void sortItems(ArrayList<TvShow> items) {
         Collections.sort(items, tvShowComparator);
-        return items;
     }
 
     @Override

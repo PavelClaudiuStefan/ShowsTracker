@@ -46,6 +46,8 @@ import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -220,16 +222,10 @@ public class MoviesDiscoverFragment extends Fragment {
 
     // Requests movies and adds them to the movieItemListAdapter
     public void requestAndAddMovies() {
-        String page = String.valueOf(currentPage);
-
-        Uri baseUri = Uri.parse(tmdbUrl);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
-        uriBuilder.appendQueryParameter("page", page);
-
         ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking
-                .get(uriBuilder.toString())
+                .get(tmdbUrl)
+                .addQueryParameter("api_key", TmdbConstants.API_KEY)
+                .addQueryParameter("page", String.valueOf(currentPage))
                 .setTag(this)
                 .setPriority(Priority.HIGH)
                 .setMaxAgeCacheControl(10, TimeUnit.MINUTES);
@@ -243,12 +239,6 @@ public class MoviesDiscoverFragment extends Fragment {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
                         List<Movie> requestedMovies = QueryUtils.extractMoviesFromJson(response);
 
                         if (currentPage == 1) {
@@ -262,7 +252,7 @@ public class MoviesDiscoverFragment extends Fragment {
                             movies.addAll(requestedMovies);
                         } else {
                             displayPossibleError();
-                            Log.e("ShadowDebug", "MoviesDiscoverFragment - No tvShows extracted from Json response");
+                            Log.e("ShadowDebug", "MoviesDiscoverFragment - No movies extracted from Json response");
                         }
                         onMoviesListLoaded();
                     }
@@ -367,8 +357,7 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     private void loadMore() {
-        // TvShow loading indicator when searching for new temporarMovies
-        //Log.i("ShadowDebug", "4 - I am visible");
+        // Movie loading indicator when searching for new temporarMovies
         loadingIndicator.setVisibility(View.VISIBLE);
         isLoading = true;
 

@@ -36,11 +36,11 @@
             android:contentDescription="@string/thumbnail"
             android:scaleType="centerInside" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -48,27 +48,34 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_above="@+id/episode_info"
+                android:layout_marginTop="8dp"
                 android:ellipsize="end"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:textColor="@color/colorTitle"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 tools:text="Show name" />
 
             <TextView
                 android:id="@+id/episode_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="8dp"
                 android:fontFamily="sans-serif-medium"
-                android:maxLines="1"
                 android:textColor="@color/colorItemDetails"
                 android:textSize="12sp"
-                android:text="@string/default_episode_info" />
+                tools:text="S01E01, " />
+
             <TextView
                 android:id="@+id/tv_show_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/episode_info"
+                android:layout_toStartOf="@+id/date"
+                android:layout_marginBottom="8dp"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-medium"
                 android:maxLines="1"
@@ -76,19 +83,19 @@
                 android:textSize="12sp"
                 tools:text="Nume Serial" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="bottom"
+                android:textColor="@color/colorItemDetails"
+                android:textSize="12sp"
+                tools:text="2017-09-05" />
 
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorItemDetails"
-            android:textSize="12sp"
-            android:layout_marginEnd="8dp"
-            tools:text="2017-09-05" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/overflow"

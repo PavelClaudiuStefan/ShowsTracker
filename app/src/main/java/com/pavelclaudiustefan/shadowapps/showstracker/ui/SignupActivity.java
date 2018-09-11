@@ -66,7 +66,6 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         signupButton.setEnabled(false);
-
         progressBar.setVisibility(View.VISIBLE);
 
         String email = emailText.getText().toString();
@@ -129,8 +128,8 @@ public class SignupActivity extends AppCompatActivity {
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 25) {
-            passwordText.setError("Between 4 and 25 alphanumeric characters.");
+        if (password.isEmpty() || password.length() <= 5 || password.length() >= 50) {
+            passwordText.setError("Between 5 and 50 alphanumeric characters.");
             valid = false;
         } else {
             passwordText.setError(null);

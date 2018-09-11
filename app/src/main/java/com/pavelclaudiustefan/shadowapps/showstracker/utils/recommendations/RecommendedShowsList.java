@@ -22,16 +22,20 @@ import io.reactivex.subscribers.DisposableSubscriber;
 // Class used to contain the recommended shows list and the methods used to create it
 public abstract class RecommendedShowsList<T extends Show> {
 
-    private String baseTmdbUrl;         // Base tmdbUrl used to get recommandations
-    private long[] tmdbIds;             // List of ids of TMDb shows that are in the user's collection
+    private static final String TAG = "RecommendedShowsList";
+
+    private String baseTmdbUrl;             // Base tmdbUrl used to get recommandations
+    private ArrayList<Long> tmdbIds;        // List of ids of TMDb shows that are in the user's collection
 
     RecommendedShowsList(String baseTmdbUrl, long[] tmdbIds) {
         this.baseTmdbUrl = baseTmdbUrl;
-        this.tmdbIds = tmdbIds;
+        this.tmdbIds = new ArrayList<>();
+        for (long tmdbId : tmdbIds) {
+            this.tmdbIds.add(tmdbId);
+        }
     }
 
     private Flowable<String> getTitleFlowable(Long id) {
-
         return Rx2AndroidNetworking.get(baseTmdbUrl + "{tmdbId}/recommendations")
                 .addPathParameter("tmdbId", String.valueOf(id))
                 .addQueryParameter("api_key", TmdbConstants.API_KEY)
@@ -42,35 +46,26 @@ public abstract class RecommendedShowsList<T extends Show> {
 
     // For every tmdbId it requests maximum 20 recommended items and adds them to the adapter for displaying
     public void addRecommendedToList(ArrayList<T> shows) {
-        final ArrayList<Long> tmdbIdsLong = new ArrayList<>();
-        for (long tmdbId : tmdbIds) {
-            tmdbIdsLong.add(tmdbId);
-        }
-
-        final ArrayList<T> allItems = new ArrayList<>();
-
-        Flowable.fromIterable(tmdbIdsLong)
+        Flowable.fromIterable(tmdbIds)
                 .flatMap((Function<Long, Publisher<Pair<String, Long>>>) id -> Flowable.zip(getTitleFlowable(id),
                         Flowable.just(id),
                         Pair::new))
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableSubscriber<Pair<String, Long>>() {
                     @Override
                     public void onNext(Pair<String, Long> pair) {
                         List<T> items = extractShowsFromJsonResponse(pair.first);
-                        addOnlyUniqueItems(items, allItems);
+                        addOnlyUniqueItems(items, shows);
                         onDataIncremented();
                     }
-
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("ShadowDebug", "Recommended shows list onError");//e.getMessage());
+                        Log.e(TAG, "Recommended shows list onError() called: " + e.getMessage());
                     }
-
                     @Override
                     public void onComplete() {
-                        shows.addAll(sortItems(allItems));
+                        sortItems(shows);
                         onDataLoaded();
                     }
                 });
@@ -101,7 +96,7 @@ public abstract class RecommendedShowsList<T extends Show> {
         }
     }
 
-    public abstract ArrayList<T> sortItems(ArrayList<T> items);
+    public abstract void sortItems(ArrayList<T> items);
 
     public abstract List<T> extractShowsFromJsonResponse(String jsonResponse);
 

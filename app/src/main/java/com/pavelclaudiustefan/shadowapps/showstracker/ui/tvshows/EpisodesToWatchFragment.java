@@ -1,7 +1,9 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +15,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,10 +55,11 @@ public class EpisodesToWatchFragment extends Fragment {
 
     private Box<Episode> episodesBox;
 
+    private String currentFilterOption;
+    private int currentSortDirectionOption;
 
     public EpisodesToWatchFragment() {
-        // TODO
-        //setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -68,8 +73,9 @@ public class EpisodesToWatchFragment extends Fragment {
         } else {
             Log.e("ShadowDebug", "TvShowsCollectionFragment - getApplication() error");
         }
-
         searchFab.setVisibility(View.GONE);
+
+        initFilteringAndSortingOptionsValues();
 
         setUpRecyclerView();
         setUpListener();
@@ -77,8 +83,26 @@ public class EpisodesToWatchFragment extends Fragment {
         return rootView;
     }
 
+    private void initFilteringAndSortingOptionsValues() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        currentFilterOption = sharedPrefs.getString(
+                getString(R.string.settings_tv_shows_episodes_to_watch_filter),
+                getString(R.string.settings_tv_shows_episodes_to_watch_filter_default)
+        );
+
+        currentSortDirectionOption = sharedPrefs.getInt(
+                getString(R.string.settings_tv_shows_episodes_to_watch_sort_direction),
+                EpisodeComparator.ASCENDING
+        );
+    }
+
     private void setUpRecyclerView() {
-        tvShowItemListAdapter = new EpisodesCardsAdapter(getActivity(), episodes, R.menu.menu_episodes_list, new EpisodesCardsAdapter.EpisodesAdapterListener() {
+        boolean isOverflowEnabled;
+        if (currentFilterOption.equals("released"))
+            isOverflowEnabled = true;
+        else
+            isOverflowEnabled = false;
+        tvShowItemListAdapter = new EpisodesCardsAdapter(getActivity(), episodes, R.menu.menu_episodes_list, isOverflowEnabled, new EpisodesCardsAdapter.EpisodesAdapterListener() {
 
             @Override
             public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
@@ -126,14 +150,33 @@ public class EpisodesToWatchFragment extends Fragment {
     }
 
     private List<Episode> requestEpisodesFromDb() {
-        // TODO implement filtering and sorting
-        return requestUnwatchedEpisodes();
+        switch (currentFilterOption) {
+            case "released":
+                return requestReleasedEpisodes();
+            case "upcoming":
+                return requestUpcomingEpisodes();
+            default:
+                Log.e("ShadowDebug", "EpisodesToWatchFragment - Filtering - displaying shows error");
+                return null;
+        }
     }
 
-    private List<Episode> requestUnwatchedEpisodes() {
+    private List<Episode> requestReleasedEpisodes() {
+        long todayInMilliseconds = System.currentTimeMillis();
         return episodesBox.query()
+                .less(Episode_.releaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Episode_.isWatched, false)
-                .sort(new EpisodeComparator(EpisodeComparator.BY_DATE, EpisodeComparator.ASCENDING))
+                .sort(new EpisodeComparator(currentSortDirectionOption))
+                .build()
+                .find();
+    }
+
+    private List<Episode> requestUpcomingEpisodes() {
+        long todayInMilliseconds = System.currentTimeMillis();
+        return episodesBox.query()
+                .greater(Episode_.releaseDateInMilliseconds, todayInMilliseconds)
+                .equal(Episode_.isWatched, false)
+                .sort(new EpisodeComparator(currentSortDirectionOption))
                 .build()
                 .find();
     }
@@ -149,5 +192,82 @@ public class EpisodesToWatchFragment extends Fragment {
         if (getActivity() != null) {
             ((TvShowsActivity)getActivity()).dataChanged();
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        menu.clear();
+        inflater.inflate(R.menu.tv_shows_episodes_to_watch_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // Set active option invisible
+        switch (currentFilterOption) {
+            case "released":
+                MenuItem cinemaItem = menu.findItem(R.id.menu_show_released);
+                cinemaItem.setEnabled(false);
+                break;
+            case "upcoming":
+                MenuItem notReleasedItem = menu.findItem(R.id.menu_show_upcoming);
+                notReleasedItem.setEnabled(false);
+                break;
+            default:
+                Log.e("ShadowDebug", "Episodes to watch - Filtering - setting menu error");
+                break;
+        }
+
+        // Set active option invisible
+        switch (currentSortDirectionOption) {
+            case EpisodeComparator.ASCENDING:
+                MenuItem ascItem = menu.findItem(R.id.menu_sort_asc_by_date);
+                ascItem.setEnabled(false);
+                break;
+            case EpisodeComparator.DESCENDING:
+                MenuItem descItem = menu.findItem(R.id.menu_sort_desc_by_date);
+                descItem.setEnabled(false);
+                break;
+            default:
+                Log.e("ShadowDebug", "Episodes to watch - Sorting direction error");
+                break;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_show_released:
+                saveFilterOption("released");
+                break;
+            case R.id.menu_show_upcoming:
+                saveFilterOption("upcoming");
+                break;
+            case R.id.menu_sort_asc_by_date:
+                saveSortDirectionOption(EpisodeComparator.ASCENDING);
+                break;
+            case R.id.menu_sort_desc_by_date:
+                saveSortDirectionOption(EpisodeComparator.DESCENDING);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        refreshShowsList();
+        return true;
+    }
+
+    private void saveFilterOption(String filterOption) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString(getString(R.string.settings_tv_shows_episodes_to_watch_filter), filterOption);
+        editor.apply();
+    }
+
+    private void saveSortDirectionOption(int sortDirection) {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putInt(getString(R.string.settings_tv_shows_episodes_to_watch_sort_direction), sortDirection);
+        editor.apply();
     }
 }

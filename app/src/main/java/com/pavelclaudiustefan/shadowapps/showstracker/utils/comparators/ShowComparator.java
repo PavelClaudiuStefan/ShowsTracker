@@ -44,7 +44,7 @@ public class ShowComparator<T extends Show> implements Comparator<T> {
                 return show1.getTitle().compareTo(show2.getTitle()) * (-1);
             }
         }
-        Log.e("ShadowDebug", "MovieComparator - Error");
+        Log.e("ShadowDebug", "ShowComprator - Error");
         return 0;
     }
 

@@ -24,18 +24,18 @@
     <!-- Sorting direction options in the "Movies - Collection" tab -->
     <string name="settings_movies_collection_sort_direction" translatable="false">movies_collection_sort_direction</string>
 
-    <!-- Filter options in the "Tv shows - To watch" tab -->
-    <string name="settings_tv_shows_to_watch_filter" translatable="false">tv_shows_to_watch_filter</string>
-    <string name="settings_tv_shows_to_watch_filter_default" translatable="false">released</string>
+
+    <!-- Filter options in the "Tv shows - Episodes to watch tab -->
+    <string name="settings_tv_shows_episodes_to_watch_filter" translatable="false">tv_shows_episodes_to_watch_filter</string>
+    <string name="settings_tv_shows_episodes_to_watch_filter_default" translatable="false">released</string>
+    <!-- Sorting direction options in the "Tv shows - Episodes to watch" tab -->
+    <string name="settings_tv_shows_episodes_to_watch_sort_direction" translatable="false">tv_shows_episodes_to_watch_sort_direction</string>
+
     <!-- Filter options in the "Tv shows - Collection tab -->
     <string name="settings_tv_shows_collection_filter" translatable="false">tv_shows_collection_filter</string>
     <string name="settings_tv_shows_collection_filter_default" translatable="false">all</string>
-    <!-- Sorting options in the "Tv shows - To watch" tab -->
-    <string name="settings_tv_shows_to_watch_sort_by" translatable="false">tv_shows_to_watch_sort</string>
     <!-- Sorting options in the "Tv shows - Collection" tab -->
     <string name="settings_tv_shows_collection_sort" translatable="false">tv_shows_collection_sort</string>
-    <!-- Sorting direction options in the "Tv shows - To watch" tab -->
-    <string name="settings_tv_shows_to_watch_sort_direction" translatable="false">tv_shows_to_watch_sort_direction</string>
     <!-- Sorting direction options in the "Tv shows - Collection" tab -->
     <string name="settings_tv_shows_collection_sort_direction" translatable="false">tv_shows_collection_sort_direction</string>
 
@@ -212,7 +212,9 @@
         \n\tAndroid Floating Action Button
         \n\tTextDrawable
     </string>
-    <string name="default_episode_info">Season 1, Episode 1</string>
+    <string name="default_episode_info">S01E01</string>
     <string name="default_season_info">Season 1</string>
+    <string name="ascending_order_by_date">Ascending by date</string>
+    <string name="descending_order_by_date">Descending by date</string>
 
 </resources>

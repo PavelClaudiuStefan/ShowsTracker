@@ -17,8 +17,8 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
 import com.squareup.picasso.Picasso;
 
-import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,8 +27,9 @@ public class EpisodesCardsAdapter extends RecyclerView.Adapter<EpisodesCardsAdap
 
     private Context context;
     private List<Episode> episodes;
-    private EpisodesCardsAdapter.EpisodesAdapterListener listener;
     private int overflowMenuRes;
+    private boolean isOverflowEnabled;
+    private EpisodesCardsAdapter.EpisodesAdapterListener listener;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -53,10 +54,11 @@ public class EpisodesCardsAdapter extends RecyclerView.Adapter<EpisodesCardsAdap
         }
     }
 
-    public EpisodesCardsAdapter(Context context, List<Episode> episodes, int overflowMenuRes, EpisodesCardsAdapter.EpisodesAdapterListener listener) {
+    public EpisodesCardsAdapter(Context context, List<Episode> episodes, int overflowMenuRes, boolean isOverFlowEnabled, EpisodesCardsAdapter.EpisodesAdapterListener listener) {
         this.context = context;
         this.episodes = episodes;
         this.overflowMenuRes = overflowMenuRes;
+        this.isOverflowEnabled = isOverFlowEnabled;
         this.listener = listener;
     }
 
@@ -77,12 +79,21 @@ public class EpisodesCardsAdapter extends RecyclerView.Adapter<EpisodesCardsAdap
                 .into(holder.imageView);
 
         holder.titleView.setText(episode.getTitle());
-        holder.episodeNumberView.setText("Season " + episode.getSeasonNumber() + ", Episode " + episode.getEpisodeNumber());
+        holder.episodeNumberView.setText(getEpisodeNumber(episode.getSeasonNumber(), episode.getEpisodeNumber()));
         holder.tvShowTitleView.setText(episode.getSeason().getTarget().getTvShow().getTarget().getTitle());
         holder.releaseDateView.setText(episode.getReleaseDate());
 
-        holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
+        if (isOverflowEnabled) {
+            holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
+        } else {
+            holder.overflow.setVisibility(View.GONE);
+        }
+
         holder.cardView.setOnClickListener(view -> listener.onCardSelected(position, holder.cardView));
+    }
+
+    private String getEpisodeNumber(int seasonNumber, int episodeNumber) {
+        return String.format(Locale.US, "S%02dE%02d, ", seasonNumber, episodeNumber);
     }
 
     @Override
@@ -97,11 +108,6 @@ public class EpisodesCardsAdapter extends RecyclerView.Adapter<EpisodesCardsAdap
         inflater.inflate(overflowMenuRes, popup.getMenu());
         popup.setOnMenuItemClickListener(new EpisodesCardsAdapter.MyMenuItemClickListener(position));
         popup.show();
-    }
-
-    private String formatVote(double vote) {
-        DecimalFormat magnitudeFormat = new DecimalFormat("0.0");
-        return magnitudeFormat.format(vote);
     }
 
     class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {

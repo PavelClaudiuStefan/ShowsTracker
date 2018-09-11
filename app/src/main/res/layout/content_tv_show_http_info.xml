@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.tvshows.TvShowActivityDb"
+    tools:showIn="@layout/activity_tv_show_db">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <FrameLayout
+            android:id="@+id/button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="4dp"
+            android:background="@android:color/white">
+
+            <ToggleButton
+                android:id="@+id/add_remove_tv_show"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/add_remove_button_color"
+                android:textOff="@string/add_tv_show"
+                android:textOn="@string/remove_tv_show"
+                android:textSize="14sp" />
+        </FrameLayout>
+
+        <RelativeLayout
+            android:id="@+id/generic_info_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_padding"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="@dimen/bottom_margin"
+            android:background="@android:color/white">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textSize="24sp"
+                android:textColor="@color/colorTitle"
+                tools:text="Title" />
+
+            <TextView
+                android:id="@+id/release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_below="@id/title"
+                android:layout_alignStart="@id/title"
+                android:textSize="16sp"
+                android:textColor="@color/colorItemDetails"
+                tools:text="Cinema release: 04 Apr 1996" />
+
+            <TextView
+                android:id="@+id/average_vote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/release_date"
+                android:layout_alignStart="@id/title"
+                android:padding="2dp"
+                android:textSize="16sp"
+                android:textColor="#ffffff"
+                android:background="@android:color/holo_green_dark"
+                tools:text="10"/>
+
+            <TextView
+                android:id="@+id/vote_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/release_date"
+                android:layout_toEndOf="@id/average_vote"
+                android:layout_marginStart="16dp"
+                android:padding="2dp"
+                android:textSize="16sp"
+                android:textColor="@color/colorItemDetails"
+                tools:text="200 votes"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/overview_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/bottom_margin"
+            android:background="@android:color/white"
+            android:padding="@dimen/text_padding">
+
+            <TextView
+                android:id="@+id/overview_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:textSize="24sp"
+                android:textColor="@color/colorTitle"
+                android:text="@string/overview_title"/>
+
+            <TextView
+                android:id="@+id/overview"
+                android:textAlignment="textStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/overview_title"
+                android:textSize="16sp"
+                android:textColor="@color/colorItemDetails"
+                tools:text="I need a lot of text here because this is gonna be the overview of this movie, or tvShow, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
+
+        </RelativeLayout>
+
+        <!-- TODO - Recycler view for seasons (optional - trailers)-->
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/seasons_recycler_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"/>-->
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

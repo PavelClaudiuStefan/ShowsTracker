@@ -122,8 +122,8 @@ public class TvShowsCollectionFragment extends Fragment{
                 TvShow tvShow = tvShows.get(position);
                 intent.putExtra("tmdb_id", tvShow.getTmdbId());
                 if (TvShowsCollectionFragment.this.getActivity() != null) {
-                    ActivityOptionsCompat options = ActivityOptionsCompat.
-                            makeSceneTransitionAnimation(TvShowsCollectionFragment.this.getActivity(), cardView.findViewById(R.id.image), "image");
+                    ActivityOptionsCompat options = ActivityOptionsCompat
+                            .makeSceneTransitionAnimation(TvShowsCollectionFragment.this.getActivity(), cardView.findViewById(R.id.image), "image");
                     startActivity(intent, options.toBundle());
                 }
             }
@@ -160,7 +160,8 @@ public class TvShowsCollectionFragment extends Fragment{
                 return requestMoviesNotReleased();
             default:
                 Log.e("TvShowsCollection", "TvShowsCollectionFragment - Filtering - displaying shows error");
-                return null;
+                // NULL - as empty object pattern
+                return new ArrayList<>();
         }
     }
 

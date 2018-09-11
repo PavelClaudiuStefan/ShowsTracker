@@ -106,9 +106,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
     private void initSharedPreferencesListener() {
         listener = (prefs, key) -> {
-            Log.i("ShadowDebug", "BaseActivity - onSharedPreferenceChanged");
             if (key.equals("display_name")) {
-                Log.i("ShadowDebug", "Updating user: ");
                 FirebaseUser currentUser = firebaseAuth.getCurrentUser();
                 if (currentUser != null) {
                     String newDisplayName = prefs.getString(key, currentUser.getDisplayName());
