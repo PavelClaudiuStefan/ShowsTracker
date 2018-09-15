@@ -24,4 +24,12 @@
     <color name="divider_background">#E0E0E0</color>
     <color name="tab_indicator">#000000</color>
     <color name="slothIconBackground">#527E9E</color>
+
+    <color name="black_semi_transparent">#ba000000</color>
+    <color name="background">#e5e5e5</color>
+    <color name="half_black">#808080</color>
+    <color name="white">#fafafa</color>
+    <color name="white_pressed">#f1f1f1</color>
+    <color name="blue_semi_transparent">#805677fc</color>
+    <color name="blue_semi_transparent_pressed">#80738ffe</color>
 </resources>

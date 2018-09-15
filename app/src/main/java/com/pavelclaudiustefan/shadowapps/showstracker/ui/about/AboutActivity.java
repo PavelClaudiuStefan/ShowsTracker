@@ -1,6 +1,7 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.about;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,7 +36,8 @@ public class AboutActivity extends AppCompatActivity {
                 .addItem(getVersionElement())
                 .addEmail("claudiu.shadow.apps@gmail.com", "Contact email")
                 .addGitHub("pavelclaudiustefan", "GitHub")
-                .addItem(getLicensesElement())
+                .addItem(getLibrariesElement())
+                .addItem(getTmdbElement())
                 .addItem(getCopyrightsElement())
                 .create();
 
@@ -55,19 +57,22 @@ public class AboutActivity extends AppCompatActivity {
         copyRightsElement.setIconTint(mehdi.sakout.aboutpage.R.color.about_item_icon_color);
         copyRightsElement.setIconNightTint(android.R.color.white);
         //copyRightsElement.setGravity(Gravity.CENTER);
-        copyRightsElement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AboutActivity.this, copyrights, Toast.LENGTH_SHORT).show();
-            }
-        });
+        copyRightsElement.setOnClickListener(v -> Toast.makeText(AboutActivity.this, copyrights, Toast.LENGTH_SHORT).show());
         return copyRightsElement;
     }
 
-    private Element getLicensesElement() {
-        Element licensesElement = new Element("Licenses", R.drawable.ic_public);
-        licensesElement.setIntent(new Intent(this, LicensesActivity.class));
-        return licensesElement;
+    private Element getLibrariesElement() {
+        Element librariesElement = new Element("Community libraries", R.drawable.ic_public);
+        librariesElement.setIntent(new Intent(this, LibrariesActivity.class));
+        return librariesElement;
+    }
+
+    private Element getTmdbElement() {
+        Element tmdbElement = new Element("The Movie Database", R.drawable.ic_tmdb);
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse("https://www.themoviedb.org/"));
+        tmdbElement.setIntent(i);
+        return tmdbElement;
     }
 
     private void setupActionBar() {

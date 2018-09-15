@@ -3,13 +3,18 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.search;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowActivityHTTP;
 
 import java.util.List;
 
 public class TvShowSearchActivity extends BaseSearchActivity<TvShow> {
+
+    public TvShowSearchActivity() {
+        setMenuResId(R.menu.menu_tv_shows_list);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

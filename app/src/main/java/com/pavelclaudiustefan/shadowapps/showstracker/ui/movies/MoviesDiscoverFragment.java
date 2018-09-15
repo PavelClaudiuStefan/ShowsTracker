@@ -5,14 +5,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,26 +24,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
+import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.AnalyticsListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowItemListAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.MovieComparator;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.EndlessScrollListener;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.helpers.recommendations.RecommendedMoviesList;
+import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations.RecommendedMoviesList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,8 @@ public class MoviesDiscoverFragment extends Fragment {
     private String tmdbUrl;
 
     private boolean isRecommended = false;
+    private boolean isLoading = false;
+    private boolean isManualRefresh = false;
 
     // These fields are saved in the bundle in onSaveInstanceState(Bundle outState)
     // and restored in onCreateView
@@ -73,14 +76,14 @@ public class MoviesDiscoverFragment extends Fragment {
     ProgressBar loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-    @BindView(R.id.list)
-    ListView listView;
+    @BindView(R.id.recycler_view)
+    RecyclerView moviesRecyclerView;
     @BindView(R.id.search_fab)
     FloatingActionButton fab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private ShowItemListAdapter<Movie> movieItemListAdapter;
+    private ShowsCardsAdapter<Movie> movieItemListAdapter;
 
     private boolean showItemsInCollection;
 
@@ -105,19 +108,47 @@ public class MoviesDiscoverFragment extends Fragment {
 
         init();
 
-        movieItemListAdapter = new ShowItemListAdapter<>(getActivity(), movies);
-        //Log.i("ShadowDebug", "1 - I am visible");
+        movieItemListAdapter = new ShowsCardsAdapter<>(getActivity(), movies, R.menu.menu_movies_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+            @Override
+            public void onAddRemoveSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(MoviesDiscoverFragment.this.getContext(), "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
+                // TODO
+                Toast.makeText(MoviesDiscoverFragment.this.getContext(), "Watch/Unwatch button pressed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCardSelected(int position, CardView cardView) {
+                if (MoviesDiscoverFragment.this.getActivity() != null) {
+                    Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
+                    Movie movie = movies.get(position);
+                    intent.putExtra("tmdb_id", movie.getTmdbId());
+                    if (getActivity() != null) {
+                        ActivityOptionsCompat options = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation(MoviesDiscoverFragment.this.getActivity(), cardView.findViewById(R.id.image), "image");
+                        startActivity(intent, options.toBundle());
+                    }
+                } else {
+                    Log.e("MoviesBaseFragment", "Parent activity is null");
+                }
+            }
+        });
+
         loadingIndicator.setVisibility(View.VISIBLE);
+        isLoading = true;
         if (isRecommended) {
             // Recommended movies section
             long[] tmdbIds = getTmdbIds();
             loadingIndicator.setIndeterminate(false);
             loadingIndicator.setMax(tmdbIds.length);
-            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING));
-            //movies = recommendedMoviesList.getList();
-            //movieItemListAdapter.addAll(movies);
-            //movieItemListAdapter = new ShowItemListAdapter<>(getContext(), movies);
-            recommendedMoviesList.addRecommendedToAdapter(movieItemListAdapter);
+            // TODO - implement menu sorting options
+            MovieComparator movieComparator = new MovieComparator(MovieComparator.BY_NUMBER_OF_TIMES_RECOMMENDED, MovieComparator.DESCENDING);
+            RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, movieComparator);
+            recommendedMoviesList.addRecommendedToList(movies);
         } else {
             // Popular movies / Top rated movies section
             setTmdbUrl();
@@ -128,6 +159,7 @@ public class MoviesDiscoverFragment extends Fragment {
                 totalPages = (int) savedInstanceState.getSerializable("totalPages");
                 //Log.i("ShadowDebug", "2 - I am gone");
                 loadingIndicator.setVisibility(View.GONE);
+                isLoading = false;
             }
 
             if (movies.isEmpty()) {
@@ -136,44 +168,38 @@ public class MoviesDiscoverFragment extends Fragment {
             }
         }
 
-        setUpListView();
+        setUpRecyclerView();
 
         return rootView;
     }
 
-    private void setUpListView() {
-        listView.setAdapter(movieItemListAdapter);
-
-        //Only visible if no movies are found
-        listView.setEmptyView(emptyStateTextView);
-
-        // Setup the item click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), MovieActivityHTTP.class);
-                Movie item = movies.get(position);
-                intent.putExtra("tmdb_id", String.valueOf(item.getTmdbId()));
-                startActivity(intent);
-            }
-        });
+    private void setUpRecyclerView() {
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        moviesRecyclerView.setLayoutManager(layoutManager);
+        moviesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        moviesRecyclerView.setAdapter(movieItemListAdapter);
 
         if (!isRecommended) {
-            listView.setOnScrollListener(new EndlessScrollListener(5, 1) {
+            moviesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public boolean onLoadMore(int page, int totalItemsCount) {
-                    //Log.i("ShadowDebug", "Why are you calling rn???");
-                    return currentPage <= totalPages && loadMore();
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (isLoading) {
+                        return;
+                    }
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int pastVisibleItems = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition();
+                    if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                        loadMore();
+                    }
                 }
             });
         }
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshList();
-                swipeRefreshLayout.setRefreshing(false);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            refreshList();
+            swipeRefreshLayout.setRefreshing(false);
         });
     }
 
@@ -193,59 +219,45 @@ public class MoviesDiscoverFragment extends Fragment {
 
     // Requests movies and adds them to the movieItemListAdapter
     public void requestAndAddMovies() {
-        String page = String.valueOf(currentPage);
-
-        Uri baseUri = Uri.parse(tmdbUrl);
-        Uri.Builder uriBuilder = baseUri.buildUpon();
-
-        uriBuilder.appendQueryParameter("api_key", TmdbConstants.API_KEY);
-        uriBuilder.appendQueryParameter("page", page);
-        AndroidNetworking.get(uriBuilder.toString())
+        ANRequest.GetRequestBuilder requestBuilder = AndroidNetworking
+                .get(tmdbUrl)
+                .addQueryParameter("api_key", TmdbConstants.API_KEY)
+                .addQueryParameter("page", String.valueOf(currentPage))
                 .setTag(this)
                 .setPriority(Priority.HIGH)
-                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
-                .build()
-                .setAnalyticsListener(new AnalyticsListener() {
-                    @Override
-                    public void onReceived(long timeTakenInMillis, long bytesSent, long bytesReceived, boolean isFromCache) {
-                        Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage);
-                    }
-                })
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES);
+
+        if (isManualRefresh) {
+            requestBuilder.getResponseOnlyFromNetwork();
+        }
+
+        requestBuilder.build()
+                .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        //Log.i("ShadowDebug", "3 - I am gone");
-                        loadingIndicator.setVisibility(View.GONE);
-
-                        List<Movie> movies = QueryUtils.extractMoviesFromJson(response);
+                        List<Movie> requestedMovies = QueryUtils.extractMoviesFromJson(response);
 
                         if (currentPage == 1) {
                             totalPages = QueryUtils.getTotalPagesFromJson(response);
                         }
 
-                        if (movies != null && !movies.isEmpty()) {
+                        if (requestedMovies != null && !requestedMovies.isEmpty()) {
                             if (!showItemsInCollection) {
-                                removeCollectionMovies(movies);
+                                removeCollectionMovies(requestedMovies);
                             }
-
-                            movieItemListAdapter.addAll(movies);
+                            movies.addAll(requestedMovies);
                         } else {
                             displayPossibleError();
-                            Log.e("ShadowDebug", "MoviesDiscoverFragment - No tvShows extracted from Json response");
+                            Log.e("ShadowDebug", "MoviesDiscoverFragment - No movies extracted from Json response");
                         }
+                        onMoviesListLoaded();
                     }
 
                     @Override
                     public void onError(ANError anError) {
                         displayPossibleError();
-                        Log.e("ShadowDebug", "MoviesDiscoverFragment onError() - " + anError.getErrorBody());
+                        Log.e("ShadowDebug", "MoviesDiscoverFragment onError() - " + anError);
                     }
                 });
     }
@@ -294,8 +306,10 @@ public class MoviesDiscoverFragment extends Fragment {
                 Log.e("MoviesDiscoverFragment", "Filtering error");
                 break;
         }
-        if (showItemsInCollection) {
-            MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
+        MenuItem showWatchedItem = menu.findItem(R.id.show_hide_watched);
+        if (isRecommended) {
+            showWatchedItem.setVisible(false);
+        } else if (showItemsInCollection) {
             showWatchedItem.setTitle(R.string.hide_collection_movies);
         }
 
@@ -339,11 +353,10 @@ public class MoviesDiscoverFragment extends Fragment {
         editor.apply();
     }
 
-
-    private boolean loadMore() {
-        // TvShow loading indicator when searching for new temporarMovies
-        //Log.i("ShadowDebug", "4 - I am visible");
+    private void loadMore() {
+        // Movie loading indicator when searching for new temporarMovies
         loadingIndicator.setVisibility(View.VISIBLE);
+        isLoading = true;
 
         ConnectivityManager connMgr = null;
         if (getActivity() != null) {
@@ -358,9 +371,6 @@ public class MoviesDiscoverFragment extends Fragment {
         if (networkInfo != null && networkInfo.isConnected()) {
             currentPage++;
             requestAndAddMovies();
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -398,13 +408,21 @@ public class MoviesDiscoverFragment extends Fragment {
 
     public void refreshList() {
         if (getActivity() != null) {
-            movieItemListAdapter.clear();
+            movies.clear();
             currentPage = 1;
+            isManualRefresh = true;
             ((MoviesActivity)getActivity()).dataChanged();
         }
     }
 
     private void displayPossibleError() {
+        // First, hide loading indicator so error message will be visible
+        if (movies == null || movies.isEmpty()) {
+            emptyStateTextView.setVisibility(View.VISIBLE);
+        }
+        loadingIndicator.setVisibility(View.GONE);
+        isLoading = false;
+
         // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
         showEmptyStateTextView(R.string.no_movies_found);
 
@@ -415,9 +433,6 @@ public class MoviesDiscoverFragment extends Fragment {
             if (connMgr != null) {
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
                 if (networkInfo == null || !networkInfo.isConnected()) {
-                    // First, hide loading indicator so error message will be visible
-                    //Log.i("ShadowDebug", "5 - I am gone");
-                    loadingIndicator.setVisibility(View.GONE);
                     showEmptyStateTextView(R.string.no_internet_connection);
                 }
             }
@@ -434,8 +449,7 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     public void onMoviesListLoaded() {
-        //Log.i("ShadowDebug", "6 - I am gone");
-        loadingIndicator.setVisibility(View.GONE);
+        movieItemListAdapter.notifyDataSetChanged();
         displayPossibleError();
     }
 }

@@ -17,6 +17,10 @@ public class MoviesActivity extends ShowsSectionsContainerActivity {
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
+    public MoviesActivity() {
+        setLayout(R.layout.activity_shows);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +29,7 @@ public class MoviesActivity extends ShowsSectionsContainerActivity {
     }
 
     @Override
-    public FragmentStatePagerAdapter getFragmentPagerAdapter() {
+    public FragmentStatePagerAdapter getFragmentStatePagerAdapter() {
         return new MoviesCategoryAdapter(this, getSupportFragmentManager());
     }
 

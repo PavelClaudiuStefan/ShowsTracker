@@ -25,7 +25,7 @@ public abstract class ShowsSectionsContainerActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        adapter = getFragmentPagerAdapter();
+        adapter = getFragmentStatePagerAdapter();
         viewPager.setAdapter(adapter);
 
         tabLayout.setupWithViewPager(viewPager);
@@ -37,5 +37,5 @@ public abstract class ShowsSectionsContainerActivity extends BaseActivity {
         adapter.notifyDataSetChanged();
     }
 
-    public abstract FragmentStatePagerAdapter getFragmentPagerAdapter();
+    public abstract FragmentStatePagerAdapter getFragmentStatePagerAdapter();
 }

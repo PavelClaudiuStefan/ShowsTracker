@@ -5,14 +5,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.BaseEntity;
 import io.objectbox.annotation.Id;
+import io.objectbox.annotation.Transient;
 
 /**
  * Show is a hypernym of movie and tv show
  */
 
-@Entity
+@BaseEntity
 public class Show {
 
     @Id(assignable = true)
@@ -22,10 +23,13 @@ public class Show {
     // if equals Long.MAX_VALUE -> Unknown release date
     private long releaseDateInMilliseconds;         // Cinema release date for movies, first TV appearance for TV shows
     private String imdbUrl;
-    private String imageId;
+    private String imagePath;
     private int voteCount;
     private String overview;
     private boolean watched;
+
+    @Transient
+    private int nrOfTimesRecommended = 0;
 
     private String thumbnailSize = "w300";
     private String imageSize = "w780";
@@ -33,12 +37,12 @@ public class Show {
     public Show() {}
 
     // Constructor for the movies in lists in the Discover section
-    public Show(int tmdbId, String title, double vote, long releaseDateInMilliseconds, String imageId) {
+    public Show(int tmdbId, String title, double vote, long releaseDateInMilliseconds, String imagePath) {
         this.tmdbId = tmdbId;
         this.title = title;
         this.vote = vote;
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
-        this.imageId = imageId;
+        this.imagePath = imagePath;
 
         this.watched = false;
     }
@@ -78,16 +82,16 @@ public class Show {
         return imdbUrl;
     }
 
-    public String getImageId() {
-        return imageId;
+    public String getImagePath() {
+        return imagePath;
     }
 
     public String getImageUrl() {
-        return "http://image.tmdb.org/t/p/" + imageSize + imageId;
+        return "http://image.tmdb.org/t/p/" + imageSize + imagePath;
     }
 
     public String getThumbnailUrl() {
-        return "http://image.tmdb.org/t/p/" + thumbnailSize + imageId;
+        return "http://image.tmdb.org/t/p/" + thumbnailSize + imagePath;
     }
 
     public void setVoteCount(int voteCount) {
@@ -114,13 +118,6 @@ public class Show {
         return watched;
     }
 
-    public int getWatchedAsIntValue() {
-        if (watched) {
-            return 1;
-        }
-        return 0;
-    }
-
     public void setTmdbId(long tmdbId) {
         this.tmdbId = tmdbId;
     }
@@ -137,8 +134,19 @@ public class Show {
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
     }
 
-    public void setImageId(String imageId) {
-        this.imageId = imageId;
+    public void incrementNrOfTimesRecommended() {
+        if (nrOfTimesRecommended == 0) {
+            nrOfTimesRecommended++;
+        }
+        nrOfTimesRecommended++;
+    }
+
+    public int getNrOfTimesRecommended() {
+        return nrOfTimesRecommended;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getThumbnailSize() {
@@ -166,7 +174,7 @@ public class Show {
                 ", vote=" + vote +
                 ", releaseDateInMilliseconds=" + releaseDateInMilliseconds +
                 ", imdbUrl='" + imdbUrl + '\'' +
-                ", imageId='" + imageId + '\'' +
+                ", imagePath='" + imagePath + '\'' +
                 ", voteCount=" + voteCount +
                 ", overview='" + overview + '\'' +
                 ", watched=" + watched +

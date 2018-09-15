@@ -4,60 +4,8 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:3811424328553684967",
-      "lastPropertyId": "11:4380582158223734865",
-      "name": "Show",
-      "properties": [
-        {
-          "id": "1:6366613526905082729",
-          "name": "tmdbId"
-        },
-        {
-          "id": "2:2374839344930100067",
-          "name": "title"
-        },
-        {
-          "id": "3:3280006406927607046",
-          "name": "vote"
-        },
-        {
-          "id": "4:5682368192120688607",
-          "name": "releaseDateInMilliseconds"
-        },
-        {
-          "id": "5:2999574997904356651",
-          "name": "imdbUrl"
-        },
-        {
-          "id": "6:5304382526880846584",
-          "name": "imageId"
-        },
-        {
-          "id": "7:333467250072482271",
-          "name": "voteCount"
-        },
-        {
-          "id": "8:8423328316945328636",
-          "name": "overview"
-        },
-        {
-          "id": "9:3773785591033636038",
-          "name": "watched"
-        },
-        {
-          "id": "10:8071026358500684124",
-          "name": "thumbnailSize"
-        },
-        {
-          "id": "11:4380582158223734865",
-          "name": "imageSize"
-        }
-      ],
-      "relations": []
-    },
-    {
       "id": "2:599848540055697503",
-      "lastPropertyId": "11:4822208752987702152",
+      "lastPropertyId": "14:5000203659118071429",
       "name": "TvShow",
       "properties": [
         {
@@ -81,10 +29,6 @@
           "name": "imdbUrl"
         },
         {
-          "id": "6:1507969142806676193",
-          "name": "imageId"
-        },
-        {
           "id": "7:4314249370938338322",
           "name": "voteCount"
         },
@@ -103,13 +47,21 @@
         {
           "id": "11:4822208752987702152",
           "name": "imageSize"
+        },
+        {
+          "id": "12:3264076103100771206",
+          "name": "status"
+        },
+        {
+          "id": "13:4796631497314693553",
+          "name": "imagePath"
         }
       ],
       "relations": []
     },
     {
       "id": "3:2611539171277373176",
-      "lastPropertyId": "13:8457002107281151000",
+      "lastPropertyId": "14:2163100938235862156",
       "name": "Movie",
       "properties": [
         {
@@ -131,10 +83,6 @@
         {
           "id": "5:1782202058926885397",
           "name": "imdbUrl"
-        },
-        {
-          "id": "6:868454011860335967",
-          "name": "imageId"
         },
         {
           "id": "7:8668291133824277807",
@@ -163,20 +111,157 @@
         {
           "id": "13:8457002107281151000",
           "name": "physicalReleaseDateInMilliseconds"
+        },
+        {
+          "id": "14:2163100938235862156",
+          "name": "imagePath"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:3320771222615079659",
+      "lastPropertyId": "13:2188703605453124240",
+      "name": "Episode",
+      "properties": [
+        {
+          "id": "1:4859647206467280558",
+          "name": "id"
+        },
+        {
+          "id": "2:2378681364352390203",
+          "name": "episodeNumber"
+        },
+        {
+          "id": "3:6272286451014303153",
+          "name": "title"
+        },
+        {
+          "id": "4:1026104893768689242",
+          "name": "overview"
+        },
+        {
+          "id": "5:2591811172868661383",
+          "name": "releaseDateInMilliseconds"
+        },
+        {
+          "id": "6:5039594544379300740",
+          "name": "vote"
+        },
+        {
+          "id": "7:7048702767143503083",
+          "name": "voteCount"
+        },
+        {
+          "id": "8:6561761720808699675",
+          "name": "imagePath"
+        },
+        {
+          "id": "9:2821403031343716546",
+          "name": "thumbnailSize"
+        },
+        {
+          "id": "10:7544082822450868892",
+          "name": "imageSize"
+        },
+        {
+          "id": "11:9197421254008265505",
+          "indexId": "1:6373179746987985923",
+          "name": "seasonId"
+        },
+        {
+          "id": "12:4522453300342779638",
+          "name": "tmdbId"
+        },
+        {
+          "id": "13:2188703605453124240",
+          "name": "seasonNumber"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:4023847820792361779",
+      "lastPropertyId": "13:602822665504661882",
+      "name": "Season",
+      "properties": [
+        {
+          "id": "1:7373266146940915997",
+          "name": "id"
+        },
+        {
+          "id": "2:273552132978777862",
+          "name": "seasonNumber"
+        },
+        {
+          "id": "3:6366406249652164563",
+          "name": "title"
+        },
+        {
+          "id": "4:3309240109602043255",
+          "name": "overview"
+        },
+        {
+          "id": "5:3725168056686548060",
+          "name": "releaseDateInMilliseconds"
+        },
+        {
+          "id": "8:4723412071829887868",
+          "name": "imagePath"
+        },
+        {
+          "id": "9:6065526964729889857",
+          "name": "thumbnailSize"
+        },
+        {
+          "id": "10:1740808947542936760",
+          "name": "imageSize"
+        },
+        {
+          "id": "11:8514222455586954924",
+          "indexId": "2:3925867330963316697",
+          "name": "tvShowId"
+        },
+        {
+          "id": "12:216049442614156508",
+          "name": "numberOfEpisodes"
+        },
+        {
+          "id": "13:602822665504661882",
+          "name": "tmdbId"
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "3:2611539171277373176",
-  "lastIndexId": "0:0",
+  "lastEntityId": "5:4023847820792361779",
+  "lastIndexId": "2:3925867330963316697",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    3811424328553684967
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    6366613526905082729,
+    2374839344930100067,
+    3280006406927607046,
+    5682368192120688607,
+    2999574997904356651,
+    5304382526880846584,
+    333467250072482271,
+    8423328316945328636,
+    3773785591033636038,
+    8071026358500684124,
+    4380582158223734865,
+    1507969142806676193,
+    868454011860335967,
+    2079492925975328571,
+    1307502989351680486,
+    5000203659118071429
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

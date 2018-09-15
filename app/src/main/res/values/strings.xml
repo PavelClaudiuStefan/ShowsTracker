@@ -24,18 +24,18 @@
     <!-- Sorting direction options in the "Movies - Collection" tab -->
     <string name="settings_movies_collection_sort_direction" translatable="false">movies_collection_sort_direction</string>
 
-    <!-- Filter options in the "Tv shows - To watch" tab -->
-    <string name="settings_tv_shows_to_watch_filter" translatable="false">tv_shows_to_watch_filter</string>
-    <string name="settings_tv_shows_to_watch_filter_default" translatable="false">released</string>
+
+    <!-- Filter options in the "Tv shows - Episodes to watch tab -->
+    <string name="settings_tv_shows_episodes_to_watch_filter" translatable="false">tv_shows_episodes_to_watch_filter</string>
+    <string name="settings_tv_shows_episodes_to_watch_filter_default" translatable="false">released</string>
+    <!-- Sorting direction options in the "Tv shows - Episodes to watch" tab -->
+    <string name="settings_tv_shows_episodes_to_watch_sort_direction" translatable="false">tv_shows_episodes_to_watch_sort_direction</string>
+
     <!-- Filter options in the "Tv shows - Collection tab -->
     <string name="settings_tv_shows_collection_filter" translatable="false">tv_shows_collection_filter</string>
     <string name="settings_tv_shows_collection_filter_default" translatable="false">all</string>
-    <!-- Sorting options in the "Tv shows - To watch" tab -->
-    <string name="settings_tv_shows_to_watch_sort_by" translatable="false">tv_shows_to_watch_sort</string>
     <!-- Sorting options in the "Tv shows - Collection" tab -->
     <string name="settings_tv_shows_collection_sort" translatable="false">tv_shows_collection_sort</string>
-    <!-- Sorting direction options in the "Tv shows - To watch" tab -->
-    <string name="settings_tv_shows_to_watch_sort_direction" translatable="false">tv_shows_to_watch_sort_direction</string>
     <!-- Sorting direction options in the "Tv shows - Collection" tab -->
     <string name="settings_tv_shows_collection_sort_direction" translatable="false">tv_shows_collection_sort_direction</string>
 
@@ -59,9 +59,9 @@
     <string name="movie_image_description">Movie image</string>
     <string name="show_image_description">TV tvShow image</string>
     <string name="overview_title">Overview:</string>
-    <string name="add_movie">Add movie</string>
+    <string name="add_movie">Add to collection</string>
     <string name="remove_movie">Remove movie</string>
-    <string name="set_watched_movie">Set watched</string>
+    <string name="set_watched">Set watched</string>
     <string name="set_not_watched_movie">Set not watched</string>
     <string name="search_movie">Search new movie…</string>
     <string name="search_tv_show">Search new TV show…</string>
@@ -82,8 +82,8 @@
     <string name="top_rated">Top rated</string>
     <string name="show_collection_movies">Show added movies</string>
     <string name="hide_collection_movies">Hide added movies</string>
-    <string name="show_collection_shows">Show added tvShows</string>
-    <string name="hide_collection_shows">Hide added tvShows</string>
+    <string name="show_collection_tv_shows">Show added TV shows</string>
+    <string name="hide_collection_tv_shows">Hide added TV shows</string>
     <string name="title_activity_shows">ShowsActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -95,8 +95,8 @@
     <string name="category_shows_upcoming">Upcoming</string>
     <string name="category_shows_all">Collection</string>
     <string name="category_shows_discover">Discover</string>
-    <string name="add_show">Add TV show</string>
-    <string name="remove_show">Remove TV show</string>
+    <string name="add_tv_show">Add to collection</string>
+    <string name="remove_tv_show">Remove TV show</string>
     <string name="logo">Logo</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -109,8 +109,8 @@
     <string name="sloth_icon">Sloth icon</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
-    <string name="feed">Feed</string>
-    <string name="movies">Movies</string>
+    <string name="feed">Feed TODO</string>
+    <string name="shows">Movies</string>
     <string name="groups">Groups</string>
     <string name="log_out">Log out</string>
     <string name="tvShows">TV Shows</string>
@@ -121,39 +121,54 @@
     <string name="sort_alphabetically">Sort alphabetically</string>
     <string name="released">Released</string>
     <string name="aired">Aired</string>
-    <string name="no_movies_added">No movies added</string>
+    <string name="no_movies_added">No movies</string>
     <string name="no_tv_shows_found">No TV shows found</string>
-    <string name="no_tv_shows_added">No TV shows added</string>
+    <string name="no_tv_shows_added">No TV shows</string>
     <string name="no_tv_show_found">No TV show found</string>
     <string name="title_activity_settings">Settings</string>
 
     <string name="copy_right" translatable="false">Copyrights © %1$d</string>
 
+
+    <string name="title_group_list">Groups</string>
+    <string name="title_group_detail">Group Detail</string>
+    <string name="group_image">Group image</string>
+    <string name="title_activity_group">Group</string>
+
+    <string name="default_number_of_users">10</string>
+    <string name="group_title">Title</string>
+    <string name="add_new_group_dialog">Add new group dialog</string>
+    <string name="no_groups_added">Create or join a group</string>
+    <string name="create_group">Create group</string>
+    <string name="join_group">Join group</string>
+    <string name="action_delete_group">Delete group</string>
+    <string name="action_exit_group">Exit group</string>
+    <string name="connection_issues">Connection issues</string>
+    <string name="title_activity_tv_show">TV Show</string>
+    <string name="tv_show_image">tv_show_image</string>
+    <string name="movie_image">Movie image</string>
+    <string name="quick_menu_button">Quick menu button</string>
+
     <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
+    <!-- General settings -->
     <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
 
     <string name="pref_title_display_name">Display name</string>
 
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
+    <string name="pref_title_starting_section">Starting section</string>
+    <string-array name="pref_section_titles">
+        <item>Movies</item>
+        <item>TV Shows</item>
+        <item>Groups</item>
     </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
+    <string-array name="pref_section_values">
+        <item>movies</item>
+        <item>tv_shows</item>
+        <item>groups</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
+    <!-- settings for Data & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
@@ -176,7 +191,7 @@
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
-    <!-- Example settings for Notifications -->
+    <!-- settings for Notifications -->
     <string name="pref_header_notifications">Notifications</string>
 
     <string name="pref_title_notifications">Notifications</string>
@@ -185,4 +200,21 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <string name="libraries_used">
+        Used libraries: \n
+        \n\tFirebase
+        \n\tObjectBox
+        \n\tButterKnife
+        \n\tFastAndroidNetworking
+        \n\tPicasso
+        \n\tAndroid About Page
+        \n\tAndroid Floating Action Button
+        \n\tTextDrawable
+    </string>
+    <string name="default_episode_info">S01E01</string>
+    <string name="default_season_info">Season 1</string>
+    <string name="ascending_order_by_date">Ascending by date</string>
+    <string name="descending_order_by_date">Descending by date</string>
+
 </resources>

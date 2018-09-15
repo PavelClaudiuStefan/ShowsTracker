@@ -17,15 +17,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.LoginActivity;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.settings.SettingsActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.settings.SettingsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsActivity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,18 +39,24 @@ import butterknife.ButterKnife;
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String TAG = "BaseActivity";
+
+    private int layout;
+
     private FirebaseAuth firebaseAuth;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     private TextView userDisplayTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_category);
+        setContentView(layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -57,7 +69,6 @@ public abstract class BaseActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Set logged user display name (Username or email)
@@ -75,6 +86,10 @@ public abstract class BaseActivity extends AppCompatActivity
         prefs.registerOnSharedPreferenceChangeListener(listener);
     }
 
+    public void setLayout(int layout) {
+        this.layout = layout;
+    }
+
     private void updateDrawerUserDisplayName(String displayName) {
         if (displayName != null && !displayName.isEmpty()) {
             userDisplayTextView.setText(displayName);
@@ -90,21 +105,33 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     private void initSharedPreferencesListener() {
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                Log.i("ShadowDebug", "BaseActivity - onSharedPreferenceChanged");
-                if (key.equals("display_name")) {
-                    Log.i("ShadowDebug", "Updating user: ");
-                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-                    if (currentUser != null) {
-                        String newDisplayName = prefs.getString(key, currentUser.getDisplayName());
-                        currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(newDisplayName).build());
-                        updateDrawerUserDisplayName(newDisplayName);
-                        Log.i("ShadowDebug", "BaseActivity - Updated");
-                    }
+        listener = (prefs, key) -> {
+            if (key.equals("display_name")) {
+                FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                if (currentUser != null) {
+                    String newDisplayName = prefs.getString(key, currentUser.getDisplayName());
+                    currentUser.updateProfile(new UserProfileChangeRequest.Builder().setDisplayName(newDisplayName).build());
+                    updateDrawerUserDisplayName(newDisplayName);
+                    updateUsersDb(newDisplayName);
                 }
             }
         };
+    }
+
+    private void updateUsersDb(String displayName) {
+        if (firebaseAuth.getUid() != null) {
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            Map<String, Object> user = new HashMap<>();
+            user.put("displayName", displayName);
+            user.put("updatedAt", Timestamp.now());
+            firestore.collection("users")
+                    .document(firebaseAuth.getUid())
+                    .update(user)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "User updated"))
+                    .addOnFailureListener(error -> Log.e(TAG, "Error updating user", error));
+        } else {
+            Log.e(TAG, "fireBaseAuth.getUid is null");
+        }
     }
 
     @Override
@@ -123,38 +150,25 @@ public abstract class BaseActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.searchable_movies.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_main) {
+        //if (id == R.id.nav_main) {
             //startActivity(new Intent(this, MainActivity.class));
-            finish();
-        } else if (id == R.id.nav_movies) {
+            //finish();
+        //} else
+        if (id == R.id.nav_movies) {
             startActivity(new Intent(this, MoviesActivity.class));
             finish();
         } else if (id == R.id.nav_tv_shows) {
             startActivity(new Intent(this, TvShowsActivity.class));
             finish();
         } else if (id == R.id.nav_groups) {
-            //startActivity(new Intent(this, GroupsActivity.class));
+            startActivity(new Intent(this, GroupsActivity.class));
+            finish();
         } else if (id == R.id.nav_settings) {
             item.setCheckable(false);
             startActivity(new Intent(this, SettingsActivity.class));

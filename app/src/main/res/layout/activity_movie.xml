@@ -1,198 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:background="#E0E0E0"
-    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityDb">
+    android:layout_height="match_parent"
+    tools:context=".ui.tvshows.TvShowActivityDb">
 
-
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <ImageView
-            android:id="@+id/thumbnail"
-            android:contentDescription="@string/movie_image_description"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@drawable/image_temp"/>
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginStart="16dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-        <!-- Empty view is only visible when the list has no items. -->
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:gravity="center_horizontal"
-            android:textAppearance="?android:textAppearanceMedium"/>
+            <com.pavelclaudiustefan.shadowapps.showstracker.customviews.FixedRatioImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/movie_image"
+                android:background="@drawable/placeholder_big"
+                app:srcCompat="@drawable/placeholder_big"
+                android:transitionName="image"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
 
-        <!-- Loading indicator is only shown before the first load -->
-        <ProgressBar
-            android:id="@+id/loading_indicator"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:visibility="gone" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/scrim"/>
 
-        <LinearLayout
-            android:id="@+id/buttons_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@android:color/white"
-            android:padding="4dp"
-            android:orientation="horizontal">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-            <ToggleButton
-                android:id="@+id/add_remove_movie"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="2dp"
-                android:backgroundTint="@color/add_remove_button_color"
-                android:textOff="@string/add_movie"
-                android:textOn="@string/remove_movie"
-                android:textSize="14sp" />
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-            <ToggleButton
-                android:id="@+id/watched_not_watched_movie"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="2dp"
-                android:backgroundTint="@color/watched_not_watched_movie_button_color"
-                android:textOff="@string/set_watched_movie"
-                android:textOn="@string/set_not_watched_movie"
-                android:textSize="14sp" />
+    </android.support.design.widget.AppBarLayout>
 
-        </LinearLayout>
+    <include layout="@layout/content_movie_activity" />
 
-        <RelativeLayout
-            android:id="@+id/generic_info_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/text_padding"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@android:color/white">
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"
+        android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textSize="24sp"
-                android:textColor="@color/colorTitle"
-                tools:text="Title" />
+    <!-- Empty view is only visible when the list has no items. -->
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_below="@id/title"
-                android:layout_alignStart="@id/title"
-                android:textSize="16sp"
-                android:textColor="@color/colorItemDetails"
-                tools:text="Cinema release: 04 Apr 1996" />
-
-            <TextView
-                android:id="@+id/digital_release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_below="@id/release_date"
-                android:layout_alignStart="@id/title"
-                android:textSize="16sp"
-                android:textColor="@color/colorItemDetails"
-                tools:text="Digital release: 04 Apr 1996" />
-
-            <TextView
-                android:id="@+id/physical_release_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_below="@id/digital_release_date"
-                android:layout_alignStart="@id/title"
-                android:textSize="16sp"
-                android:textColor="@color/colorItemDetails"
-                tools:text="Physical release: 04 Apr 1996" />
-
-            <TextView
-                android:id="@+id/average_vote"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/physical_release_date"
-                android:layout_alignStart="@id/title"
-                android:padding="2dp"
-                android:textSize="16sp"
-                android:textColor="#ffffff"
-                android:background="@android:color/holo_green_dark"
-                tools:text="10"/>
-
-            <TextView
-                android:id="@+id/vote_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/physical_release_date"
-                android:layout_toEndOf="@id/average_vote"
-                android:layout_marginStart="16dp"
-                android:padding="2dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorItemDetails"
-                tools:text="200 votes"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/overview_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@android:color/white"
-            android:padding="@dimen/text_padding">
-
-            <TextView
-                android:id="@+id/overview_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:textSize="24sp"
-                android:textColor="@color/colorTitle"
-                android:text="@string/overview_title"/>
-
-            <TextView
-                android:id="@+id/overview"
-                android:textAlignment="textStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/overview_title"
-                android:textSize="16sp"
-                android:textColor="@color/colorItemDetails"
-                tools:text="I need a lot of text here because this is gonna be the overview of this movie, or tvShow, I don't know man, I am confused. Potatoes are nice, but fries are even better. I wonder how much I need to write so it can look ok. I guess this is enough."/>
-
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/imdb_url_button"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:backgroundTint="@color/colorIMDbButton"
-            android:textSize="18sp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:padding="2dp"
-            android:text="@string/imdb"/>
-
-    </LinearLayout>
-
-</ScrollView>
+</android.support.design.widget.CoordinatorLayout>

@@ -1,12 +1,12 @@
  # Movies & Shows Tracker
  
  
- ### Android app that lets an user save a list of movies and TV shows that he watched, or wants to watch in the future.
+ ### Android app that lets an user save a list of shows and TV shows that he watched, or wants to watch in the future.
 
 
 Features:
-* List of shows/movies:
-	* To watch (Released movies/shows that are not watched)
+* List of shows/shows:
+	* To watch (Released shows/shows that are not watched)
 	* Collection
 	* Discover (Top rated/Popular/Recommended)
 * Search
