@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -81,6 +82,7 @@ public abstract class MovieActivity extends AppCompatActivity{
     ProgressBar loadingIndicator;
 
     private boolean isInUserCollection;
+    private boolean isWatchedWhileInCollection;     // If movie is in collection when watching -> true
     private Box<Movie> moviesBox;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firestore;
@@ -193,9 +195,11 @@ public abstract class MovieActivity extends AppCompatActivity{
             watchedNotWatchedButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
                 if (isChecked) {
                     if (isInUserCollection) {
+                        isWatchedWhileInCollection = true;
                         setMovieWatched(movie, true);
                     } else {
                         movie.setWatched(true);
+                        isWatchedWhileInCollection = false;
                         addRemoveMovieButton.toggle();
                     }
                 } else {
@@ -214,6 +218,14 @@ public abstract class MovieActivity extends AppCompatActivity{
     }
 
     private void insertMovie(Movie movie) {
+        // Disable buttons to give enough time for stuff to get done
+        addRemoveMovieButton.setEnabled(false);
+        watchedNotWatchedButton.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            addRemoveMovieButton.setEnabled(true);
+            watchedNotWatchedButton.setEnabled(true);
+        }, 500);
+
         // Insert movie in MovieBox
         moviesBox.put(movie);
 
@@ -237,7 +249,7 @@ public abstract class MovieActivity extends AppCompatActivity{
                                 // Valid movie is removed -> raise the number of users that have this movie as valid (valid = unwatched collection movie)
                                 updateGroupMovie(documentSnapshot.getId(), movie.getTmdbId(), +1);
                             } else {
-                                if (isInUserCollection) {
+                                if (isInUserCollection && isWatchedWhileInCollection) {
                                     // Valid movie is made invalid -> lower the number of users
                                     updateGroupMovie(documentSnapshot.getId(), movie.getTmdbId(), -1);
                                 } else {
@@ -252,6 +264,14 @@ public abstract class MovieActivity extends AppCompatActivity{
     }
 
     private void removeMovie(Movie movie) {
+        // Disable buttons to give enough time for stuff to get done
+        addRemoveMovieButton.setEnabled(false);
+        watchedNotWatchedButton.setEnabled(false);
+        new Handler().postDelayed(() -> {
+            addRemoveMovieButton.setEnabled(true);
+            watchedNotWatchedButton.setEnabled(true);
+        }, 500);
+
         moviesBox.remove(movie);
 
         // Remove movie from firestore

@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import io.objectbox.annotation.BaseEntity;
 import io.objectbox.annotation.Id;
+import io.objectbox.annotation.Transient;
 
 /**
  * Show is a hypernym of movie and tv show
@@ -26,6 +27,9 @@ public class Show {
     private int voteCount;
     private String overview;
     private boolean watched;
+
+    @Transient
+    private int nrOfTimesRecommended = 0;
 
     private String thumbnailSize = "w300";
     private String imageSize = "w780";
@@ -128,6 +132,17 @@ public class Show {
 
     public void setReleaseDateInMilliseconds(long releaseDateInMilliseconds) {
         this.releaseDateInMilliseconds = releaseDateInMilliseconds;
+    }
+
+    public void incrementNrOfTimesRecommended() {
+        if (nrOfTimesRecommended == 0) {
+            nrOfTimesRecommended++;
+        }
+        nrOfTimesRecommended++;
+    }
+
+    public int getNrOfTimesRecommended() {
+        return nrOfTimesRecommended;
     }
 
     public void setImagePath(String imagePath) {

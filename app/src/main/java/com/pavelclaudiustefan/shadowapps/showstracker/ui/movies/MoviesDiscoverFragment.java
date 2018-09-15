@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -37,17 +36,15 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations.RecommendedMoviesList;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -149,7 +146,7 @@ public class MoviesDiscoverFragment extends Fragment {
             loadingIndicator.setIndeterminate(false);
             loadingIndicator.setMax(tmdbIds.length);
             // TODO - implement menu sorting options
-            MovieComparator movieComparator = new MovieComparator(MovieComparator.BY_RATING, MovieComparator.DESCENDING);
+            MovieComparator movieComparator = new MovieComparator(MovieComparator.BY_NUMBER_OF_TIMES_RECOMMENDED, MovieComparator.DESCENDING);
             RecommendedMoviesList recommendedMoviesList = new RecommendedMoviesList(this, tmdbIds, movieComparator);
             recommendedMoviesList.addRecommendedToList(movies);
         } else {

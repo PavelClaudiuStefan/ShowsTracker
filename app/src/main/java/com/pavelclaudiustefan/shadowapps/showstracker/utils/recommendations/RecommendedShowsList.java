@@ -77,15 +77,21 @@ public abstract class RecommendedShowsList<T extends Show> {
             long itemTmdbId = item.getTmdbId();
             boolean isUnique = true;
 
+            // Check to see if is already in collection
             for (long tmdbId : tmdbIds) {
                 if (itemTmdbId == tmdbId) {
                     isUnique = false;
                 }
             }
 
-            for (T addedItem : allItems) {
-                if (itemTmdbId == addedItem.getTmdbId()) {
-                    isUnique = false;
+            // If not in collection check to see if is already recommended
+            if (isUnique) {
+                for (T addedItem : allItems) {
+                    if (itemTmdbId == addedItem.getTmdbId()) {
+                        isUnique = false;
+                        addedItem.incrementNrOfTimesRecommended();
+                        break;
+                    }
                 }
             }
 
