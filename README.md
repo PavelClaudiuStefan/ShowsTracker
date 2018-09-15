@@ -1,32 +1,14 @@
  # Movies & Shows Tracker
  
  
- ### Android app that lets an user save a list of shows and TV shows that he watched, or wants to watch in the future.
+ ### Movies & Shows Tracker is an Android app used to track your favorite movies and TV shows that you watched or plan on watching. You can alos create or join groups, where you can see the movies that every member wants to watch, so you can enjoy them toghether.
 
 
 Features:
-* List of shows/shows:
-	* To watch (Released shows/shows that are not watched)
+* List of movies/TV shows (can be filtered and sorted):
+	* To watch (Released movies/episodes that are not watched)
 	* Collection
 	* Discover (Top rated/Popular/Recommended)
+* Pages with details for movies and TV shows
 * Search
-* Statistics
-
-
-Sections - Movies:
-* To watch
-* Collection
-* Discover
-
-Sections - TV Shows:
-* To watch (Episodes)
-* Upcoming (Episodes)
-* Collection (Series)
-* Discover (Series)
-
-
-Groups:
-* Lets an user view what:
-	* Movies/shows noone saw
-	* Movies/shows everyone wants to see
-	* Movies/shows are recommended for all
+* Groups lets an user view what movies are recommended for all
