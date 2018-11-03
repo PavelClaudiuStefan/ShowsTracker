@@ -1,12 +1,12 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
@@ -28,6 +28,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.EpisodesCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode_;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.EpisodeComparator;
 
 import java.util.ArrayList;
@@ -45,8 +46,6 @@ public class EpisodesToWatchFragment extends Fragment {
     View loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-    @BindView(R.id.search_fab)
-    FloatingActionButton searchFab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -73,7 +72,6 @@ public class EpisodesToWatchFragment extends Fragment {
         } else {
             Log.e("ShadowDebug", "TvShowsCollectionFragment - getApplication() error");
         }
-        searchFab.setVisibility(View.GONE);
 
         initFilteringAndSortingOptionsValues();
 
@@ -97,11 +95,7 @@ public class EpisodesToWatchFragment extends Fragment {
     }
 
     private void setUpRecyclerView() {
-        boolean isOverflowEnabled;
-        if (currentFilterOption.equals("released"))
-            isOverflowEnabled = true;
-        else
-            isOverflowEnabled = false;
+        boolean isOverflowEnabled = currentFilterOption.equals("released");
         tvShowItemListAdapter = new EpisodesCardsAdapter(getActivity(), episodes, R.menu.menu_episodes_list, isOverflowEnabled, new EpisodesCardsAdapter.EpisodesAdapterListener() {
 
             @Override
@@ -248,6 +242,10 @@ public class EpisodesToWatchFragment extends Fragment {
                 break;
             case R.id.menu_sort_desc_by_date:
                 saveSortDirectionOption(EpisodeComparator.DESCENDING);
+                break;
+            case R.id.search:
+                Intent intent = new Intent(getActivity(), TvShowSearchActivity.class);
+                startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

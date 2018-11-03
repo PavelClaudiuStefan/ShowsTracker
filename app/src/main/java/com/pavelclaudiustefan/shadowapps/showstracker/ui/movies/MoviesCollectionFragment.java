@@ -1,5 +1,6 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie_;
@@ -19,10 +21,6 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
     private String currentFilterOption;
     private int currentSortByOption;
     private int currentSortDirectionOption;
-
-    public MoviesCollectionFragment() {
-        enableSearchFab(true);
-    }
 
     @Override
     public void initFilteringAndSortingOptionsValues() {
@@ -210,6 +208,10 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
                 break;
             case R.id.menu_sort_desc:
                 saveSortDirectionOption(MovieComparator.DESCENDING);
+                break;
+            case R.id.search:
+                Intent intent = new Intent(getActivity(), MovieSearchActivity.class);
+                startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

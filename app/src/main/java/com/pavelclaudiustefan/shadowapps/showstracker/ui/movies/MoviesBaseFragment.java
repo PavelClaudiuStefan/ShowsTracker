@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,7 +24,6 @@ import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +41,9 @@ public abstract class MoviesBaseFragment extends Fragment{
     TextView emptyStateTextView;
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
-    @BindView(R.id.search_fab)
-    FloatingActionButton searchFab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private boolean isFabVisible = false;
     private ShowsCardsAdapter<Movie> movieItemListAdapter;
 
     private Box<Movie> moviesBox;
@@ -70,7 +65,6 @@ public abstract class MoviesBaseFragment extends Fragment{
         initFilteringAndSortingOptionsValues();
         requestMoviesAndAddToAdapter();
         setUpRecyclerView();
-        setUpSearchFab();
 
         return rootView;
     }
@@ -127,21 +121,6 @@ public abstract class MoviesBaseFragment extends Fragment{
             refreshMovieList();
             swipeRefreshLayout.setRefreshing(false);
         });
-    }
-
-    public void enableSearchFab(boolean value) {
-        isFabVisible = value;
-    }
-
-    private void setUpSearchFab() {
-        if (isFabVisible) {
-            searchFab.setOnClickListener(view -> {
-                Intent intent = new Intent(getActivity(), MovieSearchActivity.class);
-                startActivity(intent);
-            });
-        } else {
-            searchFab.setVisibility(View.GONE);
-        }
     }
 
     public void refreshMovieList() {

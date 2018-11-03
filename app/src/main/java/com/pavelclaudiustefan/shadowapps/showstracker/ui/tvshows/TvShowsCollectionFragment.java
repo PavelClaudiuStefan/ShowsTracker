@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,10 +26,10 @@ import android.widget.Toast;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow_;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.TvShowComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +46,6 @@ public class TvShowsCollectionFragment extends Fragment{
     View loadingIndicator;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-    @BindView(R.id.search_fab)
-    FloatingActionButton searchFab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -193,11 +190,6 @@ public class TvShowsCollectionFragment extends Fragment{
     }
 
     private void setUpListeners() {
-        searchFab.setOnClickListener(view -> {
-            Intent intent = new Intent(getActivity(), TvShowSearchActivity.class);
-            startActivity(intent);
-        });
-
         swipeRefreshLayout.setOnRefreshListener(() -> {
             refreshShowsList();
             swipeRefreshLayout.setRefreshing(false);
@@ -299,6 +291,10 @@ public class TvShowsCollectionFragment extends Fragment{
                 break;
             case R.id.menu_sort_desc:
                 saveSortDirectionOption(TvShowComparator.DESCENDING);
+                break;
+            case R.id.search:
+                Intent intent = new Intent(getActivity(), TvShowSearchActivity.class);
+                startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

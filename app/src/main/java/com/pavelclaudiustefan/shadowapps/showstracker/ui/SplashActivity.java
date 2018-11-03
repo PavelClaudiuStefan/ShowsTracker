@@ -50,6 +50,9 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         // TODO - Check first if the movies stored in the objectbox db belong to the logged in firebase user
+        // TODO - lastUpdated value stored locally and on server -> To see which data is more fresh
+        // lastUpdatedByUser - date when user added or removed
+        // lastUpdatedAuto - date when data is updated (titles, new seasons, etc.)
         // TODO - If not, delete the objectbox db, and remake it using data from firestore
 
         startActivity(activityIntent);

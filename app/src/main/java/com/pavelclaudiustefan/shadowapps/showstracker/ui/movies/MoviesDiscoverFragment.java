@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -37,6 +36,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
@@ -78,8 +78,6 @@ public class MoviesDiscoverFragment extends Fragment {
     TextView emptyStateTextView;
     @BindView(R.id.recycler_view)
     RecyclerView moviesRecyclerView;
-    @BindView(R.id.search_fab)
-    FloatingActionButton fab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -100,7 +98,6 @@ public class MoviesDiscoverFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.category_list, container, false);
 
         ButterKnife.bind(this, rootView);
-        fab.setVisibility(View.GONE);
         if (getActivity() != null) {
             // Used to retrieve tmdbIds for hiding collection movies
             moviesBox = ((MyApp)getActivity().getApplication()).getBoxStore().boxFor(Movie.class);
@@ -330,6 +327,10 @@ public class MoviesDiscoverFragment extends Fragment {
                 break;
             case R.id.show_hide_watched:
                 saveSettingsShowHideWatched();
+                break;
+            case R.id.search:
+                Intent intent = new Intent(getActivity(), MovieSearchActivity.class);
+                startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

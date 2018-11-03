@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -37,11 +36,12 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.TvShowComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations.RecommendedTvShowsList;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +78,6 @@ public class TvShowsDiscoverFragment extends Fragment {
     TextView emptyStateTextView;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
-    @BindView(R.id.search_fab)
-    FloatingActionButton fab;
     @BindView(R.id.swiperefresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -100,7 +98,6 @@ public class TvShowsDiscoverFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.category_list, container, false);
 
         ButterKnife.bind(this, rootView);
-        fab.setVisibility(View.GONE);
         if (getActivity() != null) {
             // Used to retrieve tmdbIds for hiding collection movies
             tvShowsBox = ((MyApp)getActivity().getApplication()).getBoxStore().boxFor(TvShow.class);
@@ -328,6 +325,10 @@ public class TvShowsDiscoverFragment extends Fragment {
                 break;
             case R.id.show_hide_watched:
                 saveSettingsShowHideWatched();
+                break;
+            case R.id.search:
+                Intent intent = new Intent(getActivity(), TvShowSearchActivity.class);
+                startActivity(intent);
                 break;
             default:
                 return super.onOptionsItemSelected(item);

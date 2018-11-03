@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shows_ad_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -13,7 +14,8 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
+        android:layout_below="@+id/tabs"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
-</LinearLayout>
+</RelativeLayout>
