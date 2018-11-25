@@ -9,6 +9,7 @@
 
         <!-- enable window content transitions -->
         <item name="android:windowActivityTransitions">true</item>
+        <item name="android:autofilledHighlight">@android:color/transparent</item>
 
     </style>
 

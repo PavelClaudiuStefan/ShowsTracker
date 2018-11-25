@@ -16,15 +16,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApi;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.api.internal.GoogleApiManager;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.LoginActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.auth.AuthActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.settings.SettingsActivity;
@@ -177,8 +191,8 @@ public abstract class BaseActivity extends AppCompatActivity
             startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.logout) {
             item.setCheckable(false);
-            firebaseAuth.signOut();
-            startActivity(new Intent(this, LoginActivity.class));
+            signOut();
+            startActivity(new Intent(this, AuthActivity.class));
             finish();
         }
 
@@ -188,5 +202,16 @@ public abstract class BaseActivity extends AppCompatActivity
 
     public void closeDrawer() {
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    private void signOut() {
+        firebaseAuth.signOut();
+
+        // Google signout
+        GoogleSignInClient client = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
+        client.signOut();
+
+        // Facebook signout
+        LoginManager.getInstance().logOut();
     }
 }

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.auth.AuthActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupsActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowsActivity;
@@ -46,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         } else {
             // User is not logged in
-            activityIntent = new Intent(this, LoginActivity.class);
+            activityIntent = new Intent(this, AuthActivity.class);
         }
 
         // TODO - Check first if the movies stored in the objectbox db belong to the logged in firebase user

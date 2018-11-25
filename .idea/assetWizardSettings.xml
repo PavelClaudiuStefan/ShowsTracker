@@ -93,11 +93,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="height" value="256" />
-                            <entry key="outputName" value="placeholder_big_movie" />
-                            <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\Claudiu" />
-                            <entry key="width" value="256" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_google" />
+                            <entry key="sourceFile" value="C:\Users\Claudiu\Downloads\iconfinder_Google_1298745.svg" />
                           </map>
                         </option>
                       </PersistentState>

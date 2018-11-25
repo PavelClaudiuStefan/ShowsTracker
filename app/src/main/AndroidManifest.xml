@@ -13,10 +13,31 @@
         android:roundIcon="@mipmap/ic_launcher_sloth_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!-- Facebook authentication -->
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+        <activity android:name="com.facebook.FacebookActivity"
+            android:configChanges=
+                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+        <activity
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+
+
         <!-- TODO - Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <activity
             android:name=".ui.SplashActivity"
             android:label="@string/app_name"
@@ -28,11 +49,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.LoginActivity"
-            android:theme="@style/AppTheme.AuthTheme" />
-        <activity
-            android:name=".ui.SignupActivity"
-            android:theme="@style/AppTheme.AuthTheme" />
+            android:name=".ui.auth.AuthActivity"
+            android:label="@string/title_activity_auth"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ui.movies.MoviesActivity"
             android:launchMode="singleTop"
@@ -89,6 +108,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupActivity" />
         </activity>
+
     </application>
 
 </manifest>
