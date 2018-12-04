@@ -3,7 +3,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations;
 import android.util.Log;
 import android.util.Pair;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Show;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
 

@@ -16,26 +16,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApi;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.common.api.internal.GoogleApiManager;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.about.AboutActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.auth.AuthActivity;
@@ -49,6 +39,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.objectbox.BoxStore;
 
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -85,14 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Set logged user display name (Username or email)
-        View headerView = navigationView.getHeaderView(0);
-        userDisplayTextView = headerView.findViewById(R.id.display_name);
-
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            updateDrawerUserDisplayName(currentUser.getDisplayName());
-        }
+        setUpDrawerUserInfo();
 
         initSharedPreferencesListener();
 
@@ -102,6 +86,17 @@ public abstract class BaseActivity extends AppCompatActivity
 
     public void setLayout(int layout) {
         this.layout = layout;
+    }
+
+    private void setUpDrawerUserInfo() {
+        // Set logged user display name (Username or email)
+        View headerView = navigationView.getHeaderView(0);
+        userDisplayTextView = headerView.findViewById(R.id.display_name);
+
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+            updateDrawerUserDisplayName(currentUser.getDisplayName());
+        }
     }
 
     private void updateDrawerUserDisplayName(String displayName) {
@@ -211,7 +206,8 @@ public abstract class BaseActivity extends AppCompatActivity
         GoogleSignInClient client = GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         client.signOut();
 
-        // Facebook signout
-        LoginManager.getInstance().logOut();
+        BoxStore boxStore = ((MyApp)getApplication()).getBoxStore();
+        boxStore.close();
+        boxStore.deleteAllFiles();
     }
 }

@@ -23,7 +23,7 @@ import android.widget.Toast;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 
 import java.util.ArrayList;
 import java.util.List;

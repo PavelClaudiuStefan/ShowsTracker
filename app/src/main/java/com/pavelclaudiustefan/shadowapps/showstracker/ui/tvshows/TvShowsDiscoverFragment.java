@@ -36,7 +36,7 @@ import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;

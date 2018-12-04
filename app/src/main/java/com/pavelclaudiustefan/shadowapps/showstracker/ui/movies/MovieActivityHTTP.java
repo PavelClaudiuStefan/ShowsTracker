@@ -9,7 +9,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 
 public class MovieActivityHTTP extends MovieActivity {
 

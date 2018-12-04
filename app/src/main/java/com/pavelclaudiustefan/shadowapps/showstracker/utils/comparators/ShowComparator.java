@@ -2,7 +2,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators;
 
 import android.util.Log;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Show;
 
 import java.util.Comparator;
 

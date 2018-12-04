@@ -1,8 +1,7 @@
-package com.pavelclaudiustefan.shadowapps.showstracker.models;
+package com.pavelclaudiustefan.shadowapps.showstracker.data.models;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import io.objectbox.annotation.Backlink;

@@ -3,10 +3,10 @@ package com.pavelclaudiustefan.shadowapps.showstracker.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Season;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Episode;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Season;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.TvShow;
 
 import org.json.JSONArray;
 import org.json.JSONException;

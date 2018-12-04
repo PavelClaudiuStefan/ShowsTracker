@@ -26,8 +26,8 @@ import android.widget.Toast;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.EpisodesCardsAdapter;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode_;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Episode;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Episode_;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.TvShowSearchActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.EpisodeComparator;
 

@@ -14,7 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Season;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Season;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

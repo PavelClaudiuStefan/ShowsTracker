@@ -27,11 +27,11 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Episode;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Season;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Episode;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Season;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.TvShow;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 

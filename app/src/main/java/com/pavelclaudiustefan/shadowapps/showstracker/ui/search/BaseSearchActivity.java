@@ -28,7 +28,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Show;
 
 import java.util.ArrayList;
 import java.util.List;

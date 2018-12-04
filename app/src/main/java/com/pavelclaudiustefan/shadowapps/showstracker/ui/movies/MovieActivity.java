@@ -29,7 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 

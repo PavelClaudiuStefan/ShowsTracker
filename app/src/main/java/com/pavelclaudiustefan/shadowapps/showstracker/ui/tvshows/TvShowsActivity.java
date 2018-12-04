@@ -12,11 +12,15 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.TvShowsCategoryAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.base.ShowsSectionsContainerActivity;
 
 import butterknife.BindView;
+
+import static com.pavelclaudiustefan.shadowapps.showstracker.utils.Utils.isFreeAccount;
 
 public class TvShowsActivity extends ShowsSectionsContainerActivity {
 
@@ -35,19 +39,9 @@ public class TvShowsActivity extends ShowsSectionsContainerActivity {
         setTitle("TV Shows");
         navigationView.getMenu().findItem(R.id.nav_tv_shows).setChecked(true);
 
-        // TODO - Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
-        // Creates adView and adds it to a relative layout
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
-        AdView adView = new AdView(this);
-        adView.setAdSize(AdSize.SMART_BANNER);
-        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-        RelativeLayout.LayoutParams params= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        adView.setLayoutParams(params);
-        showsAdContainer.addView(adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        if (shouldShowAds()) {
+            setUpAds();
+        }
     }
 
     @Override
@@ -63,5 +57,29 @@ public class TvShowsActivity extends ShowsSectionsContainerActivity {
         } else {
             return super.onNavigationItemSelected(item);
         }
+    }
+
+    private boolean shouldShowAds() {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        String email = firebaseUser != null ? firebaseUser.getEmail() : "";
+
+        return isFreeAccount(email);
+    }
+
+    private void setUpAds() {
+        // TODO - Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+        // Creates adView and adds it to a relative layout
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        AdView adView = new AdView(this);
+        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        RelativeLayout.LayoutParams params= new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        adView.setLayoutParams(params);
+        showsAdContainer.addView(adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 }

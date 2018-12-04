@@ -14,4 +14,22 @@ public class Utils {
         return matcher.matches();
     }
 
+    public static boolean isFreeAccount(String email) {
+        String[] adminAccounts = {"pavelclaudiu96@gmail.com",
+                                  "pavel.claudiu_96@yahoo.com",
+                                  "varvariciv@gmail.com"};
+
+        if (email == null || email.isEmpty()) {
+            return true;
+        }
+
+        for (String accountEmail : adminAccounts) {
+            if (accountEmail.equals(email)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }

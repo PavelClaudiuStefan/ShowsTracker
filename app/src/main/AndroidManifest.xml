@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.pavelclaudiustefan.shadowapps.showstracker">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,26 +13,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_sloth_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
-        <!-- Facebook authentication -->
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>
-
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <!-- TODO - Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data
@@ -51,7 +38,7 @@
         <activity
             android:name=".ui.auth.AuthActivity"
             android:label="@string/title_activity_auth"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.movies.MoviesActivity"
             android:launchMode="singleTop"
@@ -109,6 +96,10 @@
                 android:value="com.pavelclaudiustefan.shadowapps.showstracker.ui.groups.GroupActivity" />
         </activity>
 
+        <service
+            android:name=".data.LocalDataSyncService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

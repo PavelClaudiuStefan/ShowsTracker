@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.TvShow;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.TvShow;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows.TvShowActivityHTTP;
 
 import java.util.List;

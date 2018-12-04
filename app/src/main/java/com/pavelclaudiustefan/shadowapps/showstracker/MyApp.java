@@ -3,8 +3,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker;
 import android.app.Application;
 
 import com.androidnetworking.AndroidNetworking;
-import com.facebook.FacebookSdk;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.MyObjectBox;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.MyObjectBox;
 
 import io.objectbox.BoxStore;
 
@@ -18,8 +17,6 @@ public class MyApp extends Application {
 
         AndroidNetworking.initialize(getApplicationContext());
 
-        FacebookSdk.sdkInitialize(getApplicationContext(), 100);
-
         boxStore = MyObjectBox.builder().androidContext(MyApp.this).build();
 //        http://localhost:8090/index.html
 //        adb forward tcp:8090 tcp:8090
@@ -31,6 +28,10 @@ public class MyApp extends Application {
     }
 
     public BoxStore getBoxStore() {
+        if (boxStore.isClosed()) {
+            boxStore = MyObjectBox.builder().androidContext(MyApp.this).build();
+        }
+
         return boxStore;
     }
 

@@ -14,7 +14,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Show;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Show;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;

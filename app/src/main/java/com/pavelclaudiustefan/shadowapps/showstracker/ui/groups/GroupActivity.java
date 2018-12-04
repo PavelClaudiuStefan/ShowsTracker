@@ -27,7 +27,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MovieActivityDb;
 
 import java.util.ArrayList;

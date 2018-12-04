@@ -235,6 +235,7 @@
     <string name="sign_in_with_google">Sign In With Google</string>
     <string name="sign_in_with_facebook">Sign In With Facebook</string>
     <string name="sign_in">Sign In</string>
+    <string name="google_logo_description">google_logo</string>
 
 
 </resources>

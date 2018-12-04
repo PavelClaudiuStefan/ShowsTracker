@@ -3,7 +3,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.QueryUtils;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
-import com.pavelclaudiustefan.shadowapps.showstracker.models.Movie;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesDiscoverFragment;
 
 import java.util.ArrayList;
