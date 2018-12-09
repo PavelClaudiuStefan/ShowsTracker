@@ -1,5 +1,6 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.TvShowsCategoryAdapter;
+import com.pavelclaudiustefan.shadowapps.showstracker.data.LocalDataSyncService;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.base.ShowsSectionsContainerActivity;
 
 import butterknife.BindView;
@@ -47,6 +49,23 @@ public class TvShowsActivity extends ShowsSectionsContainerActivity {
     @Override
     public FragmentStatePagerAdapter getFragmentStatePagerAdapter() {
         return new TvShowsCategoryAdapter(this, getSupportFragmentManager());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_update_data:
+                updateData();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateData() {
+        Intent i = new Intent(this, LocalDataSyncService.class);
+        i.putExtra(LocalDataSyncService.OPTION_TITLE, LocalDataSyncService.TITLE_UPDATE);
+        startService(i);
     }
 
     @Override

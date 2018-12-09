@@ -111,7 +111,7 @@ public class MoviesDiscoverFragment extends Fragment {
 
         init();
 
-        movieItemListAdapter = new ShowsCardsAdapter<>(getActivity(), movies, R.menu.menu_movies_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+        movieItemListAdapter = new ShowsCardsAdapter<>(getActivity(), movies, R.menu.menu_movie_card, new ShowsCardsAdapter.ShowsAdapterListener() {
             @Override
             public void onAddRemoveSelected(int position, MenuItem menuItem) {
                 // TODO
@@ -297,7 +297,7 @@ public class MoviesDiscoverFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
-        inflater.inflate(R.menu.discover_menu,menu);
+        inflater.inflate(R.menu.menu_discover,menu);
     }
 
     @Override

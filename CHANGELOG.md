@@ -11,7 +11,7 @@
 ### Changed
 - Login and signup screens
 
-## [5.6.0] - 4 Dec 2018
+## [5.6.0] - 9 Dec 2018
 ### Added
 - When logging out, local data is deleted
 - When logging in, local data (only movies) is synced with the data that exists in firestore
@@ -21,3 +21,7 @@
 
 ### Removed
 - Facebook Sign In
+
+## [5.6.1] - DD MMM YYYY
+### Added
+- Menu item that gives the user the option to manually update data

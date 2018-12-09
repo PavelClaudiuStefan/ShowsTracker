@@ -210,7 +210,7 @@ public class TvShowsCollectionFragment extends Fragment{
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
-        inflater.inflate(R.menu.tv_shows_collection_menu,menu);
+        inflater.inflate(R.menu.menu_tv_shows_collection,menu);
     }
 
     @Override

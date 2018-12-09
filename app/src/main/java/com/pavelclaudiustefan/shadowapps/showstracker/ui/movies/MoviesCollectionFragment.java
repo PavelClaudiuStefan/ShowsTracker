@@ -109,7 +109,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
-        inflater.inflate(R.menu.movies_collection_menu, menu);
+        inflater.inflate(R.menu.menu_movies_collection, menu);
     }
 
     @Override

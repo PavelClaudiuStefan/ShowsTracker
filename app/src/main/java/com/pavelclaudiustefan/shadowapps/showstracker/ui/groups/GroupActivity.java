@@ -88,7 +88,7 @@ public class GroupActivity extends AppCompatActivity {
     private void requestGroupsAndAddToAdapter() {
         movies = new ArrayList<>();
         requestMoviesAndAddSnapshotListener();
-        moviesListAdapter = new ShowsCardsAdapter<>(this, movies, R.menu.menu_movies_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+        moviesListAdapter = new ShowsCardsAdapter<>(this, movies, R.menu.menu_movie_card, new ShowsCardsAdapter.ShowsAdapterListener() {
             @Override
             public void onAddRemoveSelected(int position, MenuItem menuItem) {
                 // TODO

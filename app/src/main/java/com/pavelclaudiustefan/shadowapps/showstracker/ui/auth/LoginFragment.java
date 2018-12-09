@@ -196,12 +196,11 @@ public class LoginFragment extends Fragment {
     }
 
     private void syncLocalData() {
-        // TODO - start LocalDataSyncService
-
         Context context = getContext();
         assert context != null;
 
         Intent i = new Intent(context, LocalDataSyncService.class);
+        i.putExtra(LocalDataSyncService.OPTION_TITLE, LocalDataSyncService.TITLE_SYNC);
         context.startService(i);
     }
 

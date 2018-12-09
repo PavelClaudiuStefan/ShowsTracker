@@ -73,7 +73,7 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     private void requestMoviesAndAddToAdapter() {
         movies = (ArrayList<Movie>) requestMoviesFromDb();
-        movieItemListAdapter = new ShowsCardsAdapter<>(getContext(), movies, R.menu.menu_movies_list, new ShowsCardsAdapter.ShowsAdapterListener() {
+        movieItemListAdapter = new ShowsCardsAdapter<>(getContext(), movies, R.menu.menu_movie_card, new ShowsCardsAdapter.ShowsAdapterListener() {
             @Override
             public void onAddRemoveSelected(int position, MenuItem menuItem) {
                 // TODO

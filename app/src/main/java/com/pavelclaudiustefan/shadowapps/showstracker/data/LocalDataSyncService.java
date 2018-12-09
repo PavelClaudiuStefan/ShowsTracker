@@ -41,27 +41,40 @@ import okhttp3.Headers;
 
 public class LocalDataSyncService extends Service {
 
+    public static final String OPTION_TITLE = "titleOption";
+    public static final int TITLE_SYNC = 0;
+    public static final int TITLE_UPDATE = 1;
+
     private static final int PROGRESS_NOTIFICATION_ID = 19960409;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firestore;
+    Box<Movie> moviesBox;
 
     private NotificationManagerCompat notificationManagerCompat;
     private NotificationCompat.Builder notificationBuilder;
 
-    private ArrayList<Movie> movies;
+    private int titleVariant;
+    private String[] titles = new String[2];
+
     private int nrOfMovies;
     private double currentPercentage = 0;
 
     private static final int SECOND_IN_MILLISECONDS = 1000;
 
     public LocalDataSyncService() {
+        titles[TITLE_SYNC] = "Syncing data";
+        titles[TITLE_UPDATE] = "Updating data";
+
         firebaseAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        titleVariant = intent.getIntExtra(OPTION_TITLE, TITLE_SYNC);
+        moviesBox = ((MyApp) getApplication()).getBoxStore().boxFor(Movie.class);
+
         startSync();
         return Service.START_NOT_STICKY;
     }
@@ -123,13 +136,11 @@ public class LocalDataSyncService extends Service {
     /**
      * This method gets movies data from TMDb using each id in the movieIds list
      * After each respective movie gets received from the API, the notification progress is updated
-     * When every movie is received, the list of movies is sent to the storeMovies() method
+     * When every movie is received, the list of movies is sent to the storeMovie() method
      * @param movieIds is a list of TMDb ids of movies
      * @param isWatchedMovies is a list of boolean values, isWatchedMovies.get(i) is true if the movie with the id = movieIds.get(i) is watched
      */
     private void getMoviesFromTmdb(List<String> movieIds, List<Boolean> isWatchedMovies) {
-        movies = new ArrayList<>();
-
         Flowable.fromIterable(movieIds)
                 .flatMap((Function<String, Publisher<Pair<String, String>>>) id -> Flowable.zip(getMovieFlowable(id),
                         Flowable.just(id),
@@ -147,9 +158,7 @@ public class LocalDataSyncService extends Service {
                         } else {
                             finishNotification(false);
                         }
-
-                        movies.add(movie);
-                        onDataIncremented();
+                        onDataIncremented(movie);
                     }
                     @Override
                     public void onError(Throwable e) {
@@ -201,35 +210,36 @@ public class LocalDataSyncService extends Service {
         }
     }
 
-    private void onDataIncremented() {
+    private void onDataIncremented(Movie movie) {
+        storeMovie(movie);
         double percentage = currentPercentage + ((double)90/nrOfMovies);
         updateNotification(percentage);
     }
 
     private void onDataLoaded() {
-        storeMovies(movies);
-    }
-
-    /**
-     * This method stores the movies list in local storage (ObjectBox)
-     * Aftering storing the movies, it updates the notification
-     * @param movies is a list of movies of type {@link com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie}
-     */
-    private void storeMovies(List<Movie> movies) {
-        Box<Movie> movieBox = ((MyApp) getApplication()).getBoxStore().boxFor(Movie.class);
-        movieBox.put(movies);
         finishNotification(true);
     }
 
-    private void initNotification() {
-        notificationManagerCompat = NotificationManagerCompat.from(LocalDataSyncService.this);
+    private void storeMovie(Movie movie) {
+        moviesBox.put(movie);
+    }
 
+    private void initNotification() {
+        String contentTitle = titles[titleVariant];
+        String ticker;
+        if (titleVariant == TITLE_SYNC) {
+            ticker = "Start syncing local data from the server";
+        } else {
+            ticker = "Start updating data";
+        }
+
+        notificationManagerCompat = NotificationManagerCompat.from(LocalDataSyncService.this);
         notificationBuilder = createNotificationBuilder();
-        notificationBuilder.setTicker("Start syncing local data from the server");
+        notificationBuilder.setTicker(ticker);
         notificationBuilder.setOngoing(true);
         notificationBuilder.setAutoCancel(false);
         notificationBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
-        notificationBuilder.setContentTitle("Syncing local data");
+        notificationBuilder.setContentTitle(contentTitle);
         notificationBuilder.setContentText("0%");
         notificationBuilder.setProgress(100, 0, false);
         notificationManagerCompat.notify(PROGRESS_NOTIFICATION_ID, notificationBuilder.build());
@@ -250,25 +260,35 @@ public class LocalDataSyncService extends Service {
     }
 
     private void finishNotification(boolean isSuccessful) {
-        new Handler().postDelayed(() -> {
-            String statusText = isSuccessful ? "Done" : "Fail";
-            int resId = isSuccessful ? android.R.drawable.stat_sys_download_done : android.R.drawable.stat_notify_error;
+        String statusText = isSuccessful ? "Done" : "Fail";
+        int resId = isSuccessful ? android.R.drawable.stat_sys_download_done : android.R.drawable.stat_notify_error;
+        String contentTitle = titles[titleVariant];
 
-            notificationBuilder.setContentTitle("Syncing data");
+        // In case of not proper;y
+        new Handler().postDelayed(() -> {
+            notificationBuilder.setContentTitle(contentTitle);
             notificationBuilder.setSmallIcon(resId);
             notificationBuilder.setOngoing(false);
             notificationBuilder.setAutoCancel(true);
             notificationBuilder.setContentText(statusText);
             notificationBuilder.setProgress(0, 0, false);
             notificationManagerCompat.notify(PROGRESS_NOTIFICATION_ID, notificationBuilder.build());
-        }, 250);
+        }, 1000);
     }
 
     private NotificationCompat.Builder createNotificationBuilder() {
-        String channelId = "sync_channel";
+        String channelId;
+        String channelName;
+        if (titleVariant == TITLE_SYNC) {
+            channelId = "sync_channel";
+            channelName = "Sync progress bar";
+        }
+        else {
+            channelId = "update_channel";
+            channelName = "Update progress bar";
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            String channelName = "Local data sync progress bar";
             NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW);
             notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);

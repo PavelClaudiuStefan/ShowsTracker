@@ -13,7 +13,7 @@ import java.util.List;
 public class MovieSearchActivity extends BaseSearchActivity<Movie> {
 
     public MovieSearchActivity() {
-        setMenuResId(R.menu.menu_movies_list);
+        setMenuResId(R.menu.menu_movie_card);
     }
 
     @Override
