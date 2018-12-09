@@ -32,6 +32,10 @@ import com.androidnetworking.common.ANRequest;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.ShowsCardsAdapter;
@@ -43,7 +47,9 @@ import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieCom
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations.RecommendedMoviesList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -53,7 +59,7 @@ import io.objectbox.Box;
 
 public class MoviesDiscoverFragment extends Fragment {
 
-    public static final String TAG = "MoviesDiscoverFragment";
+    public static final String TAG = "ShadowDebug";
 
     private static final String TOP_RATED_OPTION = "top_rated_option";
     private static final String POPULAR_OPTION = "popular_option";
@@ -63,7 +69,7 @@ public class MoviesDiscoverFragment extends Fragment {
     private String tmdbUrl;
 
     private boolean isRecommended = false;
-    private boolean isLoading = false;
+    private boolean isLoading;
     private boolean isManualRefresh = false;
 
     // These fields are saved in the bundle in onSaveInstanceState(Bundle outState)
@@ -133,10 +139,17 @@ public class MoviesDiscoverFragment extends Fragment {
                     Log.e("MoviesBaseFragment", "Parent activity is null");
                 }
             }
+
+            @Override
+            public boolean onLongClicked(int position, CardView cardView) {
+                Movie selectedMovie = movies.get(position);
+                insertMovie(selectedMovie);
+                Toast.makeText(getContext(), selectedMovie.getTitle() + " added to collection of " + moviesBox.getAll().size(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
         });
 
-        loadingIndicator.setVisibility(View.VISIBLE);
-        isLoading = true;
+        setIsLoading(true);
         if (isRecommended) {
             // Recommended movies section
             long[] tmdbIds = getTmdbIds();
@@ -155,13 +168,13 @@ public class MoviesDiscoverFragment extends Fragment {
                 currentPage = (int) savedInstanceState.getSerializable("currentPage");
                 totalPages = (int) savedInstanceState.getSerializable("totalPages");
                 //Log.i("ShadowDebug", "2 - I am gone");
-                loadingIndicator.setVisibility(View.GONE);
-                isLoading = false;
             }
 
             if (movies.isEmpty()) {
                 // Request movies only if savedInstanceState has none and the recommended option is not active
                 requestAndAddMovies();
+            } else {
+                setIsLoading(false);
             }
         }
 
@@ -179,7 +192,7 @@ public class MoviesDiscoverFragment extends Fragment {
         if (!isRecommended) {
             moviesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     if (isLoading) {
                         return;
@@ -229,7 +242,7 @@ public class MoviesDiscoverFragment extends Fragment {
         }
 
         requestBuilder.build()
-                .setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
+                //.setAnalyticsListener((timeTakenInMillis, bytesSent, bytesReceived, isFromCache) -> Log.d(TAG, "\ntimeTakenInMillis : " + timeTakenInMillis + " isFromCache : " + isFromCache + " currentPage: " + currentPage))
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
@@ -254,7 +267,7 @@ public class MoviesDiscoverFragment extends Fragment {
                     @Override
                     public void onError(ANError anError) {
                         displayPossibleError();
-                        Log.e("ShadowDebug", "MoviesDiscoverFragment onError() - " + anError);
+                        Log.e("ShadowDebug", "MoviesDiscoverFragment anError(): " + anError.getMessage() + " - " + anError.getCause());
                     }
                 });
     }
@@ -270,7 +283,11 @@ public class MoviesDiscoverFragment extends Fragment {
                 }
             }
         }
+
         movies.removeAll(itemsToDelete);
+
+        if (movies.size() < 20)
+            loadMore();
     }
 
     private long[] getTmdbIds() {
@@ -355,9 +372,8 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     private void loadMore() {
-        // Movie loading indicator when searching for new temporarMovies
-        loadingIndicator.setVisibility(View.VISIBLE);
-        isLoading = true;
+        // Loading indicator when searching for new movies
+        setIsLoading(true);
 
         ConnectivityManager connMgr = null;
         if (getActivity() != null) {
@@ -417,12 +433,11 @@ public class MoviesDiscoverFragment extends Fragment {
     }
 
     private void displayPossibleError() {
-        // First, hide loading indicator so error message will be visible
         if (movies == null || movies.isEmpty()) {
             emptyStateTextView.setVisibility(View.VISIBLE);
+        } else {
+            emptyStateTextView.setVisibility(View.GONE);
         }
-        loadingIndicator.setVisibility(View.GONE);
-        isLoading = false;
 
         // Default - Generic error - Set empty state text to display "No movies found." It's not visible if any Show is added to the adapter
         showEmptyStateTextView(R.string.no_movies_found);
@@ -451,6 +466,96 @@ public class MoviesDiscoverFragment extends Fragment {
 
     public void onMoviesListLoaded() {
         movieItemListAdapter.notifyDataSetChanged();
+        setIsLoading(false);
         displayPossibleError();
+    }
+
+    private void setIsLoading(boolean value) {
+        isLoading = value;
+
+        if (isLoading) {
+            loadingIndicator.setVisibility(View.VISIBLE);
+        } else {
+            loadingIndicator.setVisibility(View.GONE);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    private void insertMovie(Movie movie) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+        // Insert movie in MovieBox
+        moviesBox.put(movie);
+
+        // Insert movie in firestore users/{userId}/movies and if valid, in groups/{groupTitle}/movies
+        if (firebaseAuth.getUid() != null) {
+            // Insert valid movie in users/{userId}/movies
+            Map<String, Object> movieData = new HashMap<>();
+            movieData.put("tmdbId", movie.getTmdbId());
+            movieData.put("isWatched", movie.isWatched());
+            firestore.collection("users").document(firebaseAuth.getUid()).collection("movies")
+                    .document(String.valueOf(movie.getTmdbId()))
+                    .set(movieData)
+                    .addOnFailureListener(e -> Log.e(TAG, "Insert movie in users/" + movie.getTmdbId() + "/movies failure: ", e));
+
+            // For every group that user is a member of -> update movies
+            firestore.collection("users").document(firebaseAuth.getUid()).collection("groups")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            if (!movie.isWatched()) {
+                                // Valid movie is removed -> raise the number of users that have this movie as valid (valid = unwatched collection movie)
+                                updateGroupMovie(documentSnapshot.getId(), movie.getTmdbId(), +1);
+                            } else {
+                                // TODO - recheck logic
+                                if (moviesBox.get(movie.getTmdbId()) != null && movie.isWatched()) {
+                                    // Valid movie is made invalid -> lower the number of users
+                                    updateGroupMovie(documentSnapshot.getId(), movie.getTmdbId(), -1);
+                                } else {
+                                    // Invalid movie is added -> Doesn't affect number of valid movies
+                                    updateGroupMovie(documentSnapshot.getId(), movie.getTmdbId(), 0);
+                                }
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e(TAG, "Getting user groups failure: ", e));
+        }
+    }
+
+    private void updateGroupMovie(String groupTitle, long tmdbId, int increment) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference groupMovies = firestore.collection("groups").document(groupTitle).collection("movies");
+        groupMovies.document(String.valueOf(tmdbId))
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Map<String, Object> updatedMovieData = new HashMap<>();
+                    updatedMovieData.put("tmdbId", tmdbId);
+                    if (documentSnapshot.exists()) {
+                        Long nrOfUsers = documentSnapshot.getLong("nrOfUsers");
+                        if (nrOfUsers != null) {
+                            updatedMovieData.put("nrOfUsers", nrOfUsers + increment);
+                            groupMovies.document(String.valueOf(tmdbId))
+                                    .set(updatedMovieData)
+                                    .addOnFailureListener(e -> Log.e(TAG, "Updating movies (incrementing nrOfUsers) in groups/{title}/movies failure: ", e));
+                        }
+                    } else {
+                        long nrOfUsers = 1L;
+                        updatedMovieData.put("nrOfUsers", nrOfUsers);
+                        groupMovies.document(String.valueOf(tmdbId))
+                                .set(updatedMovieData)
+                                .addOnFailureListener(e -> Log.e(TAG, "Updating movies (initiating nrOfUsers) in groups/{title}/movies failure: ", e));
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Updating movies in groups/{title}/movies failure: ", e));
     }
 }

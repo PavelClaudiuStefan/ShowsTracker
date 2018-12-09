@@ -124,6 +124,11 @@ public class TvShowsCollectionFragment extends Fragment{
                     startActivity(intent, options.toBundle());
                 }
             }
+
+            @Override
+            public boolean onLongClicked(int position, CardView cardView) {
+                return false;
+            }
         });
 
         final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);

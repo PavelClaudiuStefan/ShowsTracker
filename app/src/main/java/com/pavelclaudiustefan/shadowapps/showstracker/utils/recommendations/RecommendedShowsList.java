@@ -3,6 +3,7 @@ package com.pavelclaudiustefan.shadowapps.showstracker.utils.recommendations;
 import android.util.Log;
 import android.util.Pair;
 
+import com.androidnetworking.error.ANError;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Show;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.TmdbConstants;
 import com.rx2androidnetworking.Rx2AndroidNetworking;
@@ -18,11 +19,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
+import okhttp3.Headers;
 
 // Class used to contain the recommended shows list and the methods used to create it
 public abstract class RecommendedShowsList<T extends Show> {
 
-    private static final String TAG = "RecommendedShowsList";
+    private static final String TAG = "ShadowDebug";
+
+    private static final int SECOND_IN_MILLISECONDS = 1000;
 
     private String baseTmdbUrl;             // Base tmdbUrl used to get recommandations
     private ArrayList<Long> tmdbIds;        // List of ids of TMDb shows that are in the user's collection
@@ -33,15 +37,6 @@ public abstract class RecommendedShowsList<T extends Show> {
         for (long tmdbId : tmdbIds) {
             this.tmdbIds.add(tmdbId);
         }
-    }
-
-    private Flowable<String> getTitleFlowable(Long id) {
-        return Rx2AndroidNetworking.get(baseTmdbUrl + "{tmdbId}/recommendations")
-                .addPathParameter("tmdbId", String.valueOf(id))
-                .addQueryParameter("api_key", TmdbConstants.API_KEY)
-                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
-                .build()
-                .getStringFlowable();
     }
 
     // For every tmdbId it requests maximum 20 recommended items and adds them to the adapter for displaying
@@ -61,7 +56,7 @@ public abstract class RecommendedShowsList<T extends Show> {
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "Recommended shows list onError() called: " + e.getMessage());
+                        Log.e(TAG, "Recommended shows list onError() called: " + e.getMessage() + " " + e.toString(), e.getCause());
                     }
                     @Override
                     public void onComplete() {
@@ -69,6 +64,42 @@ public abstract class RecommendedShowsList<T extends Show> {
                         onDataLoaded();
                     }
                 });
+    }
+
+    private Flowable<String> getTitleFlowable(Long id) {
+        return Rx2AndroidNetworking.get(baseTmdbUrl + "{tmdbId}/recommendations")
+                .addPathParameter("tmdbId", String.valueOf(id))
+                .addQueryParameter("api_key", TmdbConstants.API_KEY)
+                .setMaxAgeCacheControl(10, TimeUnit.MINUTES)
+                .build()
+                .getStringFlowable()
+                .retryWhen(new RetryWithDelay(3));
+    }
+
+    private class RetryWithDelay implements Function<Flowable<? extends Throwable>, Flowable<?>> {
+        private final int maxRetries;
+        private int retryCount;
+
+        RetryWithDelay(final int maxRetries) {
+            this.maxRetries = maxRetries;
+            this.retryCount = 0;
+        }
+
+        @Override
+        public Flowable<?> apply(final Flowable<? extends Throwable> attempts) {
+            return attempts
+                    .flatMap((Function<Throwable, Flowable<?>>) throwable -> {
+                        Headers headers = ((ANError)throwable).getResponse().headers();
+                        int retryAfter = 1 + Integer.valueOf(headers.get("Retry-After"));
+
+                        if (++retryCount < maxRetries) {
+                            return Flowable.timer(retryAfter * SECOND_IN_MILLISECONDS,
+                                    TimeUnit.MILLISECONDS);
+                        }
+
+                        return Flowable.error(throwable);
+                    });
+        }
     }
 
     // Removes items that are already in the user's collection, or that are already added to the totalItems list

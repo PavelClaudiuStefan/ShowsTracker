@@ -3,10 +3,8 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.auth;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
@@ -27,13 +25,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.LocalDataSyncService;
 import com.pavelclaudiustefan.shadowapps.showstracker.ui.movies.MoviesActivity;
 import com.pavelclaudiustefan.shadowapps.showstracker.utils.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +64,8 @@ public class LoginFragment extends Fragment {
 
     private GoogleSignInClient googleSignInClient;
     private FirebaseAuth firebaseAuth;
+
+    private boolean isNewUser = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,7 +173,9 @@ public class LoginFragment extends Fragment {
 
     private void onLoginSucces() {
         if (getActivity() != null) {
-            syncLocalData();
+            if (!isNewUser) {
+                syncLocalData();
+            }
 
             getActivity().finish();
             startActivity(new Intent(getContext(), MoviesActivity.class));
@@ -236,17 +245,57 @@ public class LoginFragment extends Fragment {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        //Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        AuthResult authResult = task.getResult();
+                        if (authResult != null && authResult.getAdditionalUserInfo().isNewUser()) {
+                            isNewUser = true;
+                            saveUserInFirestore();
+                        }
                         onLoginSucces();
                     } else {
                         onLoginFailed(task.getException());
                     }
                 });
+    }
+
+    private void saveUserInFirestore() {
+        // New user is authenticated - Add user to firestore
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null) {
+
+            Map<String, Object> user = new HashMap<>();
+            if (currentUser.getDisplayName() != null && !currentUser.getDisplayName().isEmpty()) {
+                user.put("displayName", currentUser.getDisplayName());
+            } else {
+                user.put("displayName", currentUser.getEmail());
+            }
+            user.put("email", currentUser.getEmail());
+            user.put("createdAt", Timestamp.now());
+            user.put("updatedAt", Timestamp.now());
+
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.collection("users")
+                     .document(currentUser.getUid())
+                     .set(user)
+                     .addOnSuccessListener(aVoid -> Log.d(TAG, "Added a new document"))
+                     .addOnFailureListener(error -> Log.e(TAG, "Error adding document", error));
+        } else {
+            setIsLoading(false);
+            Log.e(TAG, "getCurrentUser is null");
+        }
+
+        if (getActivity() != null) {
+            getActivity().finish();
+            startActivity(new Intent(getContext(), MoviesActivity.class));
+        } else {
+            setIsLoading(false);
+            Log.e(TAG, "onSignupSucces: getActivity() is null");
+        }
     }
 
     private void setUpSectionChanger() {

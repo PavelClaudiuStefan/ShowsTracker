@@ -20,7 +20,7 @@ public class TvShowSearchActivity extends BaseSearchActivity<TvShow> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Search TV Shows");
-        setSearchViewQueryHint("Search new tv show...");
+        setSearchViewQueryHint("Search tv shows...");
     }
 
     @Override

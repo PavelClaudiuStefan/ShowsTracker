@@ -80,6 +80,7 @@ public class ShowsCardsAdapter<T extends Show> extends RecyclerView.Adapter<Show
 
         //holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
         holder.cardView.setOnClickListener(view -> listener.onCardSelected(position, holder.cardView));
+        holder.cardView.setOnLongClickListener(view -> listener.onLongClicked(position, holder.cardView));
     }
 
 
@@ -131,6 +132,8 @@ public class ShowsCardsAdapter<T extends Show> extends RecyclerView.Adapter<Show
         void onWatchUnwatchSelected(int position, MenuItem menuItem);
 
         void onCardSelected(int position, CardView cardView);
+
+        boolean onLongClicked(int position, CardView cardView);
     }
 
 }

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -32,6 +33,7 @@ import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Show;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -64,6 +66,9 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
         setContentView(R.layout.search_activity);
 
         ButterKnife.bind(this);
+
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (savedInstanceState != null) {
             loadDataFromSavedInstanceState(savedInstanceState);
@@ -144,6 +149,11 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
                         makeSceneTransitionAnimation(BaseSearchActivity.this, cardView.findViewById(R.id.image), "image");
                 startActivity(intent, options.toBundle());
             }
+
+            @Override
+            public boolean onLongClicked(int position, CardView cardView) {
+                return false;
+            }
         });
         recyclerView.setAdapter(showItemListAdapter);
 
@@ -154,7 +164,7 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (isLoading) {
                     return;
@@ -164,7 +174,7 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
                 int pastVisibleItems = ((LinearLayoutManager)layoutManager).findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                     loadMore();
-                    Log.i("ShadowDebug", "\nEND OF LIST BITCH" + "\nvisibleItemCount: " + visibleItemCount + "\ntotalItemCount: "+ totalItemCount + "\npastVisibleItems: " + pastVisibleItems);
+                    //Log.i("ShadowDebug", "\nEND OF LIST" + "\nvisibleItemCount: " + visibleItemCount + "\ntotalItemCount: "+ totalItemCount + "\npastVisibleItems: " + pastVisibleItems);
                 }
             }
         });
@@ -282,5 +292,16 @@ public abstract class BaseSearchActivity<T extends Show> extends AppCompatActivi
 
     public void setMenuResId(int menuResId) {
         this.menuResId = menuResId;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

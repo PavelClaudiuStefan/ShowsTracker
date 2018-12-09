@@ -110,6 +110,11 @@ public class GroupActivity extends AppCompatActivity {
                         makeSceneTransitionAnimation(GroupActivity.this, cardView.findViewById(R.id.image), "image");
                 startActivity(intent, options.toBundle());
             }
+
+            @Override
+            public boolean onLongClicked(int position, CardView cardView) {
+                return false;
+            }
         });
     }
 

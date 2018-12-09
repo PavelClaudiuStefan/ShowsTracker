@@ -20,7 +20,7 @@ public class MovieSearchActivity extends BaseSearchActivity<Movie> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Search Movies");
-        setSearchViewQueryHint("Search new movie...");
+        setSearchViewQueryHint("Search movies...");
     }
 
     @Override

@@ -13,7 +13,8 @@
 
 ## [5.6.0] - 4 Dec 2018
 ### Added
-- When logging in, local data is synced with the data that exists in firestore
+- When logging out, local data is deleted
+- When logging in, local data (only movies) is synced with the data that exists in firestore
 
 ### Changed
 - Ads disabled for some users (admins)

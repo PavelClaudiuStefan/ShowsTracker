@@ -101,6 +101,11 @@ public abstract class MoviesBaseFragment extends Fragment{
                     Log.e("MoviesBaseFragment", "Parent activity is null");
                 }
             }
+
+            @Override
+            public boolean onLongClicked(int position, CardView cardView) {
+                return false;
+            }
         });
         loadingIndicator.setVisibility(View.GONE);
     }
