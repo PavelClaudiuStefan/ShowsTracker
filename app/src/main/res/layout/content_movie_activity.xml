@@ -1,53 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="@layout/activity_movie"
-    android:background="#E0E0E0"
-    tools:context="com.pavelclaudiustefan.shadowapps.showstracker.ui.shows.MovieActivity">
+    android:background="#E0E0E0">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginTop="8dp"
         android:gravity="center">
-
-        <LinearLayout
-            android:id="@+id/button_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/bottom_margin"
-            android:background="@android:color/white"
-            android:padding="4dp"
-            android:orientation="horizontal">
-
-            <ToggleButton
-                android:id="@+id/add_remove_movie"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="2dp"
-                android:backgroundTint="@color/add_remove_button_color"
-                android:textOff="@string/add_movie"
-                android:textOn="@string/remove_movie"
-                android:textSize="14sp" />
-
-            <ToggleButton
-                android:id="@+id/watched_not_watched_movie"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="2dp"
-                android:backgroundTint="@color/watched_not_watched_movie_button_color"
-                android:textOff="@string/set_watched"
-                android:textOn="@string/set_not_watched_movie"
-                android:textSize="14sp" />
-
-        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/generic_info_layout"

@@ -9,12 +9,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
-import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie_;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 
-import java.util.List;
+import io.objectbox.query.Query;
 
 public class MoviesToWatchFragment extends MoviesBaseFragment {
 
@@ -40,7 +40,7 @@ public class MoviesToWatchFragment extends MoviesBaseFragment {
     }
 
     @Override
-    public List<Movie> requestMoviesFromDb() {
+    public Query<Movie> requestMoviesFromDb() {
         switch (currentFilterOption) {
             case "released_cinema":
                 return requestMoviesReleasedInCinema();
@@ -56,48 +56,44 @@ public class MoviesToWatchFragment extends MoviesBaseFragment {
         }
     }
 
-    private List<Movie> requestMoviesReleasedInCinema() {
+    private Query<Movie> requestMoviesReleasedInCinema() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .less(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestDigitalMoviesReleased() {
+    private Query<Movie> requestDigitalMoviesReleased() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .less(Movie_.digitalReleaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestPhysicalMoviesReleased() {
+    private Query<Movie> requestPhysicalMoviesReleased() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .less(Movie_.physicalReleaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestUpcomingMovies() {
+    private Query<Movie> requestUpcomingMovies() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .greater(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
                 .equal(Movie_.watched, false)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
     @Override
@@ -228,5 +224,4 @@ public class MoviesToWatchFragment extends MoviesBaseFragment {
         editor.putInt(getString(R.string.settings_movies_to_watch_sort_direction), sortDirection);
         editor.apply();
     }
-
 }

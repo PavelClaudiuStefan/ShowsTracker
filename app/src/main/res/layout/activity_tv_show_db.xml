@@ -54,6 +54,26 @@
 
     <include layout="@layout/content_tv_show_db_info" />
 
+    <FrameLayout
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:padding="4dp"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white">
+
+        <ToggleButton
+            android:id="@+id/add_remove_tv_show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/add_remove_button_color"
+            android:textOff="@string/add_tv_show"
+            android:textOn="@string/remove_tv_show"
+            android:textSize="14sp" />
+    </FrameLayout>
+
     <ProgressBar
         android:id="@+id/loading_indicator"
         android:layout_width="match_parent"

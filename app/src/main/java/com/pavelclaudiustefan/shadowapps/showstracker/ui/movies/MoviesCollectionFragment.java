@@ -9,12 +9,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
-import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Movie_;
+import com.pavelclaudiustefan.shadowapps.showstracker.ui.search.MovieSearchActivity;
+import com.pavelclaudiustefan.shadowapps.showstracker.utils.comparators.MovieComparator;
 
-import java.util.List;
+import io.objectbox.query.Query;
 
 public class MoviesCollectionFragment extends MoviesBaseFragment {
 
@@ -41,7 +41,7 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
     }
 
     @Override
-    public List<Movie> requestMoviesFromDb() {
+    public Query<Movie> requestMoviesFromDb() {
         switch (currentFilterOption) {
             case "all":
                 return requestMoviesAll();
@@ -59,51 +59,46 @@ public class MoviesCollectionFragment extends MoviesBaseFragment {
         }
     }
 
-    private List<Movie> requestMoviesAll() {
+    private Query<Movie> requestMoviesAll() {
         return getMoviesBox().query()
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestMoviesReleasedInCinema() {
+    private Query<Movie> requestMoviesReleasedInCinema() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .less(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestDigitalMoviesReleased() {
+    private Query<Movie> requestDigitalMoviesReleased() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .less(Movie_.digitalReleaseDateInMilliseconds, todayInMilliseconds)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestPhysicalMoviesReleased() {
+    private Query<Movie> requestPhysicalMoviesReleased() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .less(Movie_.physicalReleaseDateInMilliseconds, todayInMilliseconds)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
-    private List<Movie> requestMoviesNotReleased() {
+    private Query<Movie> requestMoviesNotReleased() {
         long todayInMilliseconds = System.currentTimeMillis();
 
         return getMoviesBox().query()
                 .greater(Movie_.releaseDateInMilliseconds, todayInMilliseconds)
                 .sort(new MovieComparator(currentSortByOption, currentSortDirectionOption))
-                .build()
-                .find();
+                .build();
     }
 
     @Override

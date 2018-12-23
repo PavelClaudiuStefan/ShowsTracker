@@ -31,6 +31,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
+import io.objectbox.BoxStore;
+import io.objectbox.query.Query;
+import io.objectbox.reactive.DataSubscription;
 
 // Base for fragments that display movies from the database
 public abstract class MoviesBaseFragment extends Fragment{
@@ -46,8 +49,12 @@ public abstract class MoviesBaseFragment extends Fragment{
 
     private ShowsCardsAdapter<Movie> movieItemListAdapter;
 
+    private BoxStore boxStore;
     private Box<Movie> moviesBox;
     private ArrayList<Movie> movies;
+
+    private DataSubscription subscription;
+    private Query<Movie> moviesQuery;
 
     public MoviesBaseFragment() {
         setHasOptionsMenu(true);
@@ -59,7 +66,8 @@ public abstract class MoviesBaseFragment extends Fragment{
         View rootView = inflater.inflate(R.layout.category_list, container, false);
         ButterKnife.bind(this, rootView);
         if (getActivity() != null) {
-            moviesBox = ((MyApp) getActivity().getApplication()).getBoxStore().boxFor(Movie.class);
+            boxStore = ((MyApp) getActivity().getApplication()).getBoxStore();
+            moviesBox = boxStore.boxFor(Movie.class);
         }
 
         initFilteringAndSortingOptionsValues();
@@ -72,7 +80,21 @@ public abstract class MoviesBaseFragment extends Fragment{
     public abstract void initFilteringAndSortingOptionsValues();
 
     private void requestMoviesAndAddToAdapter() {
-        movies = (ArrayList<Movie>) requestMoviesFromDb();
+        moviesQuery = requestMoviesFromDb();
+        // TODO: 09-Dec-18 - observer that refreshes movies list when new data is loaded
+//        subscription = moviesQuery.subscribe().onlyChanges().observer(data -> {
+//            Toast.makeText(getContext(), "moviesQuery CHANGED: " + data.size(), Toast.LENGTH_SHORT).show();
+//            Log.i("ShadowDebug", "requestMoviesAndAddToAdapter: moviesQuery CHANGED: " + data.size());
+//        });
+//        boxStore.subscribe(Movie.class).observer(data -> {
+//            Toast.makeText(getContext(), "BOXSTORE UPDATED", Toast.LENGTH_SHORT).show();
+//            refreshMovieList();
+//        });
+        addMoviesToAdapter(moviesQuery.find());
+    }
+
+    private void addMoviesToAdapter(List<Movie> reqMovies) {
+        movies = (ArrayList<Movie>) reqMovies;
         movieItemListAdapter = new ShowsCardsAdapter<>(getContext(), movies, R.menu.menu_movie_card, new ShowsCardsAdapter.ShowsAdapterListener() {
             @Override
             public void onAddRemoveSelected(int position, MenuItem menuItem) {
@@ -139,5 +161,12 @@ public abstract class MoviesBaseFragment extends Fragment{
         return moviesBox;
     }
 
-    public abstract List<Movie> requestMoviesFromDb();
+    public abstract Query<Movie> requestMoviesFromDb();
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        if (!subscription.isCanceled())
+//            subscription.cancel();
+    }
 }

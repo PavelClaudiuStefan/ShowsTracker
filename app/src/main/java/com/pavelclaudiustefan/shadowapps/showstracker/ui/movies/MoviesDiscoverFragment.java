@@ -267,7 +267,12 @@ public class MoviesDiscoverFragment extends Fragment {
                     @Override
                     public void onError(ANError anError) {
                         displayPossibleError();
-                        Log.e("ShadowDebug", "MoviesDiscoverFragment anError(): " + anError.getMessage() + " - " + anError.getCause());
+                        if (anError.getErrorDetail().equals("requestCancelledError")) {
+                            Log.w(TAG, "onError: MoviesDiscoverFragment - request cancelled");
+                        } else {
+                            Log.e("ShadowDebug", "MoviesDiscoverFragment anError(): " + anError.getErrorDetail(), anError);
+                        }
+
                     }
                 });
     }

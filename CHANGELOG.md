@@ -25,3 +25,6 @@
 ## [5.6.1] - DD MMM YYYY
 ### Added
 - Menu item that gives the user the option to manually update data
+
+### Changed
+- Add to collection & Set watched buttons moved to the bottom of the screen on movie/tv show activities
