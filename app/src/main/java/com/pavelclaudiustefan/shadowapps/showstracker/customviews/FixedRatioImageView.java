@@ -1,10 +1,10 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.customviews;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 
-public class FixedRatioImageView extends android.support.v7.widget.AppCompatImageView {
+public class FixedRatioImageView extends androidx.appcompat.widget.AppCompatImageView {
 
     public FixedRatioImageView(Context context) {
         super(context);

@@ -2,9 +2,9 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;

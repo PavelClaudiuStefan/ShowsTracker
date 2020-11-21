@@ -3,8 +3,8 @@ package com.pavelclaudiustefan.shadowapps.showstracker.ui.about;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -31,7 +31,7 @@ public class AboutActivity extends AppCompatActivity {
     private void setUpAboutView() {
         View aboutPage = new AboutPage(this)
                 .isRTL(false)
-                .setImage(R.mipmap.ic_launcher_sloth)
+                .setImage(R.mipmap.ic_launcher)
                 .setDescription("Shows tracker is an app used to track your favorite movies and TV shows that you watched or plan on watching. You can also create or join groups, where you can see the movies or TV shows that every member wants to watch, so you can enjoy them toghether.")
                 .addItem(getVersionElement())
                 .addEmail("claudiu.shadow.apps@gmail.com", "Contact email")

@@ -121,7 +121,7 @@
     },
     {
       "id": "4:3320771222615079659",
-      "lastPropertyId": "13:2188703605453124240",
+      "lastPropertyId": "14:4620771720216700445",
       "name": "Episode",
       "properties": [
         {
@@ -176,6 +176,10 @@
         {
           "id": "13:2188703605453124240",
           "name": "seasonNumber"
+        },
+        {
+          "id": "14:4620771720216700445",
+          "name": "isWatched"
         }
       ],
       "relations": []
