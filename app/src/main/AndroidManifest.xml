@@ -16,11 +16,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name=".ui.tvshows.SeasonActivity"></activity>
+
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false" />
-
-        <!-- TODO - Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+            android:required="false" /> <!-- TODO - Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713" />
@@ -62,8 +62,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.search.MovieSearchActivity"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".ui.search.TvShowSearchActivity"
             android:theme="@style/AppTheme" />

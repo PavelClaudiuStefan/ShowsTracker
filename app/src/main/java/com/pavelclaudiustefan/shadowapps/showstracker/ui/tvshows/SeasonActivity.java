@@ -1,5 +1,14 @@
 package com.pavelclaudiustefan.shadowapps.showstracker.ui.tvshows;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -7,17 +16,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +28,6 @@ import android.widget.ToggleButton;
 
 import com.pavelclaudiustefan.shadowapps.showstracker.MyApp;
 import com.pavelclaudiustefan.shadowapps.showstracker.R;
-import com.pavelclaudiustefan.shadowapps.showstracker.adapters.EpisodesCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.adapters.SeasonsCardsAdapter;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Episode;
 import com.pavelclaudiustefan.shadowapps.showstracker.data.models.Season;
@@ -44,7 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.objectbox.Box;
 
-public class TvShowActivityDb extends AppCompatActivity {
+public class SeasonActivity extends AppCompatActivity {
 
     @BindView(R.id.scroll_view)
     NestedScrollView scrollView;
@@ -66,12 +63,12 @@ public class TvShowActivityDb extends AppCompatActivity {
     RelativeLayout overviewLayout;
     @BindView(R.id.overview)
     TextView overviewTextView;
-    @BindView(R.id.seasons_recycler_view)
+    @BindView(R.id.episodes_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.empty_view)
     TextView emptyStateTextView;
-    @BindView(R.id.add_remove_tv_show)
-    ToggleButton addRemoveMovieButton;
+    @BindView(R.id.watch_unwatch_season)
+    ToggleButton watchUnwatchSeason;
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
 
@@ -82,15 +79,13 @@ public class TvShowActivityDb extends AppCompatActivity {
     private List<Season> seasons;
     private List<List<Episode>> episodes;
 
-    private SeasonsCardsAdapter seasonsCardsAdapter;
-
     private long tmdbId;
     private boolean inCollection = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tv_show_db);
+        setContentView(R.layout.activity_season);
         ButterKnife.bind(this);
         setupActionBar();
         setUpToolbar();
@@ -160,8 +155,8 @@ public class TvShowActivityDb extends AppCompatActivity {
             inCollection = true;
         }
 
-        addRemoveMovieButton.setChecked(inCollection);
-        addRemoveMovieButton.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+        watchUnwatchSeason.setChecked(inCollection);
+        watchUnwatchSeason.setOnCheckedChangeListener((compoundButton, isChecked) -> {
             if (isChecked) {
                 insertShow(tvShow);
                 inCollection = true;
@@ -173,8 +168,8 @@ public class TvShowActivityDb extends AppCompatActivity {
     }
 
     private void insertShow(TvShow tvShow) {
-        addRemoveMovieButton.setEnabled(false);
-        new Handler().postDelayed(() -> addRemoveMovieButton.setEnabled(true), 2000);
+        watchUnwatchSeason.setEnabled(false);
+        new Handler().postDelayed(() -> watchUnwatchSeason.setEnabled(true), 2000);
         for (int i = 0; i < seasons.size(); i++) {
             seasons.get(i).addEpisodes(episodes.get(i));
         }
@@ -184,8 +179,8 @@ public class TvShowActivityDb extends AppCompatActivity {
     }
 
     private void removeShow(TvShow tvShow) {
-        addRemoveMovieButton.setEnabled(false);
-        new Handler().postDelayed(() -> addRemoveMovieButton.setEnabled(true), 2000);
+        watchUnwatchSeason.setEnabled(false);
+        new Handler().postDelayed(() -> watchUnwatchSeason.setEnabled(true), 2000);
         if (seasons == null) {
             seasons = tvShow.getSeasons();
         }
@@ -253,67 +248,27 @@ public class TvShowActivityDb extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        seasonsCardsAdapter = new SeasonsCardsAdapter(this, seasons, R.menu.menu_season, new SeasonsCardsAdapter.SeasonsAdapterListener() {
+        SeasonsCardsAdapter seasonsCardsAdapter = new SeasonsCardsAdapter(this, seasons, R.menu.menu_tv_shows_list, new SeasonsCardsAdapter.SeasonsAdapterListener() {
             @Override
             public void onAddRemoveSelected(int position, MenuItem menuItem) {
                 // TODO
-                Toast.makeText(TvShowActivityDb.this, "Add/Remove button pressed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SeasonActivity.this, "Season - onAddRemoveSelected", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onWatchUnwatchSelected(int position, MenuItem menuItem) {
-                Season season = seasons.get(position);
-                List<Episode> episodes = season.getEpisodes();
-
-                boolean isSeasonWatchedBeforeAction = true;
-
-                for (int i = 0; i < episodes.size(); i++) {
-                    Episode currentEpisode = episodes.get(position);
-                    if (!currentEpisode.isWatched()) {
-                        isSeasonWatchedBeforeAction = false;
-                        break;
-                    }
-                }
-
-                ArrayList<Episode> updatedEpisodes = new ArrayList<>();
-                for (int i = 0; i < episodes.size(); i++) {
-                    Episode episode = episodesBox.get(episodes.get(i).getId());
-                    episode.setWatched(!isSeasonWatchedBeforeAction);
-                    updatedEpisodes.add(episode);
-
-//                    episodes.get(position).setWatched(!isSeasonWatchedBeforeAction);
-//                    Log.i("ShadowDebug", "onWatchUnwatchSelected: index = " + i + ", watched = " + !isSeasonWatchedBeforeAction);
-                }
-                Log.i("ShadowDebug", "onWatchUnwatchSelected: updated episodes list size = " + updatedEpisodes.size());
-                episodesBox.put(updatedEpisodes);
-//                episodesBox.put(episodes);
-
-                seasonsCardsAdapter.notifyDataSetChanged();
-                if (isSeasonWatchedBeforeAction) {
-                    Toast.makeText(TvShowActivityDb.this, "Season unwatched", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(TvShowActivityDb.this, "Season watched", Toast.LENGTH_SHORT).show();
-                }
+                // TODO
+                Toast.makeText(SeasonActivity.this, "Season - onWatchUnwatchSelected", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCardSelected(int position, CardView cardView) {
-//                Intent intent = new Intent(TvShowActivityDb.this, TvShowActivityDb.class);
-//                Season season = seasons.get(position);
-//                intent.putExtra("show_tmdb_id", tmdbId);
-//                intent.putExtra("tmdb_id", tmdbId);
-//                intent.putExtra("season_tmdb_id", season.getTmdbId());
-//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//                        TvShowActivityDb.this,
-//                        cardView.findViewById(R.id.image),
-//                        "image"
-//                );
-//                startActivity(intent, options.toBundle());
-                Toast.makeText(TvShowActivityDb.this, "TvShowActivityDb - onCardSelected", Toast.LENGTH_SHORT).show();
+                // TODO
+                Toast.makeText(SeasonActivity.this, "Season - onCardSelected", Toast.LENGTH_SHORT).show();
             }
         });
 
-        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(TvShowActivityDb.this, LinearLayoutManager.VERTICAL, false);
+        final RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(SeasonActivity.this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setNestedScrollingEnabled(false);
@@ -322,3 +277,4 @@ public class TvShowActivityDb extends AppCompatActivity {
     }
 
 }
+

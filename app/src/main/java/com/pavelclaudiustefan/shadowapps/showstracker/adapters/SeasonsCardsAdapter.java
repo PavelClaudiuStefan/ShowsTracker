@@ -37,8 +37,8 @@ public class SeasonsCardsAdapter extends RecyclerView.Adapter<SeasonsCardsAdapte
         ImageView imageView;
         @BindView(R.id.season_overview)
         TextView overviewTextView;
-        //@BindView(R.id.overflow)
-        //ImageView overflow;
+        @BindView(R.id.overflow)
+        ImageView overflow;
         @BindView(R.id.card_view)
         CardView cardView;
 
@@ -74,7 +74,7 @@ public class SeasonsCardsAdapter extends RecyclerView.Adapter<SeasonsCardsAdapte
         holder.titleView.setText(season.getTitle());
         holder.overviewTextView.setText(season.getOverview());
 
-        //holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
+        holder.overflow.setOnClickListener(view -> showPopupMenu(holder.overflow, position));
         holder.cardView.setOnClickListener(view -> listener.onCardSelected(position, holder.cardView));
     }
 
@@ -103,14 +103,9 @@ public class SeasonsCardsAdapter extends RecyclerView.Adapter<SeasonsCardsAdapte
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.action_add_remove:
-                    listener.onAddRemoveSelected(position, menuItem);
-                    return true;
-                case R.id.action_watch_unwatch:
-                    listener.onWatchUnwatchSelected(position, menuItem);
-                    return true;
-                default:
+            if (menuItem.getItemId() == R.id.action_watch_unwatch) {
+                listener.onWatchUnwatchSelected(position, menuItem);
+                return true;
             }
             return false;
         }
